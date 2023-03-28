@@ -1,18 +1,44 @@
 package info;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "lessons")
 public class Lesson {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "lesson_id", length = 50, nullable = false)
     private Integer id;
+
+    @Column(name = "lesson_name", length = 50, nullable = false)
     private String name;
+
+    @Column(name = "lesson_date", length = 50, nullable = false)
     private LocalDate date;
+
+    @Column(name = "start_time", length = 50, nullable = false)
     private LocalTime startTime;
+
+    @Column(name = "end_time", length = 50, nullable = false)
     private LocalTime endTime;
+
+    @Column(name = "subject_id", length = 50, nullable = false)
     private Subject subject;
+
+    @Column(name = "group_id", length = 50, nullable = false)
     private Group group;
+
+    @Column(name = "teacher_id", length = 50, nullable = false)
     private Teacher teacher;
 
     public Lesson(Integer id, String name, LocalDate date, LocalTime startTime, LocalTime endTime, Subject subject, Group group, Teacher teacher) {
