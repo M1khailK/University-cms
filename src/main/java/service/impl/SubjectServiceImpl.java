@@ -2,12 +2,12 @@ package service.impl;
 
 import info.Subject;
 import repository.SubjectRepository;
-import service.SubjectService;
+import service.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-public class SubjectServiceImpl implements SubjectService {
+public class SubjectServiceImpl implements Service<Subject> {
 
     private SubjectRepository subjectRepository;
 

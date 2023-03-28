@@ -2,12 +2,12 @@ package service.impl;
 
 import info.Teacher;
 import repository.TeacherRepository;
-import service.TeacherService;
+import service.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-public class TeacherServiceImpl implements TeacherService {
+public class TeacherServiceImpl implements Service<Teacher> {
 
     private TeacherRepository teacherRepository;
 

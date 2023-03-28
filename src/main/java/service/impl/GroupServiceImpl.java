@@ -2,12 +2,12 @@ package service.impl;
 
 import info.Group;
 import repository.GroupRepository;
-import service.GroupService;
+import service.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-public class GroupServiceImpl implements GroupService {
+public class GroupServiceImpl implements Service<Group> {
 
     private GroupRepository groupRepository;
 
