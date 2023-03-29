@@ -1,7 +1,5 @@
-package info;
+package ua.foxminded.university.info;
 
-import jakarta.persistence.Access;
-import jakarta.persistence.AccessType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -35,6 +33,10 @@ public class Student {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "group_id")
     private Group group;
+
+    public Student() {
+
+    }
 
     public Student(Integer id, String firstName, String lastName, String email, Group group) {
         this.id = id;

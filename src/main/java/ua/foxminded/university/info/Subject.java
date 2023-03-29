@@ -1,4 +1,4 @@
-package info;
+package ua.foxminded.university.info;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.util.Objects;
+
 @Entity
 @Table(name = "subjects")
 public class Subject {
@@ -19,6 +20,10 @@ public class Subject {
 
     @Column(name = "subject_name", length = 50, nullable = false)
     private String name;
+
+    public Subject() {
+
+    }
 
     public Subject(Integer id, String name) {
         this.id = id;

@@ -1,11 +1,11 @@
-package service;
+package ua.foxminded.university.services;
 
-import info.Lesson;
+import ua.foxminded.university.info.Lesson;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public interface LessonService extends Service<Lesson> {
+public interface LessonService extends EntityService<Lesson> {
 
     List<Lesson> getAllByGroupIdAndDateBetween(Integer groupId, LocalDate from, LocalDate to);
 

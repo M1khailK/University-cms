@@ -1,14 +1,18 @@
-package service.impl;
+package ua.foxminded.university.services.impl;
 
-import info.Subject;
-import repository.SubjectRepository;
-import service.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ua.foxminded.university.info.Subject;
+import ua.foxminded.university.repository.SubjectRepository;
+import ua.foxminded.university.services.EntityService;
 
 import java.util.List;
 import java.util.Optional;
 
-public class SubjectServiceImpl implements Service<Subject> {
+@Service
+public class SubjectServiceImpl implements EntityService<Subject> {
 
+    @Autowired
     private SubjectRepository subjectRepository;
 
     @Override

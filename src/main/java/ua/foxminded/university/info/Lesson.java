@@ -1,10 +1,13 @@
-package info;
+package ua.foxminded.university.info;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -32,14 +35,19 @@ public class Lesson {
     @Column(name = "end_time", length = 50, nullable = false)
     private LocalTime endTime;
 
-    @Column(name = "subject_id", length = 50, nullable = false)
+    @OneToOne
+    @JoinColumn(name = "subject_id")
     private Subject subject;
-
-    @Column(name = "group_id", length = 50, nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "group_id")
     private Group group;
-
-    @Column(name = "teacher_id", length = 50, nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
     private Teacher teacher;
+
+    public Lesson() {
+
+    }
 
     public Lesson(Integer id, String name, LocalDate date, LocalTime startTime, LocalTime endTime, Subject subject, Group group, Teacher teacher) {
         this.id = id;

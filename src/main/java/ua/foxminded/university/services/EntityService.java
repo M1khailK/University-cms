@@ -1,9 +1,9 @@
-package service;
+package ua.foxminded.university.services;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface Service<T>{
+public interface EntityService<T>{
 
     void save(T entity);
 

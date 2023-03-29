@@ -1,15 +1,19 @@
-package service.impl;
+package ua.foxminded.university.services.impl;
 
-import info.Lesson;
-import repository.LessonRepository;
-import service.LessonService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ua.foxminded.university.info.Lesson;
+import ua.foxminded.university.repository.LessonRepository;
+import ua.foxminded.university.services.LessonService;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class LessonServiceImpl implements LessonService {
 
+    @Autowired
     private LessonRepository lessonRepository;
 
     @Override

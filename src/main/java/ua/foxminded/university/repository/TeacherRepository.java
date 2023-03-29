@@ -1,6 +1,6 @@
-package repository;
+package ua.foxminded.university.repository;
 
-import info.Teacher;
+import ua.foxminded.university.info.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {

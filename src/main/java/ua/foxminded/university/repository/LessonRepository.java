@@ -1,6 +1,6 @@
-package repository;
+package ua.foxminded.university.repository;
 
-import info.Lesson;
+import ua.foxminded.university.info.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

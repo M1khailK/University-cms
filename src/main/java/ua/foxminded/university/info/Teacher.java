@@ -1,4 +1,4 @@
-package info;
+package ua.foxminded.university.info;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,6 +26,10 @@ public class Teacher {
 
     @Column(name = "email", length = 50, nullable = false)
     private String email;
+
+    public Teacher(){
+
+    }
 
     public Teacher(Integer id, String firstName, String lastName, String email) {
         this.id = id;
