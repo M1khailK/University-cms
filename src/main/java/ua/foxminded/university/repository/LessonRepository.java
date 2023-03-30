@@ -1,7 +1,7 @@
 package ua.foxminded.university.repository;
 
-import ua.foxminded.university.info.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
+import ua.foxminded.university.info.Lesson;
 
 import java.time.LocalDate;
 import java.util.List;
