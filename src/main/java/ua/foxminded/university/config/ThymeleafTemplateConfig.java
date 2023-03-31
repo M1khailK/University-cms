@@ -2,6 +2,7 @@ package ua.foxminded.university.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -9,6 +10,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
+@EnableWebMvc
 public class ThymeleafTemplateConfig {
 
     @Bean
@@ -18,7 +20,7 @@ public class ThymeleafTemplateConfig {
         return springTemplateEngine;
     }
 
-    public ClassLoaderTemplateResolver emailTemplateResolver() {
+    private ClassLoaderTemplateResolver emailTemplateResolver() {
         ClassLoaderTemplateResolver emailTemplateResolver = new ClassLoaderTemplateResolver();
         emailTemplateResolver.setPrefix("/templates/");
         emailTemplateResolver.setSuffix(".html");
