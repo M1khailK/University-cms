@@ -40,6 +40,5 @@ public class EmailSenderServiceImpl implements EmailSenderService {
         helper.setText(html, true);
 
         mailSender.send(mimeMessage);
-        System.out.println("Mail sent successfully");
     }
 }
