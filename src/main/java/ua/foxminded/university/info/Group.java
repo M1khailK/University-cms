@@ -2,7 +2,6 @@ package ua.foxminded.university.info;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,7 +24,7 @@ public class Group {
     @Column(name = "group_name", length = 50, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "group")
     private final Set<Student> students = new HashSet<>();
 
     public Group() {

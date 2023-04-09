@@ -2,7 +2,6 @@ package ua.foxminded.university.info;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,7 +29,7 @@ public class Student {
     @Column(name = "email", length = 50, nullable = false)
     private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name = "group_id")
     private Group group;
 
