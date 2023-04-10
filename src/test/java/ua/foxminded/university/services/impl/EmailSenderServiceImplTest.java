@@ -17,7 +17,6 @@ public class EmailSenderServiceImplTest {
 
     private static final String EMAIL = "mailsenderexample515@gmail.com";
     private static final String SUBJECT = "test subject";
-    private static final String BODY = "test body";
 
     @Autowired
     private EmailSenderServiceImpl emailSender;
@@ -38,7 +37,7 @@ public class EmailSenderServiceImplTest {
     @Test
     void emailSender_shouldSendEmail_whenInputHasBodySubjectAndRecipientEmail() throws MessagingException {
 
-        emailSender.sendEmail(EMAIL, SUBJECT, BODY);
+        emailSender.sendEmail(EMAIL, SUBJECT);
 
         MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
 

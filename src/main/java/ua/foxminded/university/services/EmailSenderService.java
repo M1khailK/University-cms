@@ -4,5 +4,5 @@ import jakarta.mail.MessagingException;
 
 public interface EmailSenderService {
 
-    void sendEmail(String to, String subject, String message) throws MessagingException;
+    void sendEmail(String to, String subject) throws MessagingException;
 }

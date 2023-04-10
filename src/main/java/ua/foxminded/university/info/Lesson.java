@@ -35,7 +35,7 @@ public class Lesson {
     @Column(name = "end_time", length = 50, nullable = false)
     private LocalTime endTime;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "subject_id")
     private Subject subject;
     @ManyToOne
