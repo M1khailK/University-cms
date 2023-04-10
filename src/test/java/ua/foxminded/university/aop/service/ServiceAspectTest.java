@@ -10,10 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ua.foxminded.university.config.RepositoryMockBeanConfig;
 import ua.foxminded.university.config.ServiceAspectTestConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.repository.GroupRepository;
+import ua.foxminded.university.repository.LessonRepository;
+import ua.foxminded.university.repository.StudentRepository;
+import ua.foxminded.university.repository.SubjectRepository;
+import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.impl.GroupServiceImpl;
 
 import java.util.List;
@@ -21,7 +24,11 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.lenient;
 
-@SpringBootTest(classes = {ServiceAspectTestConfig.class, RepositoryMockBeanConfig.class})
+@SpringBootTest(classes = {ServiceAspectTestConfig.class})
+@MockBean(TeacherRepository.class)
+@MockBean(LessonRepository.class)
+@MockBean(StudentRepository.class)
+@MockBean(SubjectRepository.class)
 public class ServiceAspectTest {
 
     private static final String GROUP_NAME = "Group";
@@ -54,7 +61,7 @@ public class ServiceAspectTest {
 
     @Test
     void serviceAspect_shouldDoLogging_whenGroupServiceGetGroupById() {
-        lenient().when(groupService.getById(GROUP_ID)).thenReturn(Optional.of(new Group(null,GROUP_NAME)));
+        lenient().when(groupService.getById(GROUP_ID)).thenReturn(Optional.of(new Group(null, GROUP_NAME)));
 
         Logger logger = (Logger) LoggerFactory.getLogger(ServiceAspect.class);
 
