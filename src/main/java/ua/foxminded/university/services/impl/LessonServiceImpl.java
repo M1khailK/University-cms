@@ -42,8 +42,8 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> getLessonsBySubjectId(Integer subjectId) {
-        return lessonRepository.findAllBySubjectId(subjectId);
+    public List<Lesson> getLessonsBySubjectIdAndDateBetween(Integer subjectId, LocalDate from, LocalDate to) {
+        return lessonRepository.findAllBySubjectIdAndDateBetween(subjectId, from, to);
     }
 
     @Override

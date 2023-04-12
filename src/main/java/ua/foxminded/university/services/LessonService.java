@@ -11,6 +11,6 @@ public interface LessonService extends EntityService<Lesson> {
 
     List<Lesson> getAllByTeacherIdAndDateBetween(Integer teacherId, LocalDate from, LocalDate to);
 
-    List<Lesson> getLessonsBySubjectId(Integer subjectId);
+    List<Lesson> getLessonsBySubjectIdAndDateBetween(Integer subjectId, LocalDate from, LocalDate to);
 
 }
