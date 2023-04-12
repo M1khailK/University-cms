@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.repository.StudentRepository;
-import ua.foxminded.university.services.EntityService;
+import ua.foxminded.university.services.StudentService;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StudentServiceImpl implements EntityService<Student> {
+public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentRepository studentRepository;

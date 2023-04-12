@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.repository.GroupRepository;
-import ua.foxminded.university.services.EntityService;
+import ua.foxminded.university.services.GroupService;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class GroupServiceImpl implements EntityService<Group> {
+public class GroupServiceImpl implements GroupService {
 
     @Autowired
     private GroupRepository groupRepository;
