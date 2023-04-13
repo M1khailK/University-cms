@@ -1,6 +1,5 @@
 package ua.foxminded.university.services;
 
-import jakarta.mail.MessagingException;
 import ua.foxminded.university.customexceptions.MailSenderServiceException;
 
 import java.util.Map;
