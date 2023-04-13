@@ -73,7 +73,7 @@ public class ServiceAspectTest {
         List<ILoggingEvent> logList = listAppender.list;
 
         String firstExpected = "Calling: Optional ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer)";
-        String secondExpected = "Optional ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer) response: Optional[Group{id=null, name='Group', students=[]}]";
+        String secondExpected = "Optional ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer) response: Optional[Group{id=null, name='Group'}]";
         Assertions.assertEquals(firstExpected, logList.get(0).getFormattedMessage());
         Assertions.assertEquals(secondExpected, logList.get(1).getFormattedMessage());
         Assertions.assertEquals(Level.TRACE, logList.get(0).getLevel());

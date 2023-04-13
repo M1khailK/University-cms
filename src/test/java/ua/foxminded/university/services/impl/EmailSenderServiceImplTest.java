@@ -12,11 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 @SpringBootTest()
 public class EmailSenderServiceImplTest {
 
     private static final String EMAIL = "mailsenderexample515@gmail.com";
     private static final String SUBJECT = "test subject";
+    private static final String EXAMPLE = "example";
 
     @Autowired
     private EmailSenderServiceImpl emailSender;
@@ -35,9 +40,11 @@ public class EmailSenderServiceImplTest {
     }
 
     @Test
-    void emailSender_shouldSendEmail_whenInputHasBodySubjectAndRecipientEmail() throws MessagingException {
+    void emailSender_shouldSendEmail_whenInputHasBodySubjectAndRecipientEmail() throws MessagingException, IOException {
+        Map<String, Object> templateParams = new HashMap<>();
+        templateParams.put(EXAMPLE, EXAMPLE);
 
-        emailSender.sendEmail(EMAIL, SUBJECT);
+        emailSender.sendEmail(EMAIL, SUBJECT, EXAMPLE, templateParams);
 
         MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
 

@@ -3,8 +3,6 @@ package ua.foxminded.university.services.impl;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -13,13 +11,10 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import ua.foxminded.university.services.EmailSenderService;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Service
-@PropertySource("classpath:mailTemplate.properties")
 public class EmailSenderServiceImpl implements EmailSenderService {
-
-    @Value("${mail.template}")
-    private String mailTemplate;
 
     @Autowired
     private SpringTemplateEngine templateEngine;
@@ -27,15 +22,16 @@ public class EmailSenderServiceImpl implements EmailSenderService {
     private JavaMailSender mailSender;
 
     @Override
-    public void sendEmail(String toEmail, String subject) throws MessagingException {
+    public void sendEmail(String toEmail, String subject, String emailType, Map<String, Object> templateParams) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,
                 MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                 StandardCharsets.UTF_8.name());
 
         Context context = new Context();
+        context.setVariables(templateParams);
 
-        String html = templateEngine.process(mailTemplate, context);
+        String html = templateEngine.process(emailType, context);
 
         helper.setTo(toEmail);
         helper.setSubject(subject);

@@ -5,12 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "groups")
@@ -23,9 +20,6 @@ public class Group {
 
     @Column(name = "group_name", length = 50, nullable = false)
     private String name;
-
-    @OneToMany(mappedBy = "group")
-    private final Set<Student> students = new HashSet<>();
 
     public Group() {
 
@@ -57,7 +51,6 @@ public class Group {
         return "Group{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", students=" + students +
                 '}';
     }
 
@@ -66,11 +59,11 @@ public class Group {
         if (this == o) return true;
         if (!(o instanceof Group)) return false;
         Group group = (Group) o;
-        return Objects.equals(getId(), group.getId()) && Objects.equals(getName(), group.getName()) && Objects.equals(students, group.students);
+        return Objects.equals(getId(), group.getId()) && Objects.equals(getName(), group.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), students);
+        return Objects.hash(getId(), getName());
     }
 }
