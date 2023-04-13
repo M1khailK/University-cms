@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ua.foxminded.university.customexceptions.MailSenderServiceException;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ public class EmailSenderServiceImplTest {
     }
 
     @Test
-    void emailSender_shouldSendEmail_whenInputHasBodySubjectAndRecipientEmail() throws MessagingException, IOException {
+    void emailSender_shouldSendEmail_whenInputHasBodySubjectAndRecipientEmail() throws MailSenderServiceException, MessagingException {
         Map<String, Object> templateParams = new HashMap<>();
         templateParams.put(EXAMPLE, EXAMPLE);
 
