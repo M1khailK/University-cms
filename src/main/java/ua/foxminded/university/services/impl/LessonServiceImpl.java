@@ -2,14 +2,15 @@ package ua.foxminded.university.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
+import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.services.LessonService;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,8 +36,11 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to) {
-        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to);
+    public List<Lesson> getAllByStudentAndDateBetween(Student student, LocalDate from, LocalDate to) {
+        if (student.getGroup() == null) {
+            return Collections.emptyList();
+        }
+        return lessonRepository.findAllByGroupIdAndDateBetween(student.getGroup().getId(), from, to);
     }
 
     @Override
@@ -45,7 +49,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> getLessonsBySubjectAndDateBetween(Subject subject, LocalDate from, LocalDate to) {
+    public List<Lesson> getAllBySubjectAndDateBetween(Subject subject, LocalDate from, LocalDate to) {
         return lessonRepository.findAllBySubjectIdAndDateBetween(subject.getId(), from, to);
     }
 
