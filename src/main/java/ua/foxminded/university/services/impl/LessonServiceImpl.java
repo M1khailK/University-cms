@@ -10,7 +10,6 @@ import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.services.LessonService;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +37,7 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public List<Lesson> getAllByStudentAndDateBetween(Student student, LocalDate from, LocalDate to) {
         if (student.getGroup() == null) {
-            return Collections.emptyList();
+            throw new IllegalArgumentException("Student group can`t be null.");
         }
         return lessonRepository.findAllByGroupIdAndDateBetween(student.getGroup().getId(), from, to);
     }

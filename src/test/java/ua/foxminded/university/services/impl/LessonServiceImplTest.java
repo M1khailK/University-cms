@@ -50,8 +50,8 @@ public class LessonServiceImplTest {
     private LessonService lessonService;
 
     @Test
-    void lessonService_shouldReturnEmptyList_whenStudentGroupIsNull() {
-        Assertions.assertEquals(Collections.emptyList(), lessonService.getAllByStudentAndDateBetween(new Student(null, FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, null), LOCAL_DATE, LOCAL_DATE));
+    void lessonService_shouldThrowAnException_whenStudentGroupIsNull() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> lessonService.getAllByStudentAndDateBetween(new Student(null, FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, null), LOCAL_DATE, LOCAL_DATE));
     }
 
     @Test
