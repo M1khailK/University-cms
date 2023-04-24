@@ -13,7 +13,7 @@
 <body>
 <div class="hero">
     <div class="teachers-form-box">
-        <form th:action="@{/teacherSchedule}" method="post">
+        <form th:action="@{/teacherSchedule}" method="get">
             <ul>
                 <select name="teacherId">
                     <option value="">-- Select a teacher --</option>
@@ -30,14 +30,18 @@
                         <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Lesson</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Subject</th>
                         </tr>
                         </thead>
                         <tbody>
                         <th:block th:each="lesson : ${teacherLessons}">
                             <tr>
                                 <td th:text="${lesson.date}"></td>
-                                <td th:text="${lesson.name}"></td>
+                                <td th:text="${lesson.startTime}"></td>
+                                <td th:text="${lesson.endTime}"></td>
+                                <td th:text="${lesson.subject.name}"></td>
                             </tr>
                         </th:block>
                         </tbody>
@@ -48,7 +52,7 @@
     </div>
 
         <div class="students-form-box">
-            <form th:action="@{/studentSchedule}" method="post">
+            <form th:action="@{/studentSchedule}" method="get">
                 <ul>
                     <select name="studentId">
                         <option value="">-- Select a student --</option>
@@ -65,14 +69,18 @@
                             <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Lesson</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Subject</th>
                             </tr>
                             </thead>
                             <tbody>
                             <th:block th:each="lesson : ${studentLessons}">
                                 <tr>
                                     <td th:text="${lesson.date}"></td>
-                                    <td th:text="${lesson.name}"></td>
+                                    <td th:text="${lesson.startTime}"></td>
+                                    <td th:text="${lesson.endTime}"></td>
+                                    <td th:text="${lesson.subject.name}"></td>
                                 </tr>
                             </th:block>
                             </tbody>

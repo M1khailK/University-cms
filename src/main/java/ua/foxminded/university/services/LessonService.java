@@ -1,6 +1,5 @@
 package ua.foxminded.university.services;
 
-import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Subject;
