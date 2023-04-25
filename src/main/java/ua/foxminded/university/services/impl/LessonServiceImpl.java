@@ -10,15 +10,22 @@ import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.services.LessonService;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class LessonServiceImpl implements LessonService {
 
+    private static final int HOUR_TO_DISPLAY_TOMORROW_SCHEDULE = 18;
+
     @Autowired
     private LessonRepository lessonRepository;
+
+    @Autowired
+    private Clock clock;
 
     @Override
     public void save(Lesson lesson) {
@@ -45,7 +52,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<Lesson> getAllByTeacherAndDateBetween(Teacher teacher, LocalDate from, LocalDate to) {
-        return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), from, to);
+        return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), setTodayOrTomorrowDate(from), setTodayOrTomorrowDate(to));
     }
 
     @Override
@@ -55,7 +62,20 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to) {
-        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to);
+        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), setTodayOrTomorrowDate(from), setTodayOrTomorrowDate(to));
+    }
+
+    @Override
+    public LocalDate setTodayOrTomorrowDate(LocalDate date) {
+        LocalDate today = LocalDate.now();
+        if (date == null) {
+            if (LocalTime.now(clock).isAfter(LocalTime.of(HOUR_TO_DISPLAY_TOMORROW_SCHEDULE, 0, 0, 0))) {
+                date = today.plusDays(1);
+            } else {
+                date = today;
+            }
+        }
+        return date;
     }
 
     @Override

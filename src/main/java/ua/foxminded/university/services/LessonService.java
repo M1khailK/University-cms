@@ -7,6 +7,7 @@ import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface LessonService extends EntityService<Lesson> {
@@ -18,5 +19,8 @@ public interface LessonService extends EntityService<Lesson> {
     List<Lesson> getAllBySubjectAndDateBetween(Subject subject, LocalDate from, LocalDate to);
 
     List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to);
+
+    LocalDate setTodayOrTomorrowDate(LocalDate date);
+
 
 }

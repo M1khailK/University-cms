@@ -12,4 +12,6 @@ public interface LessonRepository extends JpaRepository<Lesson, Integer> {
     List<Lesson> findAllByTeacherIdAndDateBetween(Integer teacherId, LocalDate from, LocalDate to);
 
     List<Lesson> findAllBySubjectIdAndDateBetween(Integer subjectId, LocalDate from, LocalDate to);
+
+
 }

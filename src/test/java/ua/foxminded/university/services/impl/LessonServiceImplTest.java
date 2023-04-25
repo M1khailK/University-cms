@@ -12,10 +12,16 @@ import ua.foxminded.university.info.Student;
 import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.services.LessonService;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collections;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
 
 @SpringBootTest
@@ -46,8 +52,13 @@ public class LessonServiceImplTest {
     @MockBean
     private LessonRepository lessonRepository;
 
+    @MockBean
+    private Clock clock;
+
+
     @Autowired
     private LessonService lessonService;
+
 
     @Test
     void lessonService_shouldThrowAnException_whenStudentGroupIsNull() {
@@ -65,4 +76,34 @@ public class LessonServiceImplTest {
         Assertions.assertEquals(Collections.singletonList(lesson), lessonService.getAllByStudentAndDateBetween(student, LOCAL_DATE, LOCAL_DATE));
         Mockito.verify(lessonRepository).findAllByGroupIdAndDateBetween(ID, LOCAL_DATE, LOCAL_DATE);
     }
+
+    @Test
+    public void setTodayOrTomorrowDateSetter_shouldDoNothing_whenInputLocalDateIsNotNull() {
+        LocalDate expected = LocalDate.of(2020, 10, 10);
+        LocalDate actual = lessonService.setTodayOrTomorrowDate(expected);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void setTodayOrTomorrowDateSetter_shouldReturnTomorrowDate_whenInputTimeIsSixPM() {
+        LocalTime localTime = LocalTime.of(18, 0, 0);
+        Instant fixedInstant = localTime.atDate(LocalDate.now()).toInstant(ZoneOffset.UTC);
+        Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.systemDefault());
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
+        LocalDate actual = lessonService.setTodayOrTomorrowDate(null);
+        Assertions.assertEquals(LocalDate.now().plusDays(1), actual);
+    }
+
+    @Test
+    public void setTodayOrTomorrowDateSetter_shouldReturnTodayDate_whenInputTimeIsNotSixPM() {
+        LocalTime localTime = LocalTime.of(17, 59, 59);
+        Instant fixedInstant = localTime.atDate(LocalDate.now()).toInstant(OffsetDateTime.now().getOffset());
+        Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.systemDefault());
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
+        LocalDate actual = lessonService.setTodayOrTomorrowDate(null);
+        Assertions.assertEquals(LocalDate.now(fixedClock.getZone()), actual);
+    }
+
 }
