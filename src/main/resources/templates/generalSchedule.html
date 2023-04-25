@@ -22,10 +22,8 @@
                                 th:text="${teacher.firstName + ' ' + teacher.lastName}"></option>
                     </th:block>
                 </select>
-                <input type="date" name="dateFrom" class="teacher-input-field-date-from" placeholder="Write date from"
-                       required>
-                <input type="date" name="dateTo" class="teacher-input-field-date-to" placeholder="Write date to"
-                       required>
+                <input type="date" name="dateFrom" class="teacher-input-field-date-from" placeholder="Write date from">
+                <input type="date" name="dateTo" class="teacher-input-field-date-to" placeholder="Write date to">
                 <button type="submit" class="submit-btn">Show Schedule</button>
                 <div class="teacher-lessons-container">
                     <table class="teacher-lessons-table">
@@ -63,9 +61,8 @@
                                 th:text="${group.name}"></option>
                     </th:block>
                 </select>
-                <input type="date" name="dateFrom" class="group-input-field-date-from" placeholder="Write date from"
-                       required>
-                <input type="date" name="dateTo" class="group-input-field-date-to" placeholder="Write date to" required>
+                <input type="date" name="dateFrom" class="group-input-field-date-from" placeholder="Write date from">
+                <input type="date" name="dateTo" class="group-input-field-date-to" placeholder="Write date to">
                 <button type="submit" class="submit-btn">Show Schedule</button>
                 <div class="group-lessons-container">
                     <table class="group-lessons-table">
