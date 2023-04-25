@@ -25,15 +25,6 @@
             </form>
         </div>
     </div>
-    <div class="header">
-        <div class="sidebar">
-            <ul class="sidebar-links">
-                <li><a href="/login"><i class="fa-solid fa-right-to-bracket"></i><p>Sign In</p></a></li>
-                <li><a href="/generalSchedule"><i class="fa-regular fa-calendar-days"></i><p>General Schedule</p></a></li>
-                <li><a href="/"><i class="fa-solid fa-house"></i><p>Main Page</p></a></li>
-                <div class="active"></div>
-            </ul>
-        </div>
-    </div>
+    <div data-th-replace="~{fragments/sidebar :: sidebar-menu}"></div>
 </body>
 </html>
