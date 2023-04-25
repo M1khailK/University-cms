@@ -78,8 +78,8 @@ public class ScheduleControllerTest {
 
     @Test
     public void studentController_shouldShowStudentSchedule_whenInputHasStudentIdAndDateBetween() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/studentSchedule")
-                .param("studentId", "1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/groupSchedule")
+                .param("groupId", "1")
                 .param("dateFrom", "2023-01-01")
                 .param("dateTo", "2023-01-30"))
                 .andExpect(MockMvcResultMatchers.status().isOk())

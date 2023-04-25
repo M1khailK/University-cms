@@ -5,11 +5,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
-import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
+import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
-import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 
 import java.time.LocalDate;
@@ -18,7 +18,7 @@ import java.util.List;
 @Controller
 public class ScheduleController {
 
-    private static final String STUDENTS = "students";
+    private static final String GROUPS = "groups";
     private static final String TEACHERS = "teachers";
     private static final String GENERAL_SCHEDULE = "generalSchedule";
     @Autowired
@@ -26,13 +26,13 @@ public class ScheduleController {
     @Autowired
     private LessonService lessonService;
     @Autowired
-    private StudentService studentService;
+    private GroupService groupService;
 
     @GetMapping("/generalSchedule")
     public String generalSchedule(Model model) {
-        List<Student> students = studentService.getAll();
+        List<Group> groups = groupService.getAll();
         List<Teacher> teachers = teacherService.getAll();
-        model.addAttribute(STUDENTS, students);
+        model.addAttribute(GROUPS, groups);
         model.addAttribute(TEACHERS, teachers);
         return GENERAL_SCHEDULE;
     }
@@ -41,25 +41,25 @@ public class ScheduleController {
     public String showTeacherSchedule(Model model, @RequestParam("teacherId") Integer teacherId, @RequestParam("dateFrom") LocalDate dateFrom, @RequestParam("dateTo") LocalDate dateTo) {
         Teacher teacher = teacherService.getById(teacherId).get();
         List<Teacher> teachers = teacherService.getAll();
-        List<Student> students = studentService.getAll();
+        List<Group> groups = groupService.getAll();
         List<Lesson> teacherLessons = lessonService.getAllByTeacherAndDateBetween(teacher, dateFrom, dateTo);
         model.addAttribute(TEACHERS, teachers);
-        model.addAttribute(STUDENTS, students);
+        model.addAttribute(GROUPS, groups);
         model.addAttribute("teacherLessons", teacherLessons);
         return GENERAL_SCHEDULE;
     }
 
-    @GetMapping("/studentSchedule")
-    public String showStudentSchedule(Model model, @RequestParam("studentId") Integer studentId, @RequestParam("dateFrom") LocalDate dateFrom, @RequestParam("dateTo") LocalDate dateTo) {
-        Student student = studentService.getById(studentId).get();
-        List<Student> students = studentService.getAll();
+    @GetMapping("/groupSchedule")
+    public String showGroupSchedule(Model model, @RequestParam("groupId") Integer groupId, @RequestParam("dateFrom") LocalDate dateFrom, @RequestParam("dateTo") LocalDate dateTo) {
+        Group group = groupService.getById(groupId).get();
+        List<Group> groups = groupService.getAll();
         List<Teacher> teachers = teacherService.getAll();
 
-        List<Lesson> studentLessons = lessonService.getAllByStudentAndDateBetween(student, dateFrom, dateTo);
-        model.addAttribute(STUDENTS, students);
+        List<Lesson> groupLessons = lessonService.getAllByGroupAndDateBetween(group, dateFrom, dateTo);
+        model.addAttribute(GROUPS, groups);
         model.addAttribute(TEACHERS, teachers);
 
-        model.addAttribute("studentLessons", studentLessons);
+        model.addAttribute("groupLessons", groupLessons);
         return GENERAL_SCHEDULE;
     }
 }

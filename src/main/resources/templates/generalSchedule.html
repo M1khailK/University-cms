@@ -22,8 +22,10 @@
                                 th:text="${teacher.firstName + ' ' + teacher.lastName}"></option>
                     </th:block>
                 </select>
-                <input type="date" name="dateFrom" class="teacher-input-field-date-from" placeholder="Write date from" required>
-                <input type="date" name="dateTo" class="teacher-input-field-date-to" placeholder="Write date to" required>
+                <input type="date" name="dateFrom" class="teacher-input-field-date-from" placeholder="Write date from"
+                       required>
+                <input type="date" name="dateTo" class="teacher-input-field-date-to" placeholder="Write date to"
+                       required>
                 <button type="submit" class="submit-btn">Show Schedule</button>
                 <div class="teacher-lessons-container">
                     <table class="teacher-lessons-table">
@@ -51,46 +53,46 @@
         </form>
     </div>
 
-        <div class="students-form-box">
-            <form th:action="@{/studentSchedule}" method="get">
-                <ul>
-                    <select name="studentId">
-                        <option value="">-- Select a student --</option>
-                        <th:block th:each="student : ${students}">
-                            <option th:value="${student.id}"
-                                    th:text="${student.firstName + ' ' + student.lastName}"></option>
-                        </th:block>
-                    </select>
-                    <input type="date" name="dateFrom" class="student-input-field-date-from" placeholder="Write date from" required>
-                    <input type="date" name="dateTo" class="student-input-field-date-to" placeholder="Write date to" required>
-                    <button type="submit" class="submit-btn">Show Schedule</button>
-                    <div class="student-lessons-container">
-                        <table class="student-lessons-table">
-                            <thead>
+    <div class="groups-form-box">
+        <form th:action="@{/groupSchedule}" method="get">
+            <ul>
+                <select name="groupId">
+                    <option value="">-- Select a group --</option>
+                    <th:block th:each="group : ${groups}">
+                        <option th:value="${group.id}"
+                                th:text="${group.name}"></option>
+                    </th:block>
+                </select>
+                <input type="date" name="dateFrom" class="group-input-field-date-from" placeholder="Write date from"
+                       required>
+                <input type="date" name="dateTo" class="group-input-field-date-to" placeholder="Write date to" required>
+                <button type="submit" class="submit-btn">Show Schedule</button>
+                <div class="group-lessons-container">
+                    <table class="group-lessons-table">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Subject</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="lesson : ${groupLessons}">
                             <tr>
-                                <th>Date</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Subject</th>
+                                <td th:text="${lesson.date}"></td>
+                                <td th:text="${lesson.startTime}"></td>
+                                <td th:text="${lesson.endTime}"></td>
+                                <td th:text="${lesson.subject.name}"></td>
                             </tr>
-                            </thead>
-                            <tbody>
-                            <th:block th:each="lesson : ${studentLessons}">
-                                <tr>
-                                    <td th:text="${lesson.date}"></td>
-                                    <td th:text="${lesson.startTime}"></td>
-                                    <td th:text="${lesson.endTime}"></td>
-                                    <td th:text="${lesson.subject.name}"></td>
-                                </tr>
-                            </th:block>
-                            </tbody>
-                        </table>
-                    </div>
-                </ul>
-            </form>
-        </div>
-</div>
-<div data-th-replace="~{fragments/sidebar :: sidebar-menu}"></div>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </ul>
+        </form>
+    </div>
+    <div data-th-replace="~{fragments/sidebar :: sidebar-menu}"></div>
 </div>
 </body>
 </html>

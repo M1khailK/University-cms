@@ -2,6 +2,7 @@ package ua.foxminded.university.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Subject;
@@ -50,6 +51,11 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public List<Lesson> getAllBySubjectAndDateBetween(Subject subject, LocalDate from, LocalDate to) {
         return lessonRepository.findAllBySubjectIdAndDateBetween(subject.getId(), from, to);
+    }
+
+    @Override
+    public List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to) {
+        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to);
     }
 
     @Override
