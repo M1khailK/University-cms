@@ -10,7 +10,6 @@ import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.repository.LessonRepository;
-import ua.foxminded.university.services.LessonService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -20,6 +19,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.lenient;
@@ -55,10 +55,8 @@ public class LessonServiceImplTest {
     @MockBean
     private Clock clock;
 
-
     @Autowired
-    private LessonService lessonService;
-
+    private LessonServiceImpl lessonService;
 
     @Test
     void lessonService_shouldThrowAnException_whenStudentGroupIsNull() {
@@ -78,32 +76,52 @@ public class LessonServiceImplTest {
     }
 
     @Test
-    public void setTodayOrTomorrowDateSetter_shouldDoNothing_whenInputLocalDateIsNotNull() {
-        LocalDate expected = LocalDate.of(2020, 10, 10);
-        LocalDate actual = lessonService.setTodayOrTomorrowDate(expected);
+    public void lessonService_shouldFindLessonsByInputDates_whenInputHasLocalDates() {
+        LocalDate localDate = LocalDate.of(2020, 10, 10);
+        lenient().when(lessonRepository.findAllByGroupIdAndDateBetween(1, localDate, localDate)).thenReturn(Collections.singletonList(new Lesson(ID, LESSON_NAME, localDate, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));
+
+        List<Lesson> expected = Collections.singletonList(new Lesson(ID, LESSON_NAME, localDate, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null));
+        List<Lesson> actual = lessonService.getAllByGroupAndDateBetween(new Group(ID, GROUP_NAME), localDate, localDate);
+
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    public void setTodayOrTomorrowDateSetter_shouldReturnTomorrowDate_whenInputTimeIsSixPM() {
+    public void lessonService_shouldReturnTomorrowLesson_whenInputTimeIsSixPM() {
+        lenient().when(lessonRepository.findAllByGroupIdAndDateBetween(1, LocalDate.of(YEAR, MONTH, DAY + 1), LocalDate.of(YEAR, MONTH, DAY + 1))).thenReturn(Collections.singletonList(new Lesson(ID, "TOMORROW" + LESSON_NAME, LOCAL_DATE.plusDays(1), START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));
+
+        List<Lesson> expected = Collections.singletonList(new Lesson(ID, "TOMORROW" + LESSON_NAME, LOCAL_DATE.plusDays(1), START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null));
+
         LocalTime localTime = LocalTime.of(18, 0, 0);
-        Instant fixedInstant = localTime.atDate(LocalDate.now()).toInstant(ZoneOffset.UTC);
+        LocalDate localDate = LocalDate.of(YEAR, MONTH, DAY);
+
+        Instant fixedInstant = localTime.atDate(localDate).toInstant(ZoneOffset.UTC);
         Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.systemDefault());
+
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
-        LocalDate actual = lessonService.setTodayOrTomorrowDate(null);
-        Assertions.assertEquals(LocalDate.now().plusDays(1), actual);
+
+        List<Lesson> actual = lessonService.getAllByGroupAndDateBetween(new Group(ID, GROUP_NAME), null, null);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
-    public void setTodayOrTomorrowDateSetter_shouldReturnTodayDate_whenInputTimeIsNotSixPM() {
+    public void lessonService_shouldReturnTodayLesson_whenInputTimeIsNotSixPM() {
+        lenient().when(lessonRepository.findAllByGroupIdAndDateBetween(1, LocalDate.of(YEAR, MONTH, DAY), LocalDate.of(YEAR, MONTH, DAY))).thenReturn(Collections.singletonList(new Lesson(ID, "TODAY" + LESSON_NAME, LOCAL_DATE, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));
+
+        List<Lesson> expected = Collections.singletonList(new Lesson(ID, "TODAY" + LESSON_NAME, LOCAL_DATE, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null));
+
         LocalTime localTime = LocalTime.of(17, 59, 59);
-        Instant fixedInstant = localTime.atDate(LocalDate.now()).toInstant(OffsetDateTime.now().getOffset());
+        LocalDate localDate = LocalDate.of(YEAR, MONTH, DAY);
+
+        Instant fixedInstant = localTime.atDate(localDate).toInstant(OffsetDateTime.now().getOffset());
         Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.systemDefault());
+
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
-        LocalDate actual = lessonService.setTodayOrTomorrowDate(null);
-        Assertions.assertEquals(LocalDate.now(fixedClock.getZone()), actual);
+
+        List<Lesson> actual = lessonService.getAllByGroupAndDateBetween(new Group(ID, GROUP_NAME), null, null);
+        Assertions.assertEquals(expected, actual);
     }
 
 }

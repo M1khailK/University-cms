@@ -1,10 +1,17 @@
 package ua.foxminded.university.controller;
 
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
+import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Teacher;
@@ -13,6 +20,7 @@ import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -44,8 +52,9 @@ public class ScheduleController {
     public String showTeacherSchedule(Model model, @RequestParam(value = "teacherId", required = false) Integer teacherId, @RequestParam(value = "dateFrom", required = false) LocalDate dateFrom, @RequestParam(value = "dateTo", required = false) LocalDate dateTo) {
         if (teacherId == null) {
             return REDIRECT_GENERAL_SCHEDULE;
+        } else if (dateFrom == null && dateTo != null) {
+            throw new InvalidDateRangeException("From date cannot be null when To date is provided.");
         }
-
         Teacher teacher = teacherService.getById(teacherId).get();
 
         List<Teacher> teachers = teacherService.getAll();
@@ -63,6 +72,8 @@ public class ScheduleController {
     public String showGroupSchedule(Model model, @RequestParam(value = "groupId", required = false) Integer groupId, @RequestParam(value = "dateFrom", required = false) LocalDate dateFrom, @RequestParam(value = "dateTo", required = false) LocalDate dateTo) {
         if (groupId == null) {
             return REDIRECT_GENERAL_SCHEDULE;
+        } else if (dateFrom == null && dateTo != null) {
+            throw new InvalidDateRangeException("From date cannot be null when To date is provided.");
         }
 
         Group group = groupService.getById(groupId).get();
@@ -76,5 +87,20 @@ public class ScheduleController {
         model.addAttribute("groupLessons", groupLessons);
 
         return GENERAL_SCHEDULE;
+    }
+
+    @ExceptionHandler(InvalidDateRangeException.class)
+    public ModelAndView handleInvalidDateRangeException(InvalidDateRangeException ex) {
+        ModelAndView mav = new ModelAndView();
+
+        mav.addObject("timestamp", LocalDateTime.now());
+        mav.addObject("status", HttpStatus.BAD_REQUEST.value());
+        mav.addObject("error", "Bad Request");
+        mav.addObject("message", ex.getMessage());
+        mav.addObject("trace", ex);
+
+        mav.setViewName("errorPage");
+
+        return mav;
     }
 }

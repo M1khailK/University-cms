@@ -52,6 +52,9 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<Lesson> getAllByTeacherAndDateBetween(Teacher teacher, LocalDate from, LocalDate to) {
+        if (to == null && from != null) {
+            return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), from, from.plusDays(1));
+        }
         return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), setTodayOrTomorrowDate(from), setTodayOrTomorrowDate(to));
     }
 
@@ -62,13 +65,15 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to) {
+        if (to == null && from != null) {
+            return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, from.plusDays(1));
+        }
         return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), setTodayOrTomorrowDate(from), setTodayOrTomorrowDate(to));
     }
 
-    @Override
-    public LocalDate setTodayOrTomorrowDate(LocalDate date) {
-        LocalDate today = LocalDate.now();
+    private LocalDate setTodayOrTomorrowDate(LocalDate date) {
         if (date == null) {
+            LocalDate today = LocalDate.now(clock);
             if (LocalTime.now(clock).isAfter(LocalTime.of(HOUR_TO_DISPLAY_TOMORROW_SCHEDULE, 0, 0, 0))) {
                 date = today.plusDays(1);
             } else {
