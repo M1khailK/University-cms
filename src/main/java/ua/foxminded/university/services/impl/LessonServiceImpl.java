@@ -52,10 +52,13 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<Lesson> getAllByTeacherAndDateBetween(Teacher teacher, LocalDate from, LocalDate to) {
-        if (to == null && from != null) {
-            return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), from, from.plusDays(1));
+        if (from == null) {
+            from = getDefaultDate();
         }
-        return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), setTodayOrTomorrowDate(from), setTodayOrTomorrowDate(to));
+        if (to == null) {
+            to = from.plusDays(1);
+        }
+        return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), from, to);
     }
 
     @Override
@@ -65,22 +68,22 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to) {
-        if (to == null && from != null) {
-            return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, from.plusDays(1));
+        if (from == null) {
+            from = getDefaultDate();
         }
-        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), setTodayOrTomorrowDate(from), setTodayOrTomorrowDate(to));
+        if (to == null) {
+            to = from;
+        }
+        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to);
     }
 
-    private LocalDate setTodayOrTomorrowDate(LocalDate date) {
-        if (date == null) {
-            LocalDate today = LocalDate.now(clock);
-            if (LocalTime.now(clock).isAfter(LocalTime.of(HOUR_TO_DISPLAY_TOMORROW_SCHEDULE, 0, 0, 0))) {
-                date = today.plusDays(1);
-            } else {
-                date = today;
-            }
+    private LocalDate getDefaultDate() {
+        LocalDate today = LocalDate.now(clock);
+        if (LocalTime.now(clock).isAfter(LocalTime.of(HOUR_TO_DISPLAY_TOMORROW_SCHEDULE, 0, 0, 0))) {
+            return today.plusDays(1);
+        } else {
+            return today;
         }
-        return date;
     }
 
     @Override

@@ -8,10 +8,10 @@ INSERT INTO teachers (first_name,last_name,email) VALUES ('Bob','First','firstbo
 INSERT INTO teachers (first_name,last_name,email) VALUES ('Alex','Second','secondalex@gmail.com');
 
 INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
-VALUES ('Math lesson', 1, 1, 1, '2023-04-25', '10:00:00', '12:00:00');
+VALUES ('Math lesson', 1, 1, 1, '2023-04-27', '10:00:00', '12:00:00');
 
 INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
-VALUES ('English lesson', 2, 2, 2, '2023-04-26', '11:00:00', '12:30:00');
+VALUES ('English lesson', 2, 2, 2, '2023-04-28 ', '11:00:00', '12:30:00');
 
 INSERT INTO students (group_id, first_name, last_name, email) VALUES (1, 'David', 'Brown', 'dbrown@gmail.com');
 INSERT INTO students (group_id, first_name, last_name, email) VALUES (1, 'Emma', 'Johnson', 'ejohnson@gmail.com');
