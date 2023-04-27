@@ -94,10 +94,7 @@ public class ScheduleController {
         ModelAndView mav = new ModelAndView();
 
         mav.addObject("timestamp", LocalDateTime.now());
-        mav.addObject("status", HttpStatus.BAD_REQUEST.value());
-        mav.addObject("error", "Bad Request");
         mav.addObject("message", ex.getMessage());
-        mav.addObject("trace", ex);
 
         mav.setViewName("errorPage");
 
