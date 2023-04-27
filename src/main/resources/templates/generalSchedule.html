@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>General Schedule Page</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="generalScheduleForm.css">
+    <link rel="stylesheet" type="text/css" href="sidebar.css">
+    <script src="https://kit.fontawesome.com/8d224a8437.js" crossorigin="anonymous"></script>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="hero">
+    <div class="teachers-form-box">
+        <form th:action="@{/teacherSchedule}" method="get">
+            <ul>
+                <select name="teacherId">
+                    <option value="">-- Select a teacher --</option>
+                    <th:block th:each="teacher : ${teachers}">
+                        <option th:value="${teacher.id}"
+                                th:text="${teacher.firstName + ' ' + teacher.lastName}"></option>
+                    </th:block>
+                </select>
+                <input type="date" name="dateFrom" class="teacher-input-field-date-from" placeholder="Write date from">
+                <input type="date" name="dateTo" class="teacher-input-field-date-to" placeholder="Write date to">
+                <button type="submit" class="submit-btn">Show Schedule</button>
+                <div class="teacher-lessons-container">
+                    <table class="teacher-lessons-table">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Subject</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="lesson : ${teacherLessons}">
+                            <tr>
+                                <td th:text="${lesson.date}"></td>
+                                <td th:text="${lesson.startTime}"></td>
+                                <td th:text="${lesson.endTime}"></td>
+                                <td th:text="${lesson.subject.name}"></td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </ul>
+        </form>
+    </div>
+
+    <div class="groups-form-box">
+        <form th:action="@{/groupSchedule}" method="get">
+            <ul>
+                <select name="groupId">
+                    <option value="">-- Select a group --</option>
+                    <th:block th:each="group : ${groups}">
+                        <option th:value="${group.id}"
+                                th:text="${group.name}"></option>
+                    </th:block>
+                </select>
+                <input type="date" name="dateFrom" class="group-input-field-date-from" placeholder="Write date from">
+                <input type="date" name="dateTo" class="group-input-field-date-to" placeholder="Write date to">
+                <button type="submit" class="submit-btn">Show Schedule</button>
+                <div class="group-lessons-container">
+                    <table class="group-lessons-table">
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Subject</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="lesson : ${groupLessons}">
+                            <tr>
+                                <td th:text="${lesson.date}"></td>
+                                <td th:text="${lesson.startTime}"></td>
+                                <td th:text="${lesson.endTime}"></td>
+                                <td th:text="${lesson.subject.name}"></td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </ul>
+        </form>
+    </div>
+    <div data-th-replace="~{fragments/sidebar :: sidebar-menu}"></div>
+</div>
+</body>
+</html>

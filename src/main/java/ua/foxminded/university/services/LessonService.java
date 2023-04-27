@@ -17,4 +17,6 @@ public interface LessonService extends EntityService<Lesson> {
 
     List<Lesson> getAllBySubjectAndDateBetween(Subject subject, LocalDate from, LocalDate to);
 
+    List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to);
+
 }
