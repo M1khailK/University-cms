@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Login Page</title>
@@ -11,20 +11,21 @@
     <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
 </head>
 <body>
-
-    <div class="hero">
-        <div class="form-box">
-            <div class="login-box">Log In</div>
-            <form id="login" class="input-group">
-                <input type="text" class="input-field" placeholder="Email" required>
-                <input type="password" class="input-field" placeholder="Enter Password" required>
-                <input type="checkbox" class="check-box"><span>Remember password</span>
-            </form>
-            <form id="submit-form" class="submit-button">
-                <button type="submit" class="submit-btn">Log In</button>
-            </form>
-        </div>
+<div class="hero">
+    <div class="form-box">
+        <div class="login-box">Log In</div>
+        <div class="error-message" th:if="${param.error}">
+            Invalid username and password.</div>
+        <form th:action="@{/login}" id="login" class="input-group" method="post">
+            <input type="text" name="username" class="input-field" placeholder="Email" required>
+            <input type="password" name="password" class="input-field" placeholder="Enter Password" required>
+            <input type="checkbox" class="check-box"><span>Remember password</span>
+            <button type="submit" class="submit-btn">Log In</button>
+        </form>
     </div>
-    <div data-th-replace="~{fragments/sidebar :: sidebar-menu}"></div>
+</div>
+
+<div data-th-replace="~{fragments/sidebar :: sidebar-menu}"></div>
+
 </body>
 </html>
