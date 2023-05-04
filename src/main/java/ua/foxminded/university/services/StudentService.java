@@ -2,5 +2,8 @@ package ua.foxminded.university.services;
 
 import ua.foxminded.university.info.Student;
 
-public interface StudentService extends EntityService<Student>{
+import java.util.Optional;
+
+public interface StudentService extends EntityService<Student> {
+    Optional<Student> getByEmail(String email);
 }

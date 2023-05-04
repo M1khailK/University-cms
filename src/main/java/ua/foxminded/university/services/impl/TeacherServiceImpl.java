@@ -26,6 +26,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public Optional<Teacher> getByEmail(String email) {
+        return teacherRepository.findByEmail(email);
+    }
+
+    @Override
     public List<Teacher> getAll() {
         return teacherRepository.findAll();
     }
@@ -34,4 +39,6 @@ public class TeacherServiceImpl implements TeacherService {
     public void deleteById(Integer teacherId) {
         teacherRepository.deleteById(teacherId);
     }
+
+
 }
