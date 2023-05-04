@@ -1,13 +1,17 @@
 package ua.foxminded.university.controller;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
@@ -19,14 +23,20 @@ import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.SubjectService;
 import ua.foxminded.university.services.TeacherService;
 
+import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.lenient;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
+@MockBean(DataSource.class)
+@Import(SecurityConfig.class)
 public class ScheduleControllerTest {
 
     @Autowired
@@ -47,7 +57,7 @@ public class ScheduleControllerTest {
     public void setUp() {
         LocalDate localDateFrom = LocalDate.of(2023, 1, 1);
         LocalDate localDateTo = LocalDate.of(2023, 1, 30);
-        Subject subject = new Subject(1,"Math");
+        Subject subject = new Subject(1, "Math");
         Teacher teacher = new Teacher(1, "Viktoria", "Second", "foo@gmail.com");
         Group group = new Group(1, "AA-10");
         Student student = new Student(1, "Max", "First", "qwerty@gmail.com", group);
@@ -65,20 +75,23 @@ public class ScheduleControllerTest {
 
         lenient().when(lessonService.getAllByStudentAndDateBetween(student, localDateFrom, localDateTo))
                 .thenReturn(singletonList);
-        lenient().when(lessonService.getAllByTeacherAndDateBetween(teacher,localDateFrom,localDateTo))
+        lenient().when(lessonService.getAllByTeacherAndDateBetween(teacher, localDateFrom, localDateTo))
                 .thenReturn(singletonList);
     }
-    @Test
-    public void generalScheduleController_shouldShowGeneralSchedulePage_whenInputIsEmpty() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/generalSchedule"))
+
+    @ParameterizedTest
+    @MethodSource("provideRoles")
+    public void generalScheduleController_shouldShowGeneralSchedulePage_whenUserHasRoleOrIsAnonymousAndInputIsEmpty(RequestPostProcessor user) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/generalSchedule").with(user))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("generalSchedule"))
                 .andExpect(MockMvcResultMatchers.model().size(2));
     }
 
-    @Test
-    public void studentController_shouldShowStudentSchedule_whenInputHasStudentIdAndDateBetween() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/groupSchedule")
+    @ParameterizedTest
+    @MethodSource("provideRoles")
+    public void studentController_shouldShowStudentSchedule_whenUserHasRoleOrIsAnonymousAndInputHasStudentIdAndDateBetween(RequestPostProcessor user) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/groupSchedule").with(user)
                 .param("groupId", "1")
                 .param("dateFrom", "2023-01-01")
                 .param("dateTo", "2023-01-30"))
@@ -86,9 +99,11 @@ public class ScheduleControllerTest {
                 .andExpect(MockMvcResultMatchers.model().size(3))
                 .andExpect(MockMvcResultMatchers.view().name("generalSchedule"));
     }
-    @Test
-    public void teacherController_shouldShowTeacherSchedule_whenInputHasTeacherIdAndDateBetween() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/teacherSchedule")
+
+    @ParameterizedTest
+    @MethodSource("provideRoles")
+    public void teacherController_shouldShowTeacherScheduleForAnyUser_whenUserHasRoleOrIsAnonymousAndInputHasTeacherIdAndDateBetween(RequestPostProcessor user) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/teacherSchedule").with(user)
                 .param("teacherId", "1")
                 .param("dateFrom", "2023-01-01")
                 .param("dateTo", "2023-01-30"))
@@ -96,5 +111,14 @@ public class ScheduleControllerTest {
                 .andExpect(MockMvcResultMatchers.model().size(3))
                 .andExpect(MockMvcResultMatchers.view().name("generalSchedule"));
     }
+
+    private static Stream<RequestPostProcessor> provideRoles() {
+        return Stream.of(
+                user("username").roles("STUDENT"),
+                user("username").roles("TEACHER"),
+                user("username").roles("ADMIN"),
+                anonymous());
+    }
+
 
 }

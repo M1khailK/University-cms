@@ -8,9 +8,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ua.foxminded.university.config.ServiceAspectTestConfig;
+import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.repository.GroupRepository;
 import ua.foxminded.university.repository.LessonRepository;
@@ -24,7 +25,8 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.lenient;
 
-@SpringBootTest(classes = {ServiceAspectTestConfig.class})
+@SpringBootTest()
+@EnableAutoConfiguration()
 @MockBean(TeacherRepository.class)
 @MockBean(LessonRepository.class)
 @MockBean(StudentRepository.class)

@@ -17,7 +17,7 @@
         <div class="error-message" th:if="${param.error}">
             Invalid username and password.</div>
         <form th:action="@{/login}" id="login" class="input-group" method="post">
-            <input type="text" name="username" class="input-field" placeholder="Email" required>
+            <input type="text" name="email" class="input-field" placeholder="Email" required>
             <input type="password" name="password" class="input-field" placeholder="Enter Password" required>
             <input type="checkbox" class="check-box"><span>Remember password</span>
             <button type="submit" class="submit-btn">Log In</button>

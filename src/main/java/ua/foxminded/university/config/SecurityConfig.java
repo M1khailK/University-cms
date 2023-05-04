@@ -1,19 +1,53 @@
 package ua.foxminded.university.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.thymeleaf.extras.springsecurity6.dialect.SpringSecurityDialect;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private DataSource dataSource;
+
+    @Bean
+    public JdbcUserDetailsManager users() {
+        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+        jdbcUserDetailsManager.setUsersByUsernameQuery("select email, password, isEnabled from users where email = ?");
+        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("select u.email, ur.role from users u join user_role ur on u.user_id = ur.user_id where u.email = ?");
+        jdbcUserDetailsManager.setRolePrefix("ROLE_");
+        return jdbcUserDetailsManager;
+    }
+
     @Bean
     public SecurityFilterChain config(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.authorizeHttpRequests() .requestMatchers("/**").permitAll()
-                .and().formLogin().loginPage("/login").defaultSuccessUrl("/").permitAll()
-                .and().logout().and().build();
+        return httpSecurity.authorizeHttpRequests()
+                .requestMatchers("/login").anonymous()
+                .requestMatchers("profile").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                .requestMatchers("/generalSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()
+                .requestMatchers("/**").permitAll()
+                .and().formLogin().loginPage("/login").usernameParameter("email").defaultSuccessUrl("/")
+                .and().logout().logoutSuccessUrl("/").and().build();
     }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SpringSecurityDialect springSecurityDialect() {
+        return new SpringSecurityDialect();
+    }
+
 }
