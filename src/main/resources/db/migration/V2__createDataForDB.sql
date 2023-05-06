@@ -1,3 +1,11 @@
+TRUNCATE TABLE groups CASCADE;
+TRUNCATE TABLE subjects CASCADE;
+TRUNCATE TABLE teachers CASCADE;
+TRUNCATE TABLE lessons CASCADE;
+TRUNCATE TABLE users CASCADE;
+TRUNCATE TABLE students CASCADE;
+TRUNCATE TABLE user_role CASCADE;
+
 INSERT INTO groups (group_name) VALUES ('Exact Sciences Group');
 INSERT INTO groups (group_name) VALUES ('Linguistics Group');
 
