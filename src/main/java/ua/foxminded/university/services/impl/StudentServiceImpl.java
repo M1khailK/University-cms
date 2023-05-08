@@ -31,6 +31,16 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public String getPasswordById(int id) {
+        return studentRepository.findPasswordById(id);
+    }
+
+    @Override
+    public void changePasswordById(String newPassword, int id) {
+        studentRepository.changePasswordById(newPassword, id);
+    }
+
+    @Override
     public List<Student> getAll() {
         return studentRepository.findAll();
     }

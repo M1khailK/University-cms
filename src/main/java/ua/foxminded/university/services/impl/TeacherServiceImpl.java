@@ -31,6 +31,16 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public String getPasswordById(int id) {
+        return teacherRepository.findPasswordById(id);
+    }
+
+    @Override
+    public void changePasswordById(String newPassword, int id) {
+        teacherRepository.changePasswordById(newPassword, id);
+    }
+
+    @Override
     public List<Teacher> getAll() {
         return teacherRepository.findAll();
     }

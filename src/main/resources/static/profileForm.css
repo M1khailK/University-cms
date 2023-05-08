@@ -38,6 +38,10 @@ body {
     padding-top: 20px;
 }
 
+.url {
+    text-align: center;
+}
+
 .url, hr {
     text-align: center;
 }
