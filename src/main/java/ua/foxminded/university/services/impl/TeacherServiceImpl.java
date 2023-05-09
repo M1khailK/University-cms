@@ -11,6 +11,7 @@ import ua.foxminded.university.services.TeacherService;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
@@ -54,6 +55,11 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public String getRole() {
-        return "ROLE_TEACHER";
+        return "[ROLE_TEACHER]";
+    }
+
+    @Override
+    public Teacher getByEmail(String email) {
+        return teacherRepository.findByEmail(email).get();
     }
 }

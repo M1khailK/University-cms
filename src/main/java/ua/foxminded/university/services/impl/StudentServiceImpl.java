@@ -11,6 +11,7 @@ import ua.foxminded.university.services.StudentService;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class StudentServiceImpl implements StudentService {
 
@@ -55,7 +56,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public String getRole() {
-        return "ROLE_STUDENT";
+        return "[ROLE_STUDENT]";
+    }
+
+    @Override
+    public Student getByEmail(String email) {
+        return studentRepository.findByEmail(email).get();
     }
 
 }

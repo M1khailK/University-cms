@@ -2,7 +2,9 @@ package ua.foxminded.university.services;
 
 import ua.foxminded.university.services.impl.PasswordManagerImpl;
 
-public interface UserService {
+import java.util.Optional;
+
+public interface UserService<T> {
     void changePassword(String email, String oldPassword, String newPassword);
 
     String getRole();
@@ -10,5 +12,7 @@ public interface UserService {
     default void register(PasswordManagerImpl pm) {
         pm.register(getRole(), this);
     }
+
+    T getByEmail(String email);
 
 }

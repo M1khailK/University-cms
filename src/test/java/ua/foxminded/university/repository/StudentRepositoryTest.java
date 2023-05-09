@@ -18,7 +18,7 @@ public class StudentRepositoryTest {
 
     @Test
     public void studentRepository_shouldReturnStudentByEmail_whenInputHasEmail() {
-        Student example = new Student(1, "Alex", "Second", EMAIL, null);
+        Student example = new Student(1, "password","Alex", "Second", EMAIL, null);
 
         Optional<Student> actual = studentRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(example), actual);

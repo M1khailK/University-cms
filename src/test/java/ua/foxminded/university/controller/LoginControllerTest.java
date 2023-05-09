@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
+import ua.foxminded.university.services.PasswordManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 
@@ -28,6 +29,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @MockBean(GroupService.class)
 @MockBean(LessonService.class)
 @MockBean(DataSource.class)
+@MockBean(PasswordManager.class)
 @Import(SecurityConfig.class)
 public class LoginControllerTest {
 

@@ -19,6 +19,7 @@ import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
+import ua.foxminded.university.services.PasswordManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.SubjectService;
 import ua.foxminded.university.services.TeacherService;
@@ -36,6 +37,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 @WebMvcTest
 @MockBean(DataSource.class)
+@MockBean(PasswordManager.class)
 @Import(SecurityConfig.class)
 public class ScheduleControllerTest {
 
@@ -58,9 +60,9 @@ public class ScheduleControllerTest {
         LocalDate localDateFrom = LocalDate.of(2023, 1, 1);
         LocalDate localDateTo = LocalDate.of(2023, 1, 30);
         Subject subject = new Subject(1, "Math");
-        Teacher teacher = new Teacher(1, "Viktoria", "Second", "foo@gmail.com");
+        Teacher teacher = new Teacher(1, "password","Viktoria", "Second", "foo@gmail.com");
         Group group = new Group(1, "AA-10");
-        Student student = new Student(1, "Max", "First", "qwerty@gmail.com", group);
+        Student student = new Student(1, "password","Max", "First", "qwerty@gmail.com", group);
 
         lenient().when(studentService.getAll()).thenReturn(Collections.singletonList(student));
         lenient().when(teacherService.getAll()).thenReturn(Collections.singletonList(teacher));
