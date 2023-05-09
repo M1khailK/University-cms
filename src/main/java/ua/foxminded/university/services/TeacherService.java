@@ -2,12 +2,6 @@ package ua.foxminded.university.services;
 
 import ua.foxminded.university.info.Teacher;
 
-import java.util.Optional;
+public interface TeacherService extends EntityService<Teacher>,UserService {
 
-public interface TeacherService extends EntityService<Teacher> {
-    Optional<Teacher> getByEmail(String email);
-
-    String getPasswordById(int id);
-
-    void changePasswordById(String newPassword,int id);
 }

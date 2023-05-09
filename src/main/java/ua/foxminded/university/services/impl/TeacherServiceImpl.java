@@ -1,7 +1,9 @@
 package ua.foxminded.university.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.TeacherService;
@@ -14,6 +16,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Autowired
     private TeacherRepository teacherRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void save(Teacher teacher) {
@@ -23,21 +27,6 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Optional<Teacher> getById(Integer teacherId) {
         return teacherRepository.findById(teacherId);
-    }
-
-    @Override
-    public Optional<Teacher> getByEmail(String email) {
-        return teacherRepository.findByEmail(email);
-    }
-
-    @Override
-    public String getPasswordById(int id) {
-        return teacherRepository.findPasswordById(id);
-    }
-
-    @Override
-    public void changePasswordById(String newPassword, int id) {
-        teacherRepository.changePasswordById(newPassword, id);
     }
 
     @Override
@@ -51,4 +40,20 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
 
+    @Override
+    public void changePassword(String email, String oldPassword, String newPassword) {
+        Teacher teacher = teacherRepository.findByEmail(email).get();
+        String oldPass = teacherRepository.findPasswordById(teacher.getId());
+        if (passwordEncoder.matches(oldPassword, oldPass)) {
+            teacher.setPassword(newPassword);
+            teacherRepository.save(teacher);
+        } else {
+            throw new InvalidDateRangeException("");
+        }
+    }
+
+    @Override
+    public String getRole() {
+        return "ROLE_TEACHER";
+    }
 }

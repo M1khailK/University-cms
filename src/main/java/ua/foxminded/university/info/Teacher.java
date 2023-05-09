@@ -25,6 +25,9 @@ public class Teacher {
     @Column(name = "teacher_id", length = 50, nullable = false)
     private Integer id;
 
+    @Column(name = "password", table = "users", nullable = false)
+    private String password;
+
     @Column(name = "first_name", table = "users", length = 50, nullable = false)
     private String firstName;
 

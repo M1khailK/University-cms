@@ -1,7 +1,9 @@
 package ua.foxminded.university.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.services.StudentService;
@@ -14,6 +16,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Override
     public void save(Student student) {
@@ -26,21 +31,6 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Optional<Student> getByEmail(String email) {
-        return studentRepository.findByEmail(email);
-    }
-
-    @Override
-    public String getPasswordById(int id) {
-        return studentRepository.findPasswordById(id);
-    }
-
-    @Override
-    public void changePasswordById(String newPassword, int id) {
-        studentRepository.changePasswordById(newPassword, id);
-    }
-
-    @Override
     public List<Student> getAll() {
         return studentRepository.findAll();
     }
@@ -48,6 +38,24 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void deleteById(Integer studentId) {
         studentRepository.deleteById(studentId);
+    }
+
+
+    @Override
+    public void changePassword(String email, String oldPassword, String newPassword) {
+        Student student = studentRepository.findByEmail(email).get();
+        String oldPass = studentRepository.findPasswordById(student.getId());
+        if (passwordEncoder.matches(oldPassword, oldPass)) {
+            student.setPassword(newPassword);
+            studentRepository.save(student);
+        } else {
+            throw new InvalidDateRangeException("");
+        }
+    }
+
+    @Override
+    public String getRole() {
+        return "ROLE_STUDENT";
     }
 
 }
