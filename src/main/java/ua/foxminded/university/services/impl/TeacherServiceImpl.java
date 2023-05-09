@@ -3,7 +3,7 @@ package ua.foxminded.university.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ua.foxminded.university.customexceptions.InvalidDateRangeException;
+import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.TeacherService;
@@ -46,10 +46,10 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher = teacherRepository.findByEmail(email).get();
         String oldPass = teacherRepository.findPasswordById(teacher.getId());
         if (passwordEncoder.matches(oldPassword, oldPass)) {
-            teacher.setPassword(newPassword);
+            teacherRepository.changePasswordById(passwordEncoder.encode(newPassword), teacher.getId());
             teacherRepository.save(teacher);
         } else {
-            throw new InvalidDateRangeException("");
+            throw new InvalidOldPasswordException("The old password is incorrect!");
         }
     }
 
@@ -62,4 +62,5 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher getByEmail(String email) {
         return teacherRepository.findByEmail(email).get();
     }
+
 }

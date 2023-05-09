@@ -28,6 +28,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             "(SELECT user_id " +
             "FROM students " +
             "WHERE student_id = ?2)", nativeQuery = true)
-    void changePasswordById(String newPassword,int id);
+    void changePasswordById(String newPassword, int id);
 
 }

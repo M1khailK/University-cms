@@ -60,13 +60,13 @@ public class LessonServiceImplTest {
 
     @Test
     void lessonService_shouldThrowAnException_whenStudentGroupIsNull() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> lessonService.getAllByStudentAndDateBetween(new Student(null,"password", FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, null), LOCAL_DATE, LOCAL_DATE));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> lessonService.getAllByStudentAndDateBetween(new Student(null, FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, null), LOCAL_DATE, LOCAL_DATE));
     }
 
     @Test
     void lessonService_shouldReturnLessonsList_whenStudentHasGroup() {
         Group group = new Group(ID, GROUP_NAME);
-        Student student = new Student(null,"password", FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, group);
+        Student student = new Student(null, FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, group);
         Lesson lesson = new Lesson(ID, LESSON_NAME, LOCAL_DATE, START_TIME, END_TIME, null, group, null);
 
         lenient().when(lessonRepository.findAllByGroupIdAndDateBetween(ID, LOCAL_DATE, LOCAL_DATE)).thenReturn(Collections.singletonList(lesson));
