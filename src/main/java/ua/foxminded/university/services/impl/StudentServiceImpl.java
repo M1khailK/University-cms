@@ -20,7 +20,6 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @Override
     public void save(Student student) {
         studentRepository.save(student);
