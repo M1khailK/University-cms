@@ -1,11 +1,3 @@
-drop table if exists groups;
-drop table if exists students;
-drop table if exists teachers;
-drop table if exists subjects;
-drop table if exists lessons;
-drop table if exists users;
-drop table if exists user_role;
-
 CREATE TABLE users (
   user_id SERIAL PRIMARY KEY,
   first_name VARCHAR(50) NOT NULL,
@@ -59,15 +51,9 @@ CREATE TABLE user_role(
 );
 
 INSERT INTO users (first_name, last_name, email) VALUES
-('Bob', 'First', 'bob.first@example.com'),
-('Alex', 'Second', 'alex.second@example.com');
+('Alex', 'First', 'alex.first@example.com'),
+('Bob','Second','bob.second@example.com');
 
-INSERT INTO teachers (user_id)
-VALUES (1);
-
-INSERT INTO students(user_id)
-VALUES (2);
-
-INSERT INTO user_role (user_id, role)
-VALUES(1, 'TEACHER'),(2,'STUDENT');
-
+INSERT INTO students (user_id) VALUES (1);
+INSERT INTO teachers (user_id) VALUES (2);
+INSERT INTO user_role (user_id, role) VALUES(1, 'STUDENT'),(2,'TEACHER');
