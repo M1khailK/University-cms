@@ -3,7 +3,7 @@ CREATE TABLE users (
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   email VARCHAR(50) NOT NULL,
-  password VARCHAR(255) NOT NULL DEFAULT '$2a$12$rwVch7t7YkhqKwhS7rKCaeJZmKBqe4Ze8d9C1Ka/EElEuAKOthdVe',
+  password VARCHAR(255) NOT NULL DEFAULT 'password',
   isEnabled BOOLEAN NOT NULL DEFAULT TRUE
 );
 CREATE TABLE groups (
