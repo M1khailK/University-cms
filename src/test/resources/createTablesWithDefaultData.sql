@@ -49,11 +49,3 @@ CREATE TABLE user_role(
   role VARCHAR(15) NOT NULL,
   PRIMARY KEY (user_id, role)
 );
-
-INSERT INTO users (first_name, last_name, email) VALUES
-('Alex', 'First', 'alex.first@example.com'),
-('Bob','Second','bob.second@example.com');
-
-INSERT INTO students (user_id) VALUES (1);
-INSERT INTO teachers (user_id) VALUES (2);
-INSERT INTO user_role (user_id, role) VALUES(1, 'STUDENT'),(2,'TEACHER');

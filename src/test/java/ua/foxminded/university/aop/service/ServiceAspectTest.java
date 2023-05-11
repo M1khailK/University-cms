@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.repository.GroupRepository;
 import ua.foxminded.university.repository.LessonRepository;
