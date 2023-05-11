@@ -33,7 +33,6 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         passwordManager.register(studentService.getRole(), studentService);
         passwordManager.register(teacherService.getRole(), teacherService);
-        passwordManager.getServiceByRole(authentication.getAuthorities().toString());
         model.addAttribute("user", passwordManager.getServiceByRole(authentication.getAuthorities().toString()).get().getByEmail(authentication.getName()));
         return "profile";
     }

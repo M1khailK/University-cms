@@ -14,9 +14,10 @@ import ua.foxminded.university.services.StudentService;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class StudentServiceImplTest {
@@ -36,8 +37,8 @@ public class StudentServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        lenient().when(studentRepository.findByEmail(EMAIL)).thenReturn(Optional.of(student));
-        lenient().when(studentRepository.findPasswordById(student.getId())).thenReturn(PASSWORD);
+       when(studentRepository.findByEmail(EMAIL)).thenReturn(Optional.of(student));
+       when(studentRepository.findPasswordById(student.getId())).thenReturn(PASSWORD);
     }
 
     @Test
@@ -46,9 +47,9 @@ public class StudentServiceImplTest {
         String newPassword = "newPassword";
         Student student = new Student(ID, "Alex", "First", EMAIL, null);
 
-        lenient().when(passwordEncoder.matches(oldPassword, studentRepository.findPasswordById(ID))).thenReturn(true);
-        lenient().when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
-        lenient().doNothing().when(studentRepository).changePasswordById(newPassword, student.getId());
+        when(passwordEncoder.matches(oldPassword, studentRepository.findPasswordById(ID))).thenReturn(true);
+        when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
+        doNothing().when(studentRepository).changePasswordById(newPassword, student.getId());
 
         studentService.changePassword(EMAIL, oldPassword, newPassword);
 
@@ -62,7 +63,7 @@ public class StudentServiceImplTest {
 
     @Test
     public void studentService_shouldThrowAnException_whenInputOldPasswordDoesNotMatchStudentPassword() {
-        lenient().when(passwordEncoder.matches(PASSWORD, studentRepository.findPasswordById(ID))).thenReturn(false);
+        when(passwordEncoder.matches(PASSWORD, studentRepository.findPasswordById(ID))).thenReturn(false);
         Assertions.assertThrows(InvalidOldPasswordException.class, () -> studentService.changePassword(EMAIL, PASSWORD, newPassword));
     }
 }

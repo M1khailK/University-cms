@@ -47,7 +47,7 @@ public class LoginControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"ADMIN","STUDENT","TEACHER"})
-    public void loginController_shouldShowAnErrorMessage_whenInputIsLoggedIn(String role) throws Exception {
+    public void loginController_shouldShowAnErrorMessage_whenUserIsLoggedIn(String role) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/login").with(user("username").roles(role)))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }

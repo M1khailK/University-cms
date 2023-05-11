@@ -14,9 +14,10 @@ import ua.foxminded.university.services.TeacherService;
 
 import java.util.Optional;
 
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class TeacherServiceImplTest {
@@ -37,15 +38,15 @@ public class TeacherServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        lenient().when(teacherRepository.findByEmail(EMAIL)).thenReturn(Optional.of(teacher));
-        lenient().when(teacherRepository.findPasswordById(teacher.getId())).thenReturn(PASSWORD);
+        when(teacherRepository.findByEmail(EMAIL)).thenReturn(Optional.of(teacher));
+        when(teacherRepository.findPasswordById(teacher.getId())).thenReturn(PASSWORD);
     }
 
     @Test
     public void teacherService_shouldChangePassword_whenInputHasOldPasswordNewPasswordAndEmail() {
-        lenient().when(passwordEncoder.matches(PASSWORD, teacherRepository.findPasswordById(ID))).thenReturn(true);
-        lenient().when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
-        lenient().doNothing().when(teacherRepository).changePasswordById(newPassword, teacher.getId());
+        when(passwordEncoder.matches(PASSWORD, teacherRepository.findPasswordById(ID))).thenReturn(true);
+        when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
+        doNothing().when(teacherRepository).changePasswordById(newPassword, teacher.getId());
 
         teacherService.changePassword(EMAIL, PASSWORD, newPassword);
 
@@ -59,7 +60,7 @@ public class TeacherServiceImplTest {
 
     @Test
     public void teacherService_shouldThrowAnException_whenInputOldPasswordDoesNotMatchTeacherPassword() {
-        lenient().when(passwordEncoder.matches(PASSWORD, teacherRepository.findPasswordById(ID))).thenReturn(false);
+        when(passwordEncoder.matches(PASSWORD, teacherRepository.findPasswordById(ID))).thenReturn(false);
         Assertions.assertThrows(InvalidOldPasswordException.class, () -> teacherService.changePassword(EMAIL, PASSWORD, newPassword));
     }
 }

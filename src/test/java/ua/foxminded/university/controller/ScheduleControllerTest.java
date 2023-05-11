@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
@@ -64,20 +64,20 @@ public class ScheduleControllerTest {
         Group group = new Group(1, "AA-10");
         Student student = new Student(1,"Max", "First", "qwerty@gmail.com", group);
 
-        lenient().when(studentService.getAll()).thenReturn(Collections.singletonList(student));
-        lenient().when(teacherService.getAll()).thenReturn(Collections.singletonList(teacher));
+        when(studentService.getAll()).thenReturn(Collections.singletonList(student));
+        when(teacherService.getAll()).thenReturn(Collections.singletonList(teacher));
 
-        lenient().when(studentService.getById(1)).thenReturn(Optional.of(student));
-        lenient().when(teacherService.getById(1)).thenReturn(Optional.of(teacher));
-        lenient().when(groupService.getById(1)).thenReturn(Optional.of(group));
+        when(studentService.getById(1)).thenReturn(Optional.of(student));
+        when(teacherService.getById(1)).thenReturn(Optional.of(teacher));
+        when(groupService.getById(1)).thenReturn(Optional.of(group));
 
         List<Lesson> singletonList = Collections.singletonList(new Lesson(1, "Lesson of mathematics",
                 LocalDate.of(2023, 1, 1), null, null, subject,
                 groupService.getById(1).get(), teacherService.getById(1).get()));
 
-        lenient().when(lessonService.getAllByStudentAndDateBetween(student, localDateFrom, localDateTo))
-                .thenReturn(singletonList);
-        lenient().when(lessonService.getAllByTeacherAndDateBetween(teacher, localDateFrom, localDateTo))
+       when(lessonService.getAllByStudentAndDateBetween(student, localDateFrom, localDateTo)).
+       thenReturn(singletonList);
+       when(lessonService.getAllByTeacherAndDateBetween(teacher, localDateFrom, localDateTo))
                 .thenReturn(singletonList);
     }
 

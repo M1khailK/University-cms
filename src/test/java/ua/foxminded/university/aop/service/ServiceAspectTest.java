@@ -23,7 +23,7 @@ import ua.foxminded.university.services.impl.GroupServiceImpl;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest()
 @EnableAutoConfiguration()
@@ -63,7 +63,7 @@ public class ServiceAspectTest {
 
     @Test
     void serviceAspect_shouldDoLogging_whenGroupServiceGetGroupById() {
-        lenient().when(groupService.getById(GROUP_ID)).thenReturn(Optional.of(new Group(null, GROUP_NAME)));
+        when(groupService.getById(GROUP_ID)).thenReturn(Optional.of(new Group(null, GROUP_NAME)));
 
         Logger logger = (Logger) LoggerFactory.getLogger(ServiceAspect.class);
 

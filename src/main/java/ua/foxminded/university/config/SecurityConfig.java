@@ -33,7 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain config(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests()
                 .requestMatchers("/login").anonymous()
-                .requestMatchers("profile","settings","/updatePassword").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                .requestMatchers("/profile","/settings","/updatePassword").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
                 .requestMatchers("/generalSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()
                 .requestMatchers("/**").permitAll()
                 .and().formLogin().loginPage("/login").usernameParameter("email").defaultSuccessUrl("/")
