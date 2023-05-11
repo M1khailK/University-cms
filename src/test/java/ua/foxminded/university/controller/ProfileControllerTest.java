@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
@@ -84,11 +85,11 @@ public class ProfileControllerTest {
     @ParameterizedTest
     @MethodSource("provideRoles")
     void profileController_shouldUpdateUserPassword_whenUserIsAuthorized(RequestPostProcessor user) throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/updatePassword").with(user)
+        mockMvc.perform(MockMvcRequestBuilders.post("/updatePassword").with(user).with(csrf())
                 .param("oldPass", "password")
                 .param("newPass", "newPassword"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("profile"))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/profile"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
     }
 
