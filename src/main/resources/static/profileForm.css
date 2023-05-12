@@ -15,27 +15,12 @@ body {
     background-color: #fff;
     color: #333;
     border-bottom-right-radius: 25px;
-    height: 86%;
-    left: 0;
+    top:70px;
+    height: 35%;
     overflow-x: hidden;
     padding-top: 20px;
     position: absolute;
-    top: 70px;
-    width: 250px;
-}
-
-.profile {
-    margin-bottom: 20px;
-    margin-top: -12px;
-    text-align: center;
-}
-
-
-.name,
-.surname{
-    font-size: 20px;
-    font-weight: bold;
-    padding-top: 20px;
+    width: 300px;
 }
 
 .url {
@@ -98,3 +83,5 @@ body {
     height: 270px;
     width: 80%;
 }
+.usr-pass{
+display:none}
