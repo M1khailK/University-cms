@@ -16,7 +16,7 @@ import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
-import ua.foxminded.university.services.PasswordManager;
+import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.SubjectService;
 import ua.foxminded.university.services.TeacherService;
@@ -41,7 +41,7 @@ public class ProfileControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private PasswordManager passwordManager;
+    private ServiceManager serviceManager;
     @MockBean
     private StudentService studentService;
     @MockBean
@@ -52,11 +52,11 @@ public class ProfileControllerTest {
         Student student = new Student(1, "Alex", "First", "studentName", null);
         Teacher teacher = new Teacher(1, "Bob", "Second", "teacherName");
 
-        doNothing().when(passwordManager).register("[ROLE_STUDENT]", studentService);
-        doNothing().when(passwordManager).register("[ROLE_TEACHER]", teacherService);
+        doNothing().when(serviceManager).register("[ROLE_STUDENT]", studentService);
+        doNothing().when(serviceManager).register("[ROLE_TEACHER]", teacherService);
 
-        when(passwordManager.getServiceByRole("[ROLE_STUDENT]")).thenReturn(Optional.of(studentService));
-        when(passwordManager.getServiceByRole("[ROLE_TEACHER]")).thenReturn(Optional.of(teacherService));
+        when(serviceManager.getServiceByRole("[ROLE_STUDENT]")).thenReturn(Optional.of(studentService));
+        when(serviceManager.getServiceByRole("[ROLE_TEACHER]")).thenReturn(Optional.of(teacherService));
 
         when(Optional.of(studentService).get().getByEmail(student.getEmail())).thenReturn(student);
         when(Optional.of(teacherService).get().getByEmail(teacher.getEmail())).thenReturn(teacher);

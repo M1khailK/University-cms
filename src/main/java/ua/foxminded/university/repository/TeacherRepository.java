@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     @Query(value = "SELECT * FROM users INNER JOIN user_role ON users.user_id = user_role.user_id " +
             "INNER JOIN teachers ON users.user_id = teachers.user_id " +
-            "WHERE users.email = ? AND user_role.role = 'TEACHER';",nativeQuery = true)
+            "WHERE users.email = ? AND user_role.role = 'TEACHER';", nativeQuery = true)
     Optional<Teacher> findByEmail(String email);
 
     @Query(value = "SELECT u.password " +
@@ -28,5 +28,11 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             "(SELECT user_id " +
             "FROM teachers " +
             "WHERE teacher_id = ?2)", nativeQuery = true)
-    void changePasswordById(String newPassword,int id);
+    void changePasswordById(String newPassword, int id);
+
+    @Query(value = "SELECT user_id FROM users WHERE email = ?", nativeQuery = true)
+    Integer findIdByEmail(String email);
+
+    @Query(value = "SELECT t.*, u.email,u.first_name,u.last_name FROM teachers t JOIN users u ON t.user_id = u.user_id WHERE t.user_id = ?", nativeQuery = true)
+    Teacher findTeacherByUserId(Integer userId);
 }

@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
+import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.TeacherRepository;
+import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +20,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Autowired
     private TeacherRepository teacherRepository;
+    @Autowired
+    private LessonService lessonService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -61,6 +66,17 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public Teacher getByEmail(String email) {
         return teacherRepository.findByEmail(email).get();
+    }
+
+    @Override
+    public Integer getUserIdByEmail(String email) {
+        return teacherRepository.findIdByEmail(email);
+    }
+
+    @Override
+    public List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to) {
+        Teacher teacher = teacherRepository.findTeacherByUserId(id);
+        return lessonService.getAllByTeacherAndDateBetween(teacher, from, to);
     }
 
 }

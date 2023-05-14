@@ -1,7 +1,7 @@
-package ua.foxminded.university.services.impl;
+package ua.foxminded.university.manager.impl;
 
 import org.springframework.stereotype.Service;
-import ua.foxminded.university.services.PasswordManager;
+import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.UserService;
 
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class PasswordManagerImpl implements PasswordManager {
+public class ServiceManagerImpl implements ServiceManager {
     private final Map<String, UserService> roleToService = new HashMap<>();
 
     @Override

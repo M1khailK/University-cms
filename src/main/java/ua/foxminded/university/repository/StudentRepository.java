@@ -30,4 +30,10 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             "WHERE student_id = ?2)", nativeQuery = true)
     void changePasswordById(String newPassword, int id);
 
+    @Query(value = "SELECT user_id FROM users WHERE email = ?", nativeQuery = true)
+    Integer findIdByEmail(String email);
+
+    @Query(value = "SELECT s.*, u.email,u.first_name,u.last_name FROM students s JOIN users u ON s.user_id = u.user_id WHERE s.user_id = ?", nativeQuery = true)
+    Student findStudentByUserId(Integer userId);
+
 }

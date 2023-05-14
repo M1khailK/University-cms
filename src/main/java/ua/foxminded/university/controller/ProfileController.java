@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.customexceptions.handler.CustomExceptionHandler;
-import ua.foxminded.university.services.PasswordManager;
+import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 public class ProfileController implements CustomExceptionHandler<InvalidOldPasswordException> {
 
     @Autowired
-    private PasswordManager passwordManager;
+    private ServiceManager serviceManager;
     @Autowired
     private StudentService studentService;
     @Autowired
@@ -31,9 +31,9 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
     @GetMapping("/profile")
     public String profile(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        passwordManager.register(studentService.getRole(), studentService);
-        passwordManager.register(teacherService.getRole(), teacherService);
-        model.addAttribute("user", passwordManager.getServiceByRole(authentication.getAuthorities().toString()).get().getByEmail(authentication.getName()));
+        serviceManager.register(studentService.getRole(), studentService);
+        serviceManager.register(teacherService.getRole(), teacherService);
+        model.addAttribute("user", serviceManager.getServiceByRole(authentication.getAuthorities().toString()).get().getByEmail(authentication.getName()));
         return "profile";
     }
 
@@ -48,7 +48,7 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         String userRole = authentication.getAuthorities().toString();
-        passwordManager.getServiceByRole(userRole).get().changePassword(userEmail, oldPass, newPass);
+        serviceManager.getServiceByRole(userRole).get().changePassword(userEmail, oldPass, newPass);
         return "redirect:/profile";
     }
 

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
-import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.services.LessonService;
@@ -59,11 +58,6 @@ public class LessonServiceImpl implements LessonService {
             to = from.plusDays(1);
         }
         return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), from, to);
-    }
-
-    @Override
-    public List<Lesson> getAllBySubjectAndDateBetween(Subject subject, LocalDate from, LocalDate to) {
-        return lessonRepository.findAllBySubjectIdAndDateBetween(subject.getId(), from, to);
     }
 
     @Override

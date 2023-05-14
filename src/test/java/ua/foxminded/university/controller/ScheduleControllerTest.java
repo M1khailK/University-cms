@@ -19,7 +19,7 @@ import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
-import ua.foxminded.university.services.PasswordManager;
+import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.SubjectService;
 import ua.foxminded.university.services.TeacherService;
@@ -37,7 +37,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 @WebMvcTest
 @MockBean(DataSource.class)
-@MockBean(PasswordManager.class)
+@MockBean(ServiceManager.class)
 @Import(SecurityConfig.class)
 public class ScheduleControllerTest {
 
