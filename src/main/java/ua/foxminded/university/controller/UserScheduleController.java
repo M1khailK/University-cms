@@ -5,19 +5,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import ua.foxminded.university.customexceptions.InvalidDateRangeException;
+import ua.foxminded.university.customexceptions.handler.CustomExceptionHandler;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.manager.ServiceManager;
-import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
-public class UserScheduleController {
+public class UserScheduleController implements CustomExceptionHandler<InvalidDateRangeException> {
 
     @Autowired
     private ServiceManager serviceManager;
@@ -34,6 +38,9 @@ public class UserScheduleController {
     @GetMapping("/getUserSchedule")
     public String showUserSchedule(Model model, @RequestParam(value = "dateFrom", required = false) LocalDate dateFrom,
                                    @RequestParam(value = "dateTo", required = false) LocalDate dateTo) {
+        if (dateFrom == null && dateTo != null) {
+            throw new InvalidDateRangeException("From date cannot be null when To date is provided.");
+        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         authentication.getAuthorities().toString();
         serviceManager.register(studentService.getRole(), studentService);
@@ -46,5 +53,18 @@ public class UserScheduleController {
                 .getLessonsByUserIdAndDateBetween(id, dateFrom, dateTo);
         model.addAttribute("userLessons", userLessons);
         return "userSchedule";
+    }
+
+    @Override
+    @ExceptionHandler(InvalidDateRangeException.class)
+    public ModelAndView handleCustomException(InvalidDateRangeException exception) {
+        ModelAndView mav = new ModelAndView();
+
+        mav.addObject("timestamp", LocalDateTime.now());
+        mav.addObject("message", exception.getMessage());
+
+        mav.setViewName("errorPage");
+
+        return mav;
     }
 }

@@ -3,9 +3,12 @@ package ua.foxminded.university.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
+import ua.foxminded.university.customexceptions.handler.CustomExceptionHandler;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Teacher;
@@ -14,10 +17,11 @@ import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
-public class ScheduleController {
+public class ScheduleController implements CustomExceptionHandler<InvalidDateRangeException> {
 
     private static final String GROUPS = "groups";
     private static final String TEACHERS = "teachers";
@@ -82,4 +86,16 @@ public class ScheduleController {
         return GENERAL_SCHEDULE;
     }
 
+    @Override
+    @ExceptionHandler(InvalidDateRangeException.class)
+    public ModelAndView handleCustomException(InvalidDateRangeException exception) {
+        ModelAndView mav = new ModelAndView();
+
+        mav.addObject("timestamp", LocalDateTime.now());
+        mav.addObject("message", exception.getMessage());
+
+        mav.setViewName("errorPage");
+
+        return mav;
+    }
 }
