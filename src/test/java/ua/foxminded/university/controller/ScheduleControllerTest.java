@@ -1,6 +1,7 @@
 package ua.foxminded.university.controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,9 @@ import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
+import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
-import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.SubjectService;
 import ua.foxminded.university.services.TeacherService;
@@ -60,9 +61,9 @@ public class ScheduleControllerTest {
         LocalDate localDateFrom = LocalDate.of(2023, 1, 1);
         LocalDate localDateTo = LocalDate.of(2023, 1, 30);
         Subject subject = new Subject(1, "Math");
-        Teacher teacher = new Teacher(1,"Viktoria", "Second", "foo@gmail.com");
+        Teacher teacher = new Teacher(1, "Viktoria", "Second", "foo@gmail.com");
         Group group = new Group(1, "AA-10");
-        Student student = new Student(1,"Max", "First", "qwerty@gmail.com", group);
+        Student student = new Student(1, "Max", "First", "qwerty@gmail.com", group);
 
         when(studentService.getAll()).thenReturn(Collections.singletonList(student));
         when(teacherService.getAll()).thenReturn(Collections.singletonList(teacher));
@@ -75,9 +76,9 @@ public class ScheduleControllerTest {
                 LocalDate.of(2023, 1, 1), null, null, subject,
                 groupService.getById(1).get(), teacherService.getById(1).get()));
 
-       when(lessonService.getAllByStudentAndDateBetween(student, localDateFrom, localDateTo)).
-       thenReturn(singletonList);
-       when(lessonService.getAllByTeacherAndDateBetween(teacher, localDateFrom, localDateTo))
+        when(lessonService.getAllByStudentAndDateBetween(student, localDateFrom, localDateTo)).
+                thenReturn(singletonList);
+        when(lessonService.getAllByTeacherAndDateBetween(teacher, localDateFrom, localDateTo))
                 .thenReturn(singletonList);
     }
 
@@ -112,6 +113,29 @@ public class ScheduleControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(3))
                 .andExpect(MockMvcResultMatchers.view().name("generalSchedule"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideRoles")
+    public void groupScheduleController_shouldThrowAnException_whenDateFromIsNull(RequestPostProcessor user) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/groupSchedule").with(user)
+                .param("groupId", "1")
+                .param("dateFrom", "")
+                .param("dateTo", "2023-01-30"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().size(2))
+                .andExpect(MockMvcResultMatchers.view().name("errorPage"));
+    }
+    @ParameterizedTest
+    @MethodSource("provideRoles")
+    public void teacherScheduleController_shouldThrowAnException_whenDateFromIsNull(RequestPostProcessor user) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/teacherSchedule").with(user)
+                .param("teacherId", "1")
+                .param("dateFrom", "")
+                .param("dateTo", "2023-01-30"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().size(2))
+                .andExpect(MockMvcResultMatchers.view().name("errorPage"));
     }
 
     private static Stream<RequestPostProcessor> provideRoles() {
