@@ -3,6 +3,8 @@ INSERT INTO groups (group_name) VALUES ('Linguistics Group');
 
 INSERT INTO subjects (subject_name) VALUES ('Mathematics');
 INSERT INTO subjects (subject_name) VALUES ('English');
+INSERT INTO subjects (subject_name) VALUES ('Ukrainian');
+INSERT INTO subjects (subject_name) VALUES ('French');
 
 INSERT INTO users (first_name, last_name, email,password) VALUES
 ('Bob', 'First', 'bob.first@example.com','$2a$12$HPxWa4yaBboQQMQByAbN2OMeJB3Q5di3/iWeQ6XfGpPNrGOncsP6G'),
@@ -26,4 +28,25 @@ INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date,
 VALUES ('Math lesson', 1, 1, 1, '2023-04-27', '10:00:00', '12:00:00');
 
 INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
-VALUES ('English lesson', 2, 2, 2, '2023-04-28 ', '11:00:00', '12:30:00');
+VALUES ('English lesson', 2, 2, 2, '2022-04-05 ', '11:00:00', '12:30:00');
+
+INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
+VALUES ('Ukrainian lesson', 2, 3, 2, '2022-04-28 ', '12:00:00', '12:30:00');
+
+INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
+VALUES ('Ukrainian lesson', 2, 3, 2, '2023-01-12 ', '13:00:00', '14:30:00');
+
+INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
+VALUES ('English lesson', 2, 2, 2, '2023-02-16 ', '14:00:00', '15:30:00');
+
+INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
+VALUES ('French lesson', 2, 4, 2, '2023-04-28 ', '15:00:00', '16:30:00');
+
+INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
+VALUES ('French lesson', 2, 4, 2, '2023-05-18 ', '15:30:00', '17:30:00');
+
+INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
+VALUES ('French lesson', 2, 4, 2, '2023-06-21 ', '11:00:00', '13:45:00');
+
+INSERT INTO lessons (lesson_name, group_id, subject_id, teacher_id, lesson_date, start_time, end_time)
+VALUES ('Ukrainian lesson', 2, 3, 2, '2023-07-28 ', '11:00:00', '12:30:00');

@@ -25,12 +25,9 @@ public class UserScheduleController {
     private StudentService studentService;
     @Autowired
     private TeacherService teacherService;
-    @Autowired
-    private LessonService lessonService;
 
     @GetMapping("/mySchedule")
-    public String mySchedulePage(Model model) {
-
+    public String mySchedulePage() {
         return "userSchedule";
     }
 
@@ -41,8 +38,12 @@ public class UserScheduleController {
         authentication.getAuthorities().toString();
         serviceManager.register(studentService.getRole(), studentService);
         serviceManager.register(teacherService.getRole(), teacherService);
-        Integer id = serviceManager.getServiceByRole(authentication.getAuthorities().toString()).get().getUserIdByEmail(authentication.getName());
-        List<Lesson> userLessons = serviceManager.getServiceByRole(authentication.getAuthorities().toString()).get().getLessonsByUserIdAndDateBetween(id, dateFrom, dateTo);
+        Integer id = serviceManager
+                .getServiceByRole(authentication.getAuthorities().toString()).get()
+                .getUserIdByEmail(authentication.getName());
+        List<Lesson> userLessons = serviceManager
+                .getServiceByRole(authentication.getAuthorities().toString()).get()
+                .getLessonsByUserIdAndDateBetween(id, dateFrom, dateTo);
         model.addAttribute("userLessons", userLessons);
         return "userSchedule";
     }
