@@ -21,8 +21,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Optional<Group> getById(Integer groupId) {
-        return groupRepository.findById(groupId);
+    public Group getById(Integer groupId) {
+        return groupRepository.findById(groupId).get();
     }
 
     @Override

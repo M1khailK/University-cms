@@ -7,7 +7,7 @@ public interface EntityService<T>{
 
     void save(T entity);
 
-    Optional<T> getById(Integer id);
+    T getById(Integer id);
 
     List<T> getAll();
 

@@ -32,21 +32,13 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public Optional<Lesson> getById(Integer lessonId) {
-        return lessonRepository.findById(lessonId);
+    public Lesson getById(Integer lessonId) {
+        return lessonRepository.findById(lessonId).get();
     }
 
     @Override
     public List<Lesson> getAll() {
         return lessonRepository.findAll();
-    }
-
-    @Override
-    public List<Lesson> getAllByStudentAndDateBetween(Student student, LocalDate from, LocalDate to) {
-        if (student.getGroup() == null) {
-            throw new IllegalArgumentException("Student group can`t be null.");
-        }
-        return lessonRepository.findAllByGroupIdAndDateBetween(student.getGroup().getId(), from, to);
     }
 
     @Override

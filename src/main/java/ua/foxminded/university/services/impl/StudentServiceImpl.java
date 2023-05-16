@@ -31,8 +31,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Optional<Student> getById(Integer studentId) {
-        return studentRepository.findById(studentId);
+    public Student getById(Integer studentId) {
+        return studentRepository.findById(studentId).get();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to) {
-        Student student = studentRepository.findStudentByUserId(id);
+        Student student = studentRepository.findStudentByUserId(id).get();
         return lessonService.getAllByGroupAndDateBetween(student.getGroup(), from, to);
     }
 

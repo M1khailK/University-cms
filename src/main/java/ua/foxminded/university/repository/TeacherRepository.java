@@ -34,5 +34,5 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     Integer findIdByEmail(String email);
 
     @Query(value = "SELECT t.*, u.email,u.first_name,u.last_name FROM teachers t JOIN users u ON t.user_id = u.user_id WHERE t.user_id = ?", nativeQuery = true)
-    Teacher findTeacherByUserId(Integer userId);
+    Optional<Teacher> findTeacherByUserId(Integer userId);
 }

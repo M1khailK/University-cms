@@ -21,8 +21,8 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Optional<Subject> getById(Integer subjectId) {
-        return subjectRepository.findById(subjectId);
+    public Subject getById(Integer subjectId) {
+        return subjectRepository.findById(subjectId).get();
     }
 
     @Override

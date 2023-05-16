@@ -31,8 +31,8 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Optional<Teacher> getById(Integer teacherId) {
-        return teacherRepository.findById(teacherId);
+    public Teacher getById(Integer teacherId) {
+        return teacherRepository.findById(teacherId).get();
     }
 
     @Override
@@ -75,7 +75,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to) {
-        Teacher teacher = teacherRepository.findTeacherByUserId(id);
+        Teacher teacher = teacherRepository.findTeacherByUserId(id).get();
         return lessonService.getAllByTeacherAndDateBetween(teacher, from, to);
     }
 

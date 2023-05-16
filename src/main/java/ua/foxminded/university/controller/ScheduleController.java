@@ -52,7 +52,7 @@ public class ScheduleController implements CustomExceptionHandler<InvalidDateRan
         } else if (dateFrom == null && dateTo != null) {
             throw new InvalidDateRangeException("From date cannot be null when To date is provided.");
         }
-        Teacher teacher = teacherService.getById(teacherId).get();
+        Teacher teacher = teacherService.getById(teacherId);
 
         List<Teacher> teachers = teacherService.getAll();
         List<Group> groups = groupService.getAll();
@@ -73,7 +73,7 @@ public class ScheduleController implements CustomExceptionHandler<InvalidDateRan
             throw new InvalidDateRangeException("From date cannot be null when To date is provided.");
         }
 
-        Group group = groupService.getById(groupId).get();
+        Group group = groupService.getById(groupId);
 
         List<Group> groups = groupService.getAll();
         List<Teacher> teachers = teacherService.getAll();

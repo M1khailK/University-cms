@@ -34,6 +34,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     Integer findIdByEmail(String email);
 
     @Query(value = "SELECT s.*, u.email,u.first_name,u.last_name FROM students s JOIN users u ON s.user_id = u.user_id WHERE s.user_id = ?", nativeQuery = true)
-    Student findStudentByUserId(Integer userId);
+   Optional<Student> findStudentByUserId(Integer userId);
 
 }
