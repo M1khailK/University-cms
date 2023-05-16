@@ -59,23 +59,6 @@ public class LessonServiceImplTest {
     private LessonServiceImpl lessonService;
 
     @Test
-    void lessonService_shouldThrowAnException_whenStudentGroupIsNull() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> lessonService.getAllByStudentAndDateBetween(new Student(null, FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, null), LOCAL_DATE, LOCAL_DATE));
-    }
-
-    @Test
-    void lessonService_shouldReturnLessonsList_whenStudentHasGroup() {
-        Group group = new Group(ID, GROUP_NAME);
-        Student student = new Student(null, FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, group);
-        Lesson lesson = new Lesson(ID, LESSON_NAME, LOCAL_DATE, START_TIME, END_TIME, null, group, null);
-
-        when(lessonRepository.findAllByGroupIdAndDateBetween(ID, LOCAL_DATE, LOCAL_DATE)).thenReturn(Collections.singletonList(lesson));
-
-        Assertions.assertEquals(Collections.singletonList(lesson), lessonService.getAllByStudentAndDateBetween(student, LOCAL_DATE, LOCAL_DATE));
-        Mockito.verify(lessonRepository).findAllByGroupIdAndDateBetween(ID, LOCAL_DATE, LOCAL_DATE);
-    }
-
-    @Test
     public void lessonService_shouldFindLessonsByInputDates_whenInputHasLocalDates() {
         LocalDate localDate = LocalDate.of(2020, 10, 10);
        when(lessonRepository.findAllByGroupIdAndDateBetween(1, localDate, localDate)).thenReturn(Collections.singletonList(new Lesson(ID, LESSON_NAME, localDate, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));

@@ -63,7 +63,7 @@ public class TeacherRepositoryTest {
     @Test
     public void teacherRepository_shouldReturnTeacher_whenInputHasUserId() {
         Teacher expected = new Teacher(1, "Bob", "Second", EMAIL);
-        Teacher actual = teacherRepository.findTeacherByUserId(1);
+        Teacher actual = teacherRepository.findTeacherByUserId(1).get();
         Assertions.assertEquals(expected, actual);
     }
 }

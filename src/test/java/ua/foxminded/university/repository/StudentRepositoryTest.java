@@ -63,7 +63,7 @@ public class StudentRepositoryTest {
     @Test
     public void studentRepository_shouldReturnStudent_whenInputHasUserId() {
         Student expected = new Student(1, "Alex", "First", EMAIL, null);
-        Student actual = studentRepository.findStudentByUserId(1);
+        Student actual = studentRepository.findStudentByUserId(1).get();
         Assertions.assertEquals(expected, actual);
     }
 

@@ -62,7 +62,7 @@ public class ServiceAspectTest {
 
     @Test
     void serviceAspect_shouldDoLogging_whenGroupServiceGetGroupById() {
-        when(groupService.getById(GROUP_ID)).thenReturn(Optional.of(new Group(null, GROUP_NAME)));
+        when(groupRepository.findById(GROUP_ID)).thenReturn(Optional.of(new Group(1, GROUP_NAME)));
 
         Logger logger = (Logger) LoggerFactory.getLogger(ServiceAspect.class);
 
@@ -73,8 +73,8 @@ public class ServiceAspectTest {
         groupService.getById(GROUP_ID);
         List<ILoggingEvent> logList = listAppender.list;
 
-        String firstExpected = "Calling: Optional ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer)";
-        String secondExpected = "Optional ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer) response: Optional[Group(id=null, name=Group)]";
+        String firstExpected = "Calling: Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer)";
+        String secondExpected = "Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer) response: Group(id=1, name=Group)";
         Assertions.assertEquals(firstExpected, logList.get(0).getFormattedMessage());
         Assertions.assertEquals(secondExpected, logList.get(1).getFormattedMessage());
         Assertions.assertEquals(Level.TRACE, logList.get(0).getLevel());

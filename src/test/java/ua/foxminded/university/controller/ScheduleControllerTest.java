@@ -68,15 +68,15 @@ public class ScheduleControllerTest {
         when(studentService.getAll()).thenReturn(Collections.singletonList(student));
         when(teacherService.getAll()).thenReturn(Collections.singletonList(teacher));
 
-        when(studentService.getById(1)).thenReturn(Optional.of(student));
-        when(teacherService.getById(1)).thenReturn(Optional.of(teacher));
-        when(groupService.getById(1)).thenReturn(Optional.of(group));
+        when(studentService.getById(1)).thenReturn(student);
+        when(teacherService.getById(1)).thenReturn(teacher);
+        when(groupService.getById(1)).thenReturn(group);
 
         List<Lesson> singletonList = Collections.singletonList(new Lesson(1, "Lesson of mathematics",
                 LocalDate.of(2023, 1, 1), null, null, subject,
-                groupService.getById(1).get(), teacherService.getById(1).get()));
+                groupService.getById(1), teacherService.getById(1)));
 
-        when(lessonService.getAllByStudentAndDateBetween(student, localDateFrom, localDateTo)).
+        when(lessonService.getAllByGroupAndDateBetween(group, localDateFrom, localDateTo)).
                 thenReturn(singletonList);
         when(lessonService.getAllByTeacherAndDateBetween(teacher, localDateFrom, localDateTo))
                 .thenReturn(singletonList);
