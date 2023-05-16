@@ -30,18 +30,19 @@ public class StudentRepositoryTest {
 
     @Test
     public void studentRepository_shouldReturnStudentByEmail_whenInputHasEmail() {
-        Student example = new Student(1, "Alex", "First", EMAIL, null);
+        Student expected = new Student(1, "Alex", "First", EMAIL, null);
         Optional<Student> actual = studentRepository.findByEmail(EMAIL);
-        Assertions.assertEquals(Optional.of(example), actual);
+        Assertions.assertEquals(Optional.of(expected), actual);
     }
 
     @Test
     public void studentRepository_shouldReturnPassword_whenInputHasStudentId() {
-        String example = "password";
+        String expected = "password";
 
         String actual = studentRepository.findPasswordById(1);
-        Assertions.assertEquals(example, actual);
+        Assertions.assertEquals(expected, actual);
     }
+
     @Test
     public void studentRepository_shouldReturnUserId_whenInputHasStudentEmail() {
         String email = "alex.first@example.com";
@@ -49,13 +50,21 @@ public class StudentRepositoryTest {
         Integer expected = 1;
         Assertions.assertEquals(expected, actual);
     }
+
     @Test
     public void studentRepository_shouldChangePassword_whenInputHasNewPasswordAndStudentId() {
-        String example = "newPassword";
+        String expected = "newPassword";
         studentRepository.changePasswordById("newPassword", 1);
 
         String actual = studentRepository.findPasswordById(1);
-        Assertions.assertEquals(example, actual);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void studentRepository_shouldReturnStudent_whenInputHasUserId() {
+        Student expected = new Student(1, "Alex", "First", EMAIL, null);
+        Student actual = studentRepository.findStudentByUserId(1);
+        Assertions.assertEquals(expected, actual);
     }
 
 }
