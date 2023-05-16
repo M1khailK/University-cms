@@ -42,7 +42,13 @@ public class StudentRepositoryTest {
         String actual = studentRepository.findPasswordById(1);
         Assertions.assertEquals(example, actual);
     }
-
+    @Test
+    public void teacherRepository_shouldReturnUserId_whenInputHasTeacherEmail() {
+        String email = "alex.first@example.com";
+        Integer actual = studentRepository.findIdByEmail(email);
+        Integer expected = 1;
+        Assertions.assertEquals(expected, actual);
+    }
     @Test
     public void studentRepository_shouldChangePassword_whenInputHasNewPasswordAndStudentId() {
         String example = "newPassword";
