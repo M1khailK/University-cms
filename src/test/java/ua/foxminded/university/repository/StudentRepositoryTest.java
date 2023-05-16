@@ -43,7 +43,7 @@ public class StudentRepositoryTest {
         Assertions.assertEquals(example, actual);
     }
     @Test
-    public void teacherRepository_shouldReturnUserId_whenInputHasTeacherEmail() {
+    public void studentRepository_shouldReturnUserId_whenInputHasStudentEmail() {
         String email = "alex.first@example.com";
         Integer actual = studentRepository.findIdByEmail(email);
         Integer expected = 1;
@@ -57,4 +57,5 @@ public class StudentRepositoryTest {
         String actual = studentRepository.findPasswordById(1);
         Assertions.assertEquals(example, actual);
     }
+
 }
