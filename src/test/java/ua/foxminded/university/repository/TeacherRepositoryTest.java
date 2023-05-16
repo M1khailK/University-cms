@@ -44,6 +44,14 @@ public class TeacherRepositoryTest {
     }
 
     @Test
+    public void teacherRepository_shouldReturnUserId_whenInputHasTeacherEmail() {
+        String email = "bob.second@example.com";
+        Integer actual = teacherRepository.findIdByEmail(email);
+        Integer expected = 1;
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
     public void teacherRepository_shouldChangePassword_whenInputHasNewPasswordAndTeacherId() {
         String example = "newPassword";
         teacherRepository.changePasswordById("newPassword", 1);
