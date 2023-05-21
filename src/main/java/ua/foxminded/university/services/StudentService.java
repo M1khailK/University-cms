@@ -1,7 +1,6 @@
 package ua.foxminded.university.services;
 
 import ua.foxminded.university.info.Student;
-import ua.foxminded.university.info.Teacher;
 
 import java.util.List;
 

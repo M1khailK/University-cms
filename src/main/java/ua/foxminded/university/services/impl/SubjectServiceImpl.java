@@ -7,7 +7,6 @@ import ua.foxminded.university.repository.SubjectRepository;
 import ua.foxminded.university.services.SubjectService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {

@@ -7,7 +7,6 @@ import ua.foxminded.university.repository.GroupRepository;
 import ua.foxminded.university.services.GroupService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GroupServiceImpl implements GroupService {
