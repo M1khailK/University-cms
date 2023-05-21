@@ -23,7 +23,7 @@ public class TeacherRepositoryTest {
 
     @BeforeEach
     public void setup() {
-        jdbcTemplate.execute("TRUNCATE TABLE students, users, groups, subjects, teachers, lessons, user_role RESTART IDENTITY;");
+        jdbcTemplate.execute("TRUNCATE TABLE students, users, groups, subjects, teachers,admins, lessons, user_role RESTART IDENTITY;");
         jdbcTemplate.execute("INSERT INTO users (first_name, last_name, email, password) VALUES ('Bob', 'Second', 'bob.second@example.com', 'password');");
         jdbcTemplate.execute("INSERT INTO teachers (user_id) VALUES (1);");
         jdbcTemplate.execute("INSERT INTO user_role (user_id, role) VALUES (1, 'TEACHER');");
@@ -37,7 +37,7 @@ public class TeacherRepositoryTest {
     }
 
     @Test
-    public void teacherRepository_shouldReturnPassword_whenInputHasTeacherId() {
+    public void teacherRepository_shouldReturnPassword_whenInputHasUserId() {
         String expected = "password";
         String actual = teacherRepository.findPasswordById(1);
         Assertions.assertEquals(expected, actual);
@@ -52,7 +52,7 @@ public class TeacherRepositoryTest {
     }
 
     @Test
-    public void teacherRepository_shouldChangePassword_whenInputHasNewPasswordAndTeacherId() {
+    public void teacherRepository_shouldChangePassword_whenInputHasNewPasswordAndUserId() {
         String expected = "newPassword";
         teacherRepository.changePasswordById("newPassword", 1);
 

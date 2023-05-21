@@ -5,17 +5,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
-import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
@@ -24,8 +20,9 @@ import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.SubjectService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserManagerService;
+import ua.foxminded.university.services.UserService;
 
-import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +35,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @WebMvcTest
 @MockBean(LessonService.class)
 @MockBean(GroupService.class)
+@MockBean(UserService.class)
 @MockBean(SubjectService.class)
 public class UserScheduleControllerTest {
     private static final int ID = 1;
@@ -45,6 +43,8 @@ public class UserScheduleControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private ServiceManager serviceManager;
+    @MockBean
+    private UserManagerService userManagerService;
     @MockBean
     private StudentService studentService;
     @MockBean
@@ -67,8 +67,8 @@ public class UserScheduleControllerTest {
         when(serviceManager.getServiceByRole("[ROLE_STUDENT]")).thenReturn(Optional.of(studentService));
         when(serviceManager.getServiceByRole("[ROLE_TEACHER]")).thenReturn(Optional.of(teacherService));
 
-        when(serviceManager.getServiceByRole("[ROLE_STUDENT]").get().getUserIdByEmail("student@gmail.com")).thenReturn(ID);
-        when(serviceManager.getServiceByRole("[ROLE_TEACHER]").get().getUserIdByEmail("teacher@gmail.com")).thenReturn(ID);
+        when(userManagerService.getUserIdByEmail("student@gmail.com")).thenReturn(ID);
+        when(userManagerService.getUserIdByEmail("teacher@gmail.com")).thenReturn(ID);
 
         when(serviceManager.getServiceByRole("[ROLE_STUDENT]").get().getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
         when(serviceManager.getServiceByRole("[ROLE_TEACHER]").get().getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));

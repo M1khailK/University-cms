@@ -22,7 +22,7 @@ public class StudentRepositoryTest {
 
     @BeforeEach
     public void setup() {
-        jdbcTemplate.execute("TRUNCATE TABLE students, users, groups, subjects, teachers, lessons, user_role RESTART IDENTITY;");
+        jdbcTemplate.execute("TRUNCATE TABLE students, users, groups, subjects, teachers,admins, lessons, user_role RESTART IDENTITY;");
         jdbcTemplate.execute("INSERT INTO users (first_name, last_name, email, password) VALUES ('Alex', 'First', 'alex.first@example.com', 'password');");
         jdbcTemplate.execute("INSERT INTO students (user_id) VALUES (1);");
         jdbcTemplate.execute("INSERT INTO user_role (user_id, role) VALUES (1, 'STUDENT');");

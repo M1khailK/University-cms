@@ -22,7 +22,7 @@ public class Teacher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "teacher_id", length = 50, nullable = false)
+    @Column(name = "user_id", length = 50, nullable = false)
     private Integer id;
 
     @Column(name = "first_name", table = "users", length = 50, nullable = false)

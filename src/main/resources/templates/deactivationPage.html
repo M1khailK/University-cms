@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Deactivation Page</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="sidebar.css">
+    <script src="https://kit.fontawesome.com/8d224a8437.js" crossorigin="anonymous"></script>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="hero">
+    <form th:action="@{/deactivateUser}" method="get">
+        <div class="combined-form-box">
+            <ul>
+                <select name="userId">
+                    <option value="">-- Select a user --</option>
+
+                    <optgroup label="Teachers">
+                        <th:block th:each="teacher : ${teachers}">
+                            <option th:value="${teacher.id}"
+                                    th:text="${'Teacher: ' + teacher.id + ' ' + teacher.firstName + ' ' + teacher.lastName + ' ' + teacher.email}"></option>
+                        </th:block>
+                    </optgroup>
+
+                    <optgroup label="Students">
+                        <th:block th:each="student : ${students}">
+                            <option th:value="${student.id}"
+                                    th:text="${'Student: ' + student.id + ' ' + student.firstName + ' ' + student.lastName + ' ' + student.email}"></option>
+                        </th:block>
+                    </optgroup>
+
+                </select>
+                <button type="submit" class="submit-btn">Deactivate</button>
+
+            </ul>
+        </div>
+    </form>
+</div>
+</body>
+</html>

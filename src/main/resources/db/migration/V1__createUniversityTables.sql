@@ -6,6 +6,7 @@ CREATE TABLE users (
   password VARCHAR(255) NOT NULL,
   isEnabled BOOLEAN NOT NULL DEFAULT TRUE
 );
+
 CREATE TABLE groups (
     group_id SERIAL PRIMARY KEY,
     group_name VARCHAR(50) NOT NULL
@@ -16,9 +17,13 @@ CREATE TABLE subjects (
     subject_name VARCHAR(50) NOT NULL
 );
 
+CREATE TABLE admins (
+    user_id INT PRIMARY KEY,
+    FOREIGN KEY(user_id) REFERENCES users(user_id)
+);
+
 CREATE TABLE teachers (
-    teacher_id SERIAL PRIMARY KEY,
-    user_id INT,
+    user_id INT PRIMARY KEY,
     FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
 
@@ -30,21 +35,20 @@ CREATE TABLE lessons (
     teacher_id INT,
     FOREIGN KEY (group_id) REFERENCES groups(group_id),
     FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
-    FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id),
+    FOREIGN KEY (teacher_id) REFERENCES teachers(user_id),
     lesson_date DATE,
     start_time TIME,
     end_time TIME
 );
 
 CREATE TABLE students (
-    student_id SERIAL PRIMARY KEY,
-    user_id INT,
+    user_id INT PRIMARY KEY,
     group_id INT,
     FOREIGN KEY(user_id) REFERENCES users(user_id),
     FOREIGN KEY (group_id) REFERENCES groups(group_id)
 );
 
-CREATE TABLE user_role(
+CREATE TABLE user_role (
   user_id INT,
   role VARCHAR(15) NOT NULL,
   PRIMARY KEY (user_id, role)

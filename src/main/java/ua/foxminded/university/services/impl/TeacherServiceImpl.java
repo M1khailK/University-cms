@@ -79,4 +79,8 @@ public class TeacherServiceImpl implements TeacherService {
         return lessonService.getAllByTeacherAndDateBetween(teacher, from, to);
     }
 
+    @Override
+    public List<Teacher> getAllEnabledTeachers() {
+        return teacherRepository.findAllEnabledTeachers();
+    }
 }

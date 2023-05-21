@@ -17,6 +17,7 @@ import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
 
@@ -27,6 +28,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @MockBean(StudentService.class)
 @MockBean(GroupService.class)
 @MockBean(LessonService.class)
+@MockBean(UserService.class)
 @MockBean(DataSource.class)
 @MockBean(ServiceManager.class)
 @Import(SecurityConfig.class)

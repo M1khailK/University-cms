@@ -24,6 +24,7 @@ import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.SubjectService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
@@ -53,6 +54,8 @@ public class ScheduleControllerTest {
     private TeacherService teacherService;
     @MockBean
     private GroupService groupService;
+    @MockBean
+    private UserService userService;
     @MockBean
     private SubjectService subjectService;
 

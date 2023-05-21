@@ -12,7 +12,6 @@ import ua.foxminded.university.services.StudentService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -76,5 +75,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public String getRole() {
         return "[ROLE_STUDENT]";
+    }
+
+    @Override
+    public List<Student> getAllEnabledStudents() {
+        return studentRepository.findAllEnabledStudents();
     }
 }

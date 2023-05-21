@@ -20,6 +20,7 @@ import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.SubjectService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
 import java.util.Optional;
@@ -34,6 +35,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @MockBean(DataSource.class)
 @MockBean(LessonService.class)
 @MockBean(GroupService.class)
+@MockBean(UserService.class)
 @MockBean(SubjectService.class)
 @Import(SecurityConfig.class)
 public class ProfileControllerTest {
