@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
 
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
@@ -24,9 +26,11 @@ public class TeacherRepositoryTest {
     @BeforeEach
     public void setup() {
         jdbcTemplate.execute("TRUNCATE TABLE students, users, groups, subjects, teachers,admins, lessons, user_role RESTART IDENTITY;");
-        jdbcTemplate.execute("INSERT INTO users (first_name, last_name, email, password) VALUES ('Bob', 'Second', 'bob.second@example.com', 'password');");
-        jdbcTemplate.execute("INSERT INTO teachers (user_id) VALUES (1);");
-        jdbcTemplate.execute("INSERT INTO user_role (user_id, role) VALUES (1, 'TEACHER');");
+        jdbcTemplate.execute("INSERT INTO users (first_name, last_name, email, password) VALUES " +
+                "('Bob', 'Second', 'bob.second@example.com', 'password')," +
+                "('Alex','Third','alex.third@example.com','password');");
+        jdbcTemplate.execute("INSERT INTO teachers (user_id) VALUES (1),(2);");
+        jdbcTemplate.execute("INSERT INTO user_role (user_id, role) VALUES (1, 'TEACHER'),(2,'TEACHER');");
     }
 
     @Test
@@ -64,6 +68,15 @@ public class TeacherRepositoryTest {
     public void teacherRepository_shouldReturnTeacher_whenInputHasUserId() {
         Teacher expected = new Teacher(1, "Bob", "Second", EMAIL);
         Teacher actual = teacherRepository.findTeacherByUserId(1).get();
+        Assertions.assertEquals(expected, actual);
+    }
+    @Test
+    public void teacherRepository_shouldReturnListOfTeachers_whenTheirAccountsAreEnabled() {
+        String disableUserAccountQuery = "UPDATE users SET isEnabled = FALSE WHERE user_id = ?";
+
+        jdbcTemplate.update(disableUserAccountQuery, 1);
+        List<Teacher> actual = teacherRepository.findAllEnabledTeachers();
+        List<Teacher> expected = List.of(new Teacher(2,"Alex","Third","alex.third@example.com"));
         Assertions.assertEquals(expected, actual);
     }
 }
