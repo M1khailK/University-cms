@@ -52,6 +52,7 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
         return "redirect:/profile";
     }
 
+    @Override
     @ExceptionHandler(InvalidOldPasswordException.class)
     public ModelAndView handleCustomException(InvalidOldPasswordException ex) {
         ModelAndView mav = new ModelAndView();

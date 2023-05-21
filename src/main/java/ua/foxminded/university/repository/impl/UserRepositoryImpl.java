@@ -12,9 +12,9 @@ public class UserRepositoryImpl implements UserRepository {
     private EntityManager entityManager;
 
     @Transactional
-    public void deactivateUserAccountById(int id) {
+    public void deactivateUserAccountById(Integer id) {
         entityManager.createNativeQuery("UPDATE users SET isEnabled = FALSE WHERE user_id = ?")
-                .setParameter(1,id)
+                .setParameter(1, id)
                 .executeUpdate();
     }
 }
