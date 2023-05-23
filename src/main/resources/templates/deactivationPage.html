@@ -6,17 +6,20 @@
     <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="sidebar.css">
     <link rel="stylesheet" type="text/css" href="deactivationPageForm.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
     <script src="https://kit.fontawesome.com/8d224a8437.js" crossorigin="anonymous"></script>
     <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 </head>
 <body>
 <div class="hero">
     <form th:action="@{/deactivateUser}" method="get">
         <div class="combined-form-box">
             <ul>
-                <select name="userId">
-                    <option value="">-- Select a user --</option>
+                <select name="userId" id="select-user" size="10">
 
                     <optgroup label="Teachers">
                         <th:block th:each="teacher : ${teachers}">
@@ -38,6 +41,12 @@
             </ul>
         </div>
     </form>
+    <div data-th-replace="~{fragments/sidebar :: sidebar-menu}"></div>
 </div>
+<script>
+$(document).ready(function () {
+   $("select").select2();
+});
+</script>
 </body>
 </html>
