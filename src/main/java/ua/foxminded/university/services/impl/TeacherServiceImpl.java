@@ -68,11 +68,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Integer getUserIdByEmail(String email) {
-        return teacherRepository.findIdByEmail(email);
-    }
-
-    @Override
     public List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to) {
         Teacher teacher = teacherRepository.findTeacherByUserId(id).get();
         return lessonService.getAllByTeacherAndDateBetween(teacher, from, to);

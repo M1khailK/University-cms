@@ -12,7 +12,5 @@ public interface UserManagerService<T> {
 
     T getByEmail(String email);
 
-    Integer getUserIdByEmail(String email);
-
     List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to);
 }

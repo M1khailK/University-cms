@@ -33,4 +33,9 @@ public class GroupServiceImpl implements GroupService {
     public void deleteById(Integer groupId) {
         groupRepository.deleteById(groupId);
     }
+
+    @Override
+    public Group getByName(String groupName) {
+        return groupRepository.findByName(groupName);
+    }
 }

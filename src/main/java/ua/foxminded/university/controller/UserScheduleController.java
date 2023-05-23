@@ -15,6 +15,7 @@ import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +30,8 @@ public class UserScheduleController implements CustomExceptionHandler<InvalidDat
     private StudentService studentService;
     @Autowired
     private TeacherService teacherService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/mySchedule")
     public String mySchedulePage() {
@@ -45,9 +48,7 @@ public class UserScheduleController implements CustomExceptionHandler<InvalidDat
         authentication.getAuthorities().toString();
         serviceManager.register(studentService.getRole(), studentService);
         serviceManager.register(teacherService.getRole(), teacherService);
-        Integer id = serviceManager
-                .getServiceByRole(authentication.getAuthorities().toString()).get()
-                .getUserIdByEmail(authentication.getName());
+        Integer id = userService.getUserIdByEmail(authentication.getName());
         List<Lesson> userLessons = serviceManager
                 .getServiceByRole(authentication.getAuthorities().toString()).get()
                 .getLessonsByUserIdAndDateBetween(id, dateFrom, dateTo);

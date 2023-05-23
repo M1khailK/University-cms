@@ -18,12 +18,12 @@ CREATE TABLE subjects (
 );
 
 CREATE TABLE admins (
-    user_id INT PRIMARY KEY,
+    user_id SERIAL PRIMARY KEY,
     FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE teachers (
-    user_id INT PRIMARY KEY,
+    user_id SERIAL PRIMARY KEY,
     FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
 
@@ -42,7 +42,7 @@ CREATE TABLE lessons (
 );
 
 CREATE TABLE students (
-    user_id INT PRIMARY KEY,
+    user_id SERIAL PRIMARY KEY,
     group_id INT,
     FOREIGN KEY(user_id) REFERENCES users(user_id),
     FOREIGN KEY (group_id) REFERENCES groups(group_id)

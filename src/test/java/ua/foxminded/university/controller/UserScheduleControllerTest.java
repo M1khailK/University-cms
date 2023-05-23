@@ -15,6 +15,7 @@ import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
+import ua.foxminded.university.repository.UserRepository;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
@@ -44,7 +45,7 @@ public class UserScheduleControllerTest {
     @MockBean
     private ServiceManager serviceManager;
     @MockBean
-    private UserManagerService userManagerService;
+    private UserService userService;
     @MockBean
     private StudentService studentService;
     @MockBean
@@ -67,8 +68,8 @@ public class UserScheduleControllerTest {
         when(serviceManager.getServiceByRole("[ROLE_STUDENT]")).thenReturn(Optional.of(studentService));
         when(serviceManager.getServiceByRole("[ROLE_TEACHER]")).thenReturn(Optional.of(teacherService));
 
-        when(userManagerService.getUserIdByEmail("student@gmail.com")).thenReturn(ID);
-        when(userManagerService.getUserIdByEmail("teacher@gmail.com")).thenReturn(ID);
+        when(userService.getUserIdByEmail("student@gmail.com")).thenReturn(ID);
+        when(userService.getUserIdByEmail("teacher@gmail.com")).thenReturn(ID);
 
         when(serviceManager.getServiceByRole("[ROLE_STUDENT]").get().getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
         when(serviceManager.getServiceByRole("[ROLE_TEACHER]").get().getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));

@@ -50,11 +50,6 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Integer getUserIdByEmail(String email) {
-        return studentRepository.findIdByEmail(email);
-    }
-
-    @Override
     public List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to) {
         Student student = studentRepository.findStudentByUserId(id).get();
         return lessonService.getAllByGroupAndDateBetween(student.getGroup(), from, to);

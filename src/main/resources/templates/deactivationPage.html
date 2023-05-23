@@ -24,14 +24,14 @@
                     <optgroup label="Teachers">
                         <th:block th:each="teacher : ${teachers}">
                             <option th:value="${teacher.id}"
-                                    th:text="${'Teacher: ' + teacher.id + ' ' + teacher.firstName + ' ' + teacher.lastName + ' ' + teacher.email}"></option>
+                                    th:text="${'Teacher: ' + teacher.firstName + ' ' + teacher.lastName + ' ' + teacher.email}"></option>
                         </th:block>
                     </optgroup>
 
                     <optgroup label="Students">
                         <th:block th:each="student : ${students}">
                             <option th:value="${student.id}"
-                                    th:text="${'Student: ' + student.id + ' ' + student.firstName + ' ' + student.lastName + ' ' + student.email}"></option>
+                                    th:text="${'Student: ' + student.firstName + ' ' + student.lastName + ' ' + student.email}"></option>
                         </th:block>
                     </optgroup>
 
