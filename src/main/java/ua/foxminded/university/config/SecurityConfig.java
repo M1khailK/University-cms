@@ -1,6 +1,5 @@
 package ua.foxminded.university.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,11 +16,8 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private DataSource dataSource;
-
     @Bean
-    public JdbcUserDetailsManager users() {
+    public JdbcUserDetailsManager users(DataSource dataSource) {
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
         jdbcUserDetailsManager.setUsersByUsernameQuery("select email, password, isEnabled from users where email = ? and isEnabled = true");
         jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("select u.email, ur.role from users u join user_role ur on u.user_id = ur.user_id where u.email = ?");
