@@ -54,11 +54,11 @@ public class ProfileControllerTest {
         Student student = new Student(1, "Alex", "First", "studentName", null);
         Teacher teacher = new Teacher(1, "Bob", "Second", "teacherName");
 
-        doNothing().when(serviceManager).register("[ROLE_STUDENT]", studentService);
-        doNothing().when(serviceManager).register("[ROLE_TEACHER]", teacherService);
+        doNothing().when(serviceManager).register("ROLE_STUDENT", studentService);
+        doNothing().when(serviceManager).register("ROLE_TEACHER", teacherService);
 
-        when(serviceManager.getServiceByRole("[ROLE_STUDENT]")).thenReturn(Optional.of(studentService));
-        when(serviceManager.getServiceByRole("[ROLE_TEACHER]")).thenReturn(Optional.of(teacherService));
+        when(serviceManager.getServiceByRole("ROLE_STUDENT")).thenReturn(Optional.of(studentService));
+        when(serviceManager.getServiceByRole("ROLE_TEACHER")).thenReturn(Optional.of(teacherService));
 
         when(Optional.of(studentService).get().getByEmail(student.getEmail())).thenReturn(student);
         when(Optional.of(teacherService).get().getByEmail(teacher.getEmail())).thenReturn(teacher);

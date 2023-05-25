@@ -59,7 +59,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public String getRole() {
-        return "[ROLE_TEACHER]";
+        return "ROLE_TEACHER";
     }
 
     @Override

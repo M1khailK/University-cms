@@ -69,7 +69,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public String getRole() {
-        return "[ROLE_STUDENT]";
+        return "ROLE_STUDENT";
     }
 
     @Override

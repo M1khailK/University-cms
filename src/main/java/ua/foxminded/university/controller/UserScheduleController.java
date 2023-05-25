@@ -2,6 +2,7 @@ package ua.foxminded.university.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +20,9 @@ import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserScheduleController implements CustomExceptionHandler<InvalidDateRangeException> {
@@ -45,12 +48,16 @@ public class UserScheduleController implements CustomExceptionHandler<InvalidDat
             throw new InvalidDateRangeException("From date cannot be null when To date is provided.");
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        authentication.getAuthorities().toString();
+        Collection<? extends GrantedAuthority> userRolesCollection = authentication.getAuthorities();
         serviceManager.register(studentService.getRole(), studentService);
         serviceManager.register(teacherService.getRole(), teacherService);
+
+        String userRoles = userRolesCollection.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(", "));
         Integer id = userService.getUserIdByEmail(authentication.getName());
         List<Lesson> userLessons = serviceManager
-                .getServiceByRole(authentication.getAuthorities().toString()).get()
+                .getServiceByRole(userRoles).get()
                 .getLessonsByUserIdAndDateBetween(id, dateFrom, dateTo);
         model.addAttribute("userLessons", userLessons);
         return "userSchedule";
