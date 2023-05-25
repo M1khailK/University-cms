@@ -14,6 +14,7 @@ import ua.foxminded.university.services.UserService;
 
 @Controller
 public class AccountCreatorController {
+    private static final String REDIRECT_ACCOUNT_CREATOR_PAGE = "redirect:/accountCreatorPage";
     @Autowired
     private StudentService studentService;
     @Autowired
@@ -33,19 +34,19 @@ public class AccountCreatorController {
         Group group = groupService.getByName(user.getGroupName());
         userService.insertUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
         userService.insertStudentById(userService.getUserIdByEmail(user.getEmail()), group.getId());
-        return "redirect:/accountCreatorPage";
+        return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
 
     @PostMapping("/createTeacher")
     public String createTeacherAccount(@Valid User user) {
         userService.insertUser(user.getFirstName(),user.getLastName(),user.getEmail(),user.getPassword());
         userService.insertTeacherById(userService.getUserIdByEmail(user.getEmail()));
-        return "redirect:/accountCreatorPage";
+        return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
     @PostMapping("/createAdmin")
     public String createAdminAccount(@Valid User user) {
         userService.insertUser(user.getFirstName(),user.getLastName(),user.getEmail(),user.getPassword());
         userService.insertAdmin(userService.getUserIdByEmail(user.getEmail()));
-        return "redirect:/accountCreatorPage";
+        return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
 }

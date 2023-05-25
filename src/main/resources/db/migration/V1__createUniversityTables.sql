@@ -17,11 +17,6 @@ CREATE TABLE subjects (
     subject_name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE admins (
-    user_id SERIAL PRIMARY KEY,
-    FOREIGN KEY(user_id) REFERENCES users(user_id)
-);
-
 CREATE TABLE teachers (
     user_id SERIAL PRIMARY KEY,
     FOREIGN KEY(user_id) REFERENCES users(user_id)

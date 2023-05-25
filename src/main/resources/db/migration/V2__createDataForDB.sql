@@ -18,9 +18,6 @@ INSERT INTO users (first_name, last_name, email,password) VALUES
 INSERT INTO teachers (user_id)
 VALUES (1), (2), (3);
 
-INSERT INTO admins (user_id)
-VALUES (7);
-
 INSERT INTO students (user_id, group_id)
 VALUES (4, 1), (5, 2), (6, 2);
 
