@@ -1,11 +1,16 @@
+CREATE SEQUENCE user_seq
+    START WITH 1
+    INCREMENT BY 1;
+
 CREATE TABLE users (
-  user_id SERIAL PRIMARY KEY,
+  user_id INT PRIMARY KEY,
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   email VARCHAR(50) NOT NULL,
-  password VARCHAR(255) NOT NULL DEFAULT 'password',
+  password VARCHAR(255) NOT NULL,
   isEnabled BOOLEAN NOT NULL DEFAULT TRUE
 );
+
 CREATE TABLE groups (
     group_id SERIAL PRIMARY KEY,
     group_name VARCHAR(50) NOT NULL
@@ -16,14 +21,13 @@ CREATE TABLE subjects (
     subject_name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE admins (
-    user_id INT PRIMARY KEY,
-    FOREIGN KEY(user_id) REFERENCES users(user_id)
+CREATE TABLE teachers (
+    user_id INT PRIMARY KEY
 );
 
-CREATE TABLE teachers (
+CREATE TABLE students (
     user_id INT PRIMARY KEY,
-    FOREIGN KEY(user_id) REFERENCES users(user_id)
+    group_id INT
 );
 
 CREATE TABLE lessons (
@@ -38,13 +42,6 @@ CREATE TABLE lessons (
     lesson_date DATE,
     start_time TIME,
     end_time TIME
-);
-
-CREATE TABLE students (
-    user_id INT PRIMARY KEY,
-    group_id INT,
-    FOREIGN KEY(user_id) REFERENCES users(user_id),
-    FOREIGN KEY (group_id) REFERENCES groups(group_id)
 );
 
 CREATE TABLE user_role (

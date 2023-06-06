@@ -51,8 +51,8 @@ public class ProfileControllerTest {
 
     @BeforeEach
     public void setUp() {
-        Student student = new Student(1, "Alex", "First", "studentName", null);
-        Teacher teacher = new Teacher(1, "Bob", "Second", "teacherName");
+        Student student = new Student(1, "Alex", "First", "studentName", null,"password");
+        Teacher teacher = new Teacher(1, "Bob", "Second", "teacherName","password");
 
         doNothing().when(serviceManager).register("ROLE_STUDENT", studentService);
         doNothing().when(serviceManager).register("ROLE_TEACHER", teacherService);

@@ -6,14 +6,14 @@ INSERT INTO subjects (subject_name) VALUES ('English');
 INSERT INTO subjects (subject_name) VALUES ('Ukrainian');
 INSERT INTO subjects (subject_name) VALUES ('French');
 
-INSERT INTO users (first_name, last_name, email,password) VALUES
-('Bob', 'First', 'bob.first@example.com','$2a$12$HPxWa4yaBboQQMQByAbN2OMeJB3Q5di3/iWeQ6XfGpPNrGOncsP6G'),
-('Jack', 'Second', 'jack.second@example.com','$2a$12$w7HM.8a422AOCZHwfKaX7u4YJYINJeMYf58bSb5e/vHomNgD4JYrO'),
-('Alex', 'Third', 'alex.third@example.com','$2a$12$L79h5hwvCDyszsJv0klFY.6FxjRaglGs.Z/MHtUXu5gNNcq/WKLPm'),
-('Alice', 'Fourth', 'alice.fourth@example.com','$2a$12$pmdp4e.fjSYY8hA0iV9wWeMQSPYwvzuqVTtfL7h2V9LRYQuZfAxqy'),
-('Tom', 'Fifth', 'tom.fifth@example.com','$2a$12$6bN37oQO9o185mRub0ZUSeuZCBwX.nYMALnVZlOPpV9J5x6LpinYO'),
-('Sara', 'Sixth', 'sara.sixth@example.com','$2a$12$lpCnlVIXCatv.AvqngkJb.yTfpZk41cXOZMjsK/.SxhkAToEs.HjC'),
-('Admin', 'AdminSurname', 'admin@example.com','$2a$12$RrhQL7KBsmIRJUXdRj3o6ubtptUs9lJFZgV1yHtjyoq1RYq7qvDa.');
+INSERT INTO users (user_id,first_name, last_name, email,password) VALUES
+(nextval('user_seq'),'Bob', 'First', 'bob.first@example.com','$2a$12$HPxWa4yaBboQQMQByAbN2OMeJB3Q5di3/iWeQ6XfGpPNrGOncsP6G'),
+(nextval('user_seq'),'Jack', 'Second', 'jack.second@example.com','$2a$12$w7HM.8a422AOCZHwfKaX7u4YJYINJeMYf58bSb5e/vHomNgD4JYrO'),
+(nextval('user_seq'),'Alex', 'Third', 'alex.third@example.com','$2a$12$L79h5hwvCDyszsJv0klFY.6FxjRaglGs.Z/MHtUXu5gNNcq/WKLPm'),
+(nextval('user_seq'),'Alice', 'Fourth', 'alice.fourth@example.com','$2a$12$pmdp4e.fjSYY8hA0iV9wWeMQSPYwvzuqVTtfL7h2V9LRYQuZfAxqy'),
+(nextval('user_seq'),'Tom', 'Fifth', 'tom.fifth@example.com','$2a$12$6bN37oQO9o185mRub0ZUSeuZCBwX.nYMALnVZlOPpV9J5x6LpinYO'),
+(nextval('user_seq'),'Sara', 'Sixth', 'sara.sixth@example.com','$2a$12$lpCnlVIXCatv.AvqngkJb.yTfpZk41cXOZMjsK/.SxhkAToEs.HjC'),
+(nextval('user_seq'),'Admin', 'AdminSurname', 'admin@example.com','$2a$12$RrhQL7KBsmIRJUXdRj3o6ubtptUs9lJFZgV1yHtjyoq1RYq7qvDa.');
 
 INSERT INTO teachers (user_id)
 VALUES (1), (2), (3);

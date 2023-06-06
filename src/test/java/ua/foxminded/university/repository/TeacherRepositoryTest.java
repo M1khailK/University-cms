@@ -25,17 +25,18 @@ public class TeacherRepositoryTest {
 
     @BeforeEach
     public void setup() {
-        jdbcTemplate.execute("TRUNCATE TABLE students, users, groups, subjects, teachers,admins, lessons, user_role RESTART IDENTITY;");
-        jdbcTemplate.execute("INSERT INTO users (first_name, last_name, email, password) VALUES " +
-                "('Bob', 'Second', 'bob.second@example.com', 'password')," +
-                "('Alex','Third','alex.third@example.com','password');");
+        jdbcTemplate.execute("TRUNCATE TABLE users, groups, subjects, teachers, students, lessons, user_role;");
+        jdbcTemplate.execute("ALTER SEQUENCE user_seq RESTART WITH 1;");
+        jdbcTemplate.execute("INSERT INTO users (user_id,first_name, last_name, email, password) VALUES " +
+                "(nextval('user_seq'),'Bob', 'Second', 'bob.second@example.com', 'password')," +
+                "(nextval('user_seq'),'Alex','Third','alex.third@example.com','password');");
         jdbcTemplate.execute("INSERT INTO teachers (user_id) VALUES (1),(2);");
         jdbcTemplate.execute("INSERT INTO user_role (user_id, role) VALUES (1, 'TEACHER'),(2,'TEACHER');");
     }
 
     @Test
     public void teacherRepository_shouldReturnTeacherByEmail_whenInputHasEmail() {
-        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL);
+        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL,"password");
         Optional<Teacher> actual = teacherRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(expected), actual);
     }
@@ -66,8 +67,8 @@ public class TeacherRepositoryTest {
 
     @Test
     public void teacherRepository_shouldReturnTeacher_whenInputHasUserId() {
-        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL);
-        Teacher actual = teacherRepository.findTeacherByUserId(1).get();
+        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL,"password");
+        Teacher actual = teacherRepository.findById(1).get();
         Assertions.assertEquals(expected, actual);
     }
     @Test
@@ -76,7 +77,7 @@ public class TeacherRepositoryTest {
 
         jdbcTemplate.update(disableUserAccountQuery, 1);
         List<Teacher> actual = teacherRepository.findAllEnabledTeachers();
-        List<Teacher> expected = List.of(new Teacher(2,"Alex","Third","alex.third@example.com"));
+        List<Teacher> expected = List.of(new Teacher(2,"Alex","Third","alex.third@example.com","password"));
         Assertions.assertEquals(expected, actual);
     }
 }

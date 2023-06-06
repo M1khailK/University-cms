@@ -62,9 +62,9 @@ public class ScheduleControllerTest {
         LocalDate localDateFrom = LocalDate.of(2023, 1, 1);
         LocalDate localDateTo = LocalDate.of(2023, 1, 30);
         Subject subject = new Subject(1, "Math");
-        Teacher teacher = new Teacher(1, "Viktoria", "Second", "foo@gmail.com");
+        Teacher teacher = new Teacher(1, "Viktoria", "Second", "foo@gmail.com","password");
         Group group = new Group(1, "AA-10");
-        Student student = new Student(1, "Max", "First", "qwerty@gmail.com", group);
+        Student student = new Student(1, "Max", "First", "qwerty@gmail.com", group,"password");
 
         when(studentService.getAll()).thenReturn(Collections.singletonList(student));
         when(teacherService.getAll()).thenReturn(Collections.singletonList(teacher));

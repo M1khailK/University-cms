@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SecondaryTable;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +24,8 @@ import lombok.NoArgsConstructor;
 public class Student {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
+    @SequenceGenerator( name = "user_generator", sequenceName = "user_seq",allocationSize = 1)
     @Column(name = "user_id", length = 50, nullable = false)
     private Integer id;
 
@@ -39,5 +41,8 @@ public class Student {
     @ManyToOne()
     @JoinColumn(name = "group_id")
     private Group group;
+
+    @Column(name = "password",table = "users",nullable = false)
+    private String password;
 
 }

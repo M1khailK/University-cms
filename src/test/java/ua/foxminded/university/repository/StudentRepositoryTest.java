@@ -24,15 +24,18 @@ public class StudentRepositoryTest {
 
     @BeforeEach
     public void setup() {
-        jdbcTemplate.execute("TRUNCATE TABLE students, users, groups, subjects, teachers,admins, lessons, user_role RESTART IDENTITY;");
-        jdbcTemplate.execute("INSERT INTO users (first_name, last_name, email, password) VALUES ('Alex', 'First', 'alex.first@example.com', 'password'),('Bob','Second','bob.second@example.com','password');");
+        jdbcTemplate.execute("TRUNCATE TABLE users, groups, subjects, teachers, students, lessons, user_role;");
+        jdbcTemplate.execute("ALTER SEQUENCE user_seq RESTART WITH 1;");
+        jdbcTemplate.execute("INSERT INTO users (user_id,first_name, last_name, email, password) VALUES" +
+                "(nextval('user_seq'),'Alex', 'First', 'alex.first@example.com', 'password')," +
+                "(nextval('user_seq'),'Bob','Second','bob.second@example.com','password');");
         jdbcTemplate.execute("INSERT INTO students (user_id) VALUES (1),(2);");
         jdbcTemplate.execute("INSERT INTO user_role (user_id, role) VALUES (1, 'STUDENT'),(2,'STUDENT');");
     }
 
     @Test
     public void studentRepository_shouldReturnStudentByEmail_whenInputHasEmail() {
-        Student expected = new Student(1, "Alex", "First", EMAIL, null);
+        Student expected = new Student(1, "Alex", "First", EMAIL, null,"password");
         Optional<Student> actual = studentRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(expected), actual);
     }
@@ -63,19 +66,12 @@ public class StudentRepositoryTest {
     }
 
     @Test
-    public void studentRepository_shouldReturnStudent_whenInputHasUserId() {
-        Student expected = new Student(1, "Alex", "First", EMAIL, null);
-        Student actual = studentRepository.findStudentByUserId(1).get();
-        Assertions.assertEquals(expected, actual);
-    }
-
-    @Test
     public void studentRepository_shouldReturnListOfStudents_whenTheirAccountsAreEnabled() {
         String disableUserAccountQuery = "UPDATE users SET isEnabled = FALSE WHERE user_id = ?";
 
         jdbcTemplate.update(disableUserAccountQuery, 1);
         List<Student> actual = studentRepository.findAllEnabledStudents();
-        List<Student> expected = List.of(new Student(2,"Bob","Second","bob.second@example.com",null));
+        List<Student> expected = List.of(new Student(2,"Bob","Second","bob.second@example.com",null,"password"));
         Assertions.assertEquals(expected, actual);
     }
 

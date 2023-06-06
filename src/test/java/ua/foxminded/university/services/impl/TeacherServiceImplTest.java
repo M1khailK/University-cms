@@ -26,7 +26,7 @@ public class TeacherServiceImplTest {
     private static final String PASSWORD = "password";
     private static final String newPassword = "newPassword";
     private static final int ID = 1;
-    private static final Teacher teacher = new Teacher(ID, "Bob", "First", EMAIL);
+    private static final Teacher teacher = new Teacher(ID, "Bob", "First", EMAIL,"password");
 
 
     @Autowired

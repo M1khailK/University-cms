@@ -27,6 +27,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public void save(Teacher teacher) {
         teacherRepository.save(teacher);
+        teacherRepository.setTeacherRole(teacher.getId());
     }
 
     @Override
@@ -69,7 +70,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to) {
-        Teacher teacher = teacherRepository.findTeacherByUserId(id).get();
+        Teacher teacher = teacherRepository.findById(id).get();
         return lessonService.getAllByTeacherAndDateBetween(teacher, from, to);
     }
 

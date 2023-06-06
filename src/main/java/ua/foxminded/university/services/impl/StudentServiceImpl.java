@@ -27,6 +27,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void save(Student student) {
         studentRepository.save(student);
+        studentRepository.setStudentRole(student.getId());
     }
 
     @Override
@@ -51,7 +52,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to) {
-        Student student = studentRepository.findStudentByUserId(id).get();
+        Student student = studentRepository.findById(id).get();
         return lessonService.getAllByGroupAndDateBetween(student.getGroup(), from, to);
     }
 

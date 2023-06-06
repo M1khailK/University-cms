@@ -56,23 +56,23 @@ public class UserScheduleControllerTest {
         LocalDate localDateFrom = LocalDate.of(2023, 1, 1);
         LocalDate localDateTo = LocalDate.of(2023, 1, 30);
         Subject subject = new Subject(1, "Math");
-        Teacher teacher = new Teacher(1, "Viktoria", "Second", "teacher@gmail.com");
+        Teacher teacher = new Teacher(1, "Viktoria", "Second", "teacher@gmail.com","password");
         Group group = new Group(1, "AA-10");
         Lesson lesson = new Lesson(1, "Lesson of mathematics",
                 LocalDate.of(2023, 1, 15), null, null, subject,
                 group, teacher);
 
-        doNothing().when(serviceManager).register("[ROLE_STUDENT]", studentService);
-        doNothing().when(serviceManager).register("[ROLE_TEACHER]", teacherService);
+        doNothing().when(serviceManager).register("ROLE_STUDENT", studentService);
+        doNothing().when(serviceManager).register("ROLE_TEACHER", teacherService);
 
-        when(serviceManager.getServiceByRole("[ROLE_STUDENT]")).thenReturn(Optional.of(studentService));
-        when(serviceManager.getServiceByRole("[ROLE_TEACHER]")).thenReturn(Optional.of(teacherService));
+        when(serviceManager.getServiceByRole("ROLE_STUDENT")).thenReturn(Optional.of(studentService));
+        when(serviceManager.getServiceByRole("ROLE_TEACHER")).thenReturn(Optional.of(teacherService));
 
         when(userService.getUserIdByEmail("student@gmail.com")).thenReturn(ID);
         when(userService.getUserIdByEmail("teacher@gmail.com")).thenReturn(ID);
 
-        when(serviceManager.getServiceByRole("[ROLE_STUDENT]").get().getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
-        when(serviceManager.getServiceByRole("[ROLE_TEACHER]").get().getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
+        when(serviceManager.getServiceByRole("ROLE_STUDENT").get().getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
+        when(serviceManager.getServiceByRole("ROLE_TEACHER").get().getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
     }
 
     @ParameterizedTest

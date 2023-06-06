@@ -26,7 +26,7 @@ public class StudentServiceImplTest {
     private static final String PASSWORD = "password";
     private static final String newPassword = "newPassword";
     private static final int ID = 1;
-    private static final Student student = new Student(ID, "Alex", "First", EMAIL, null);
+    private static final Student student = new Student(ID, "Alex", "First", EMAIL, null,"password");
 
     @Autowired
     private StudentService studentService;
@@ -45,7 +45,7 @@ public class StudentServiceImplTest {
     public void studentService_shouldChangePassword_whenInputHasOldPasswordNewPasswordAndEmail() {
         String oldPassword = "password";
         String newPassword = "newPassword";
-        Student student = new Student(ID, "Alex", "First", EMAIL, null);
+        Student student = new Student(ID, "Alex", "First", EMAIL, null,"password");
 
         when(passwordEncoder.matches(oldPassword, studentRepository.findPasswordById(ID))).thenReturn(true);
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);

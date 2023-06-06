@@ -35,12 +35,15 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     @Query(value = "SELECT user_id FROM users WHERE email = ?", nativeQuery = true)
     Integer findIdByEmail(String email);
 
-    @Query(value = "SELECT t.*, u.email, u.first_name, u.last_name FROM teachers t JOIN users u ON t.user_id = u.user_id WHERE t.user_id = ?", nativeQuery = true)
-    Optional<Teacher> findTeacherByUserId(Integer userId);
-
-    @Query(value = "SELECT t.*, u.email, u.first_name, u.last_name " +
+    @Query(value = "SELECT t.*, u.email, u.first_name, u.last_name, u.password " +
             "FROM teachers t " +
             "JOIN users u ON t.user_id = u.user_id " +
-            "WHERE u.isEnabled = true",nativeQuery = true)
+            "WHERE u.isEnabled = true", nativeQuery = true)
     List<Teacher> findAllEnabledTeachers();
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO user_role (user_id, role) " +
+            "VALUES (?, 'TEACHER')", nativeQuery = true)
+    void setTeacherRole(int teacherId);
 }

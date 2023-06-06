@@ -35,13 +35,15 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Query(value = "SELECT user_id FROM users WHERE email = ?", nativeQuery = true)
     Integer findIdByEmail(String email);
 
-    @Query(value = "SELECT s.*, u.email, u.first_name, u.last_name FROM students s JOIN users u ON s.user_id = u.user_id WHERE s.user_id = ?", nativeQuery = true)
-    Optional<Student> findStudentByUserId(Integer userId);
-
-    @Query(value = "SELECT s.*, u.email, u.first_name, u.last_name " +
+    @Query(value = "SELECT s.*, u.email, u.first_name, u.last_name, u.password " +
             "FROM students s " +
             "JOIN users u ON s.user_id = u.user_id " +
-            "WHERE u.isEnabled = true",nativeQuery = true)
+            "WHERE u.isEnabled = true", nativeQuery = true)
     List<Student> findAllEnabledStudents();
 
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO user_role (user_id, role) " +
+            "VALUES (?, 'STUDENT')", nativeQuery = true)
+    void setStudentRole(int studentId);
 }

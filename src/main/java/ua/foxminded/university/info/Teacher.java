@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.SecondaryTable;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,9 +22,11 @@ import lombok.NoArgsConstructor;
 public class Teacher {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
+    @SequenceGenerator(name = "user_generator", sequenceName = "user_seq",allocationSize = 1)
     @Column(name = "user_id", length = 50, nullable = false)
     private Integer id;
+
 
     @Column(name = "first_name", table = "users", length = 50, nullable = false)
     private String firstName;
@@ -33,4 +36,6 @@ public class Teacher {
 
     @Column(name = "email", table = "users", length = 50, nullable = false)
     private String email;
+    @Column(name = "password",table = "users",nullable = false)
+    private String password;
 }

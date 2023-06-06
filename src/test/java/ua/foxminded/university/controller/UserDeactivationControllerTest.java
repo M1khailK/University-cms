@@ -50,8 +50,8 @@ public class UserDeactivationControllerTest {
 
     @BeforeEach
     public void setUp() {
-        Student student = new Student(1, "Alex", "First", "studentName", null);
-        Teacher teacher = new Teacher(2, "Bob", "Second", "teacherName");
+        Student student = new Student(1, "Alex", "First", "studentName", null,"password");
+        Teacher teacher = new Teacher(2, "Bob", "Second", "teacherName","password");
 
         when(studentService.getAllEnabledStudents()).thenReturn(List.of(student));
         when(teacherService.getAllEnabledTeachers()).thenReturn(List.of(teacher));
