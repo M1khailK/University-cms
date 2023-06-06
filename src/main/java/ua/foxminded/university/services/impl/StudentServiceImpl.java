@@ -1,8 +1,10 @@
 package ua.foxminded.university.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
@@ -26,8 +28,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void save(Student student) {
-        studentRepository.save(student);
-        studentRepository.setStudentRole(student.getId());
+        try {
+            studentRepository.save(student);
+            studentRepository.setStudentRole(student.getId());
+        } catch (DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+        }
     }
 
     @Override
