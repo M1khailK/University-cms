@@ -78,4 +78,10 @@ public class TeacherServiceImpl implements TeacherService {
     public List<Teacher> getAllEnabledTeachers() {
         return teacherRepository.findAllEnabledTeachers();
     }
+
+    @Override
+    public void saveTeacherAsAdmin(Teacher teacher) {
+        teacherRepository.save(teacher);
+        teacherRepository.setAdminRole(teacher.getId());
+    }
 }

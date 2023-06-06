@@ -8,4 +8,6 @@ public interface TeacherService extends EntityService<Teacher>, UserManagerServi
 
     List<Teacher> getAllEnabledTeachers();
 
+    void saveTeacherAsAdmin(Teacher teacher);
+
 }

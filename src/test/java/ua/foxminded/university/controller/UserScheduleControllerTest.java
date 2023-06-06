@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -38,6 +39,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @MockBean(GroupService.class)
 @MockBean(UserService.class)
 @MockBean(SubjectService.class)
+@MockBean(PasswordEncoder.class)
 public class UserScheduleControllerTest {
     private static final int ID = 1;
     @Autowired

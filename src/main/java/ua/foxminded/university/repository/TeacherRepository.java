@@ -46,4 +46,10 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     @Query(value = "INSERT INTO user_role (user_id, role) " +
             "VALUES (?, 'TEACHER')", nativeQuery = true)
     void setTeacherRole(int teacherId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO user_role (user_id, role) " +
+            "VALUES (?, 'ADMIN')", nativeQuery = true)
+    void setAdminRole(int id);
 }
