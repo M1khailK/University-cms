@@ -35,6 +35,12 @@ public class UserRepositoryImplTest {
 
         boolean actual = jdbcTemplate.queryForObject(selectIsEnabledFromStudent, Boolean.class, 1);
 
-        Assertions.assertEquals(false, actual);
+        Assertions.assertFalse(actual);
+    }
+
+    @Test
+    public void userRepository_shouldFindUserId_whenInputHasUserEmail() {
+        int id = userRepository.findUserIdByEmail("alex.first@example.com");
+        Assertions.assertEquals(1, id);
     }
 }

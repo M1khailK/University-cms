@@ -27,24 +27,4 @@ public class UserServiceImpl implements UserService {
         userRepository.deactivateUserAccountById(id);
     }
 
-    @Override
-    public void insertUser(String firstName, String lastName, String email, String password) {
-        userRepository.insertUser(firstName, lastName, email, encoder.encode(password));
-    }
-
-    @Override
-    public void insertStudentById(Integer userId, Integer groupId) {
-        userRepository.insertStudent(userId, groupId);
-    }
-
-    @Override
-    public void insertTeacherById(Integer userId) {
-        userRepository.insertTeacher(userId);
-    }
-
-    @Override
-    public void insertAdmin(Integer userId) {
-        userRepository.insertAdmin(userId);
-    }
-
 }
