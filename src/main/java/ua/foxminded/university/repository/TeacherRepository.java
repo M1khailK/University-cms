@@ -10,11 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
-    @Query(value = "SELECT u.user_id, u.first_name, u.last_name, u.email, u.password, u.isEnabled " +
-            "FROM users u " +
-            "INNER JOIN user_role ur ON u.user_id = ur.user_id " +
-            "INNER JOIN teachers t ON u.user_id = t.user_id " +
-            "WHERE u.email = ? AND ur.role = 'TEACHER'", nativeQuery = true)
+
     Optional<Teacher> findByEmail(String email);
 
     @Query(value = "SELECT u.password " +
@@ -31,9 +27,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             "FROM teachers " +
             "WHERE user_id = ?2)", nativeQuery = true)
     void changePasswordById(String newPassword, int id);
-
-    @Query(value = "SELECT user_id FROM users WHERE email = ?", nativeQuery = true)
-    Integer findIdByEmail(String email);
 
     @Query(value = "SELECT t.*, u.email, u.first_name, u.last_name, u.password " +
             "FROM teachers t " +
