@@ -13,8 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
-import ua.foxminded.university.info.Student;
-import ua.foxminded.university.info.Teacher;
+import ua.foxminded.university.customexceptions.InvalidUserIdException;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.EmailSenderService;
 import ua.foxminded.university.services.GroupService;
@@ -25,11 +24,9 @@ import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
-import java.util.List;
 import java.util.stream.Stream;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
@@ -52,13 +49,7 @@ public class UserDeactivationControllerTest {
 
     @BeforeEach
     public void setUp() {
-        Student student = new Student(1, "Alex", "First", "studentName", null,"password");
-        Teacher teacher = new Teacher(2, "Bob", "Second", "teacherName","password");
-
-        when(studentService.getAllEnabledStudents()).thenReturn(List.of(student));
-        when(teacherService.getAllEnabledTeachers()).thenReturn(List.of(teacher));
-        doNothing().when(userService).disableUserById(1);
-        doNothing().when(userService).disableUserById(2);
+        doThrow(InvalidUserIdException.class).when(userService).disableUserById(null);
     }
 
     @Test
@@ -68,9 +59,11 @@ public class UserDeactivationControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("deactivationPage"))
                 .andExpect(MockMvcResultMatchers.model().size(2));
     }
+
     @Test
     public void userDeactivationController_shouldDeactivateUser_whenUserIsAdmin() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/deactivateUser").with(user("admin").roles("ADMIN")))
+        mockMvc.perform(MockMvcRequestBuilders.get("/deactivateUser").with(user("admin").roles("ADMIN"))
+                .param("userId", "1"))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/deactivationPage"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
@@ -88,6 +81,15 @@ public class UserDeactivationControllerTest {
     public void userDeactivationController_shouldNotDeactivateUser_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/deactivateUser").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    public void userDeactivationController_shouldThrowException_whenInputUserIdIsNull() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/deactivateUser").with(user("admin").roles("ADMIN")))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().size(2))
+                .andExpect(MockMvcResultMatchers.view().name("errorPage"));
+
     }
 
     private static Stream<RequestPostProcessor> provideRoles() {

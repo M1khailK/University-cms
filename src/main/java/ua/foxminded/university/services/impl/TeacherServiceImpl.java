@@ -19,6 +19,9 @@ import java.util.List;
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
+    private static final String DUPLICATED_EMAIL_MESSAGE = "Email already exists. Please choose a different email.";
+    private static final String PASSWORD_IS_INCORRECT = "The old password is incorrect!";
+
     @Autowired
     private TeacherRepository teacherRepository;
     @Autowired
@@ -32,7 +35,7 @@ public class TeacherServiceImpl implements TeacherService {
             teacherRepository.save(teacher);
             teacherRepository.setTeacherRole(teacher.getId());
         } catch (DataIntegrityViolationException exception) {
-            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+            throw new DuplicateEmailException(DUPLICATED_EMAIL_MESSAGE);
         }
     }
 
@@ -60,7 +63,7 @@ public class TeacherServiceImpl implements TeacherService {
             teacherRepository.changePasswordById(passwordEncoder.encode(newPassword), teacher.getId());
             teacherRepository.save(teacher);
         } else {
-            throw new InvalidOldPasswordException("The old password is incorrect!");
+            throw new InvalidOldPasswordException(PASSWORD_IS_INCORRECT);
         }
     }
 
@@ -87,7 +90,11 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void saveTeacherAsAdmin(Teacher teacher) {
-        teacherRepository.save(teacher);
-        teacherRepository.setAdminRole(teacher.getId());
+        try {
+            teacherRepository.save(teacher);
+            teacherRepository.setAdminRole(teacher.getId());
+        } catch (DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException(DUPLICATED_EMAIL_MESSAGE);
+        }
     }
 }

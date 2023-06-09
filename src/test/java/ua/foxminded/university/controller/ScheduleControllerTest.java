@@ -59,32 +59,6 @@ public class ScheduleControllerTest {
     @MockBean
     private SubjectService subjectService;
 
-    @BeforeEach
-    public void setUp() {
-        LocalDate localDateFrom = LocalDate.of(2023, 1, 1);
-        LocalDate localDateTo = LocalDate.of(2023, 1, 30);
-        Subject subject = new Subject(1, "Math");
-        Teacher teacher = new Teacher(1, "Viktoria", "Second", "foo@gmail.com","password");
-        Group group = new Group(1, "AA-10");
-        Student student = new Student(1, "Max", "First", "qwerty@gmail.com", group,"password");
-
-        when(studentService.getAll()).thenReturn(Collections.singletonList(student));
-        when(teacherService.getAll()).thenReturn(Collections.singletonList(teacher));
-
-        when(studentService.getById(1)).thenReturn(student);
-        when(teacherService.getById(1)).thenReturn(teacher);
-        when(groupService.getById(1)).thenReturn(group);
-
-        List<Lesson> singletonList = Collections.singletonList(new Lesson(1, "Lesson of mathematics",
-                LocalDate.of(2023, 1, 1), null, null, subject,
-                groupService.getById(1), teacherService.getById(1)));
-
-        when(lessonService.getAllByGroupAndDateBetween(group, localDateFrom, localDateTo)).
-                thenReturn(singletonList);
-        when(lessonService.getAllByTeacherAndDateBetween(teacher, localDateFrom, localDateTo))
-                .thenReturn(singletonList);
-    }
-
     @ParameterizedTest
     @MethodSource("provideRoles")
     public void generalScheduleController_shouldShowGeneralSchedulePage_whenUserHasRoleOrIsAnonymousAndInputIsEmpty(RequestPostProcessor user) throws Exception {
