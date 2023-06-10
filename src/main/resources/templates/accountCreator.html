@@ -16,12 +16,12 @@
     </div>
     <div class="form-container studentAccount">
         <h2>Student Account Creation</h2>
-        <form th:action="@{/createStudent}" method="post" name="studentForm" th:object="${user}">
-            <label>First Name</label> <input type="text" name="user.firstName">
-            <label>Last Name</label> <input type="text" name="user.lastName">
-            <label>Email</label> <input type="text" name="user.email">
-            <label>Group</label> <input type="text" name="user.groupName">
-            <label>Password</label> <input type="text" name="user.password">
+        <form th:action="@{/createStudent}" method="post" name="studentForm">
+            <label>First Name</label> <input type="text" name="firstName">
+            <label>Last Name</label> <input type="text" name="lastName">
+            <label>Email</label> <input type="text" name="email">
+            <label>Group</label> <input type="text" name="groupName">
+            <label>Password</label> <input type="text" name="password">
             <button type="submit" class="submit">Create Student Account</button>
         </form>
     </div>

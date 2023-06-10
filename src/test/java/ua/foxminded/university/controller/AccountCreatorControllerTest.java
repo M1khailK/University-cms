@@ -1,5 +1,6 @@
 package ua.foxminded.university.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
+import ua.foxminded.university.customexceptions.InvalidUserIdException;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.EmailSenderService;
@@ -26,6 +28,8 @@ import ua.foxminded.university.services.UserService;
 import javax.sql.DataSource;
 import java.util.stream.Stream;
 
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
@@ -46,6 +50,21 @@ public class AccountCreatorControllerTest {
     private MockMvc mockMvc;
 
     @Test
+    public void accountCreatorController_shouldShowAccountCreatorPage_whenUserIsAdmin() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/accountCreatorPage").with(user("admin").roles("ADMIN")))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("accountCreator"))
+                .andExpect(MockMvcResultMatchers.model().size(0));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideRoles")
+    public void accountCreatorController_shouldNotCreateStudentAccount_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/accountCreatorPage").with(user))
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
     public void accountCreatorController_shouldCreateStudentAccount_whenInputIsUserObject() throws Exception {
         User user = new User();
         user.setEmail("userEmail@email.com");
@@ -53,10 +72,46 @@ public class AccountCreatorControllerTest {
         user.setFirstName("Name");
         user.setLastName("Surname");
         user.setPassword("password");
-        mockMvc.perform(MockMvcRequestBuilders.post("/createStudent").with(user("admin").roles("ADMIN")))
+        mockMvc.perform(MockMvcRequestBuilders.post("/createStudent").with(user("admin").roles("ADMIN")).with(csrf()).flashAttr("user", user))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.view().name("accountCreator"))
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/accountCreatorPage"))
+                .andExpect(MockMvcResultMatchers.model().size(0));
+    }
+    @Test
+    public void accountCreatorController_shouldCreateTeacherAccount_whenInputIsUserObject() throws Exception {
+        User user = new User();
+        user.setEmail("userEmail@email.com");
+        user.setFirstName("Name");
+        user.setLastName("Surname");
+        user.setPassword("password");
+        mockMvc.perform(MockMvcRequestBuilders.post("/createTeacher").with(user("admin").roles("ADMIN")).with(csrf()).flashAttr("user", user))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/accountCreatorPage"))
+                .andExpect(MockMvcResultMatchers.model().size(0));
+    }
+    @Test
+    public void accountCreatorController_shouldCreateAdminAccount_whenInputIsUserObject() throws Exception {
+        User user = new User();
+        user.setEmail("userEmail@email.com");
+        user.setFirstName("Name");
+        user.setLastName("Surname");
+        user.setPassword("password");
+        mockMvc.perform(MockMvcRequestBuilders.post("/createAdmin").with(user("admin").roles("ADMIN")).with(csrf()).flashAttr("user", user))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/accountCreatorPage"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
     }
 
+    @ParameterizedTest
+    @MethodSource("provideRoles")
+    public void accountCreatorController_shouldNotShowAccountCreatorPage_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/accountCreatorPage").with(user))
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    private static Stream<RequestPostProcessor> provideRoles() {
+        return Stream.of(
+                user("studentName").roles("STUDENT"),
+                user("teacherName").roles("TEACHER"));
+    }
 }

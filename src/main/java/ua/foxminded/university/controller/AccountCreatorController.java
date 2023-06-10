@@ -50,7 +50,7 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
     }
 
     @PostMapping("/createStudent")
-    public String createStudentAccount(@Valid @ModelAttribute("user") User user) {
+    public String createStudentAccount(@Valid User user) {
         Group group = groupService.getByName(user.getGroupName());
         Student student = new Student(null, user.getFirstName(), user.getLastName(), user.getEmail(), group,
                 passwordEncoder.encode(user.getPassword()));
