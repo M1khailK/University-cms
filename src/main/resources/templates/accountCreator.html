@@ -17,31 +17,31 @@
     <div class="form-container studentAccount">
         <h2>Student Account Creation</h2>
         <form th:action="@{/createStudent}" method="post" name="studentForm">
-            <label>First Name</label> <input type="text" name="firstName">
-            <label>Last Name</label> <input type="text" name="lastName">
-            <label>Email</label> <input type="text" name="email">
-            <label>Group</label> <input type="text" name="groupName">
-            <label>Password</label> <input type="text" name="password">
+            <label>First Name</label> <input type="text" name="firstName" required minlength="2" maxlength="50">
+            <label>Last Name</label> <input type="text" name="lastName" required minlength="2" maxlength="50">
+            <label>Email</label> <input type="text" name="email" required pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$" minlength="5" maxlength="50">
+            <label>Group(Please enter the group name)</label> <input type="text" name="groupName" required minlength="5" maxlength="50">
+            <label>Password(min. 5 chars, 1 letter, 1 digit.)</label> <input type="password" name="password" required minlength="5" maxlength="50" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$">
             <button type="submit" class="submit">Create Student Account</button>
         </form>
     </div>
     <div class="form-container teacherAccount">
         <h2>Teacher Account Creation</h2>
         <form th:action="@{/createTeacher}" method="post" name="teacherForm">
-            <label>First Name</label> <input type="text" name="firstName">
-            <label>Last Name</label> <input type="text" name="lastName">
-            <label>Email</label> <input type="text" name="email">
-            <label>Password</label> <input type="text" name="password">
+            <label>First Name</label> <input type="text" name="firstName" required minlength="2" maxlength="50">
+            <label>Last Name</label> <input type="text" name="lastName" required minlength="2" maxlength="50">
+            <label>Email</label> <input type="text" name="email" required pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$" minlength="5" maxlength="50">
+            <label>Password(min. 5 chars, 1 letter, 1 digit.)</label> <input type="password" name="password" required minlength="5" maxlength="50" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$">
             <button type="submit" class="submit">Create Teacher Account</button>
         </form>
     </div>
     <div class="form-container adminAccount">
         <h2>Admin Account Creation</h2>
         <form th:action="@{/createAdmin}" method="post" name="adminForm">
-            <label>First Name</label> <input type="text" name="firstName">
-            <label>Last Name</label> <input type="text" name="lastName">
-            <label>Email</label> <input type="text" name="email">
-            <label>Password</label> <input type="text" name="password">
+            <label>First Name</label> <input type="text" name="firstName" required minlength="2" maxlength="50">
+            <label>Last Name</label> <input type="text" name="lastName" required minlength="2" maxlength="50">
+            <label>Email</label> <input type="text" name="email" required pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$" minlength="5" maxlength="50">
+            <label>Password(Create a password: min. 5 chars, 1 letter, 1 digit.)</label> <input type="password" name="password" required minlength="5" maxlength="50" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$">
             <button type="submit" class="submit">Create Admin Account</button>
         </form>
     </div>
