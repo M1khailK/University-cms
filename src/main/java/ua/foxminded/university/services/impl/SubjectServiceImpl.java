@@ -21,7 +21,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject getById(Integer subjectId) {
-        return subjectRepository.findById(subjectId).get();
+        return subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalArgumentException("Subject was not found by id"));
     }
 
     @Override

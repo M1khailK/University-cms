@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ua.foxminded.university.repository.UserRepository;
 
+import java.util.Optional;
+
 @SpringBootTest
 public class UserRepositoryImplTest {
     @Autowired
@@ -40,7 +42,7 @@ public class UserRepositoryImplTest {
 
     @Test
     public void userRepository_shouldFindUserId_whenInputHasUserEmail() {
-        int id = userRepository.findUserIdByEmail("alex.first@example.com");
-        Assertions.assertEquals(1, id);
+        Optional<Integer> id = userRepository.findUserIdByEmail("alex.first@example.com");
+        Assertions.assertEquals(Optional.of(1), id);
     }
 }

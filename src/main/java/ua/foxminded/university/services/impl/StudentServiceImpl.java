@@ -38,7 +38,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student getById(Integer studentId) {
-        return studentRepository.findById(studentId).get();
+        return studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student was not found by id"));
     }
 
     @Override
@@ -53,19 +53,24 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student getByEmail(String email) {
-        return studentRepository.findByEmail(email).get();
+        return studentRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Student was not found by email"));
     }
 
     @Override
     public List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to) {
-        Student student = studentRepository.findById(id).get();
+        Student student = getById(id);
         return lessonService.getAllByGroupAndDateBetween(student.getGroup(), from, to);
     }
 
     @Override
+    public String getPasswordById(int id) {
+        return studentRepository.findPasswordById(id).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id"));
+    }
+
+    @Override
     public void changePassword(String email, String oldPassword, String newPassword) {
-        Student student = studentRepository.findByEmail(email).get();
-        String oldPass = studentRepository.findPasswordById(student.getId());
+        Student student = getByEmail(email);
+        String oldPass = getPasswordById(student.getId());
         if (passwordEncoder.matches(oldPassword, oldPass)) {
             studentRepository.changePasswordById(passwordEncoder.encode(newPassword), student.getId());
             studentRepository.save(student);
@@ -81,6 +86,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> getAllEnabledStudents() {
-        return studentRepository.findAllEnabledStudents();
+        return studentRepository.findAllEnabledStudents().orElseThrow(() -> new IllegalArgumentException("All enabled students were not found"));
     }
 }

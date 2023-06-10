@@ -39,12 +39,12 @@ public class TeacherServiceImplTest {
     @BeforeEach
     public void setUp() {
         when(teacherRepository.findByEmail(EMAIL)).thenReturn(Optional.of(teacher));
-        when(teacherRepository.findPasswordById(teacher.getId())).thenReturn(PASSWORD);
+        when(teacherRepository.findPasswordById(teacher.getId())).thenReturn(Optional.of(PASSWORD));
     }
 
     @Test
     public void teacherService_shouldChangePassword_whenInputHasOldPasswordNewPasswordAndEmail() {
-        when(passwordEncoder.matches(PASSWORD, teacherRepository.findPasswordById(ID))).thenReturn(true);
+        when(passwordEncoder.matches(PASSWORD, teacherRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by teacher's id")))).thenReturn(true);
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
         doNothing().when(teacherRepository).changePasswordById(newPassword, teacher.getId());
 
@@ -52,7 +52,7 @@ public class TeacherServiceImplTest {
 
         verify(teacherRepository).findByEmail(EMAIL);
         verify(teacherRepository, times(2)).findPasswordById(ID);
-        verify(passwordEncoder).matches(PASSWORD, teacherRepository.findPasswordById(ID));
+        verify(passwordEncoder).matches(PASSWORD, teacherRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by teacher's id")));
         verify(teacherRepository).changePasswordById(newPassword, teacher.getId());
         verify(teacherRepository).save(teacher);
 
@@ -60,7 +60,7 @@ public class TeacherServiceImplTest {
 
     @Test
     public void teacherService_shouldThrowAnException_whenInputOldPasswordDoesNotMatchTeacherPassword() {
-        when(passwordEncoder.matches(PASSWORD, teacherRepository.findPasswordById(ID))).thenReturn(false);
+        when(passwordEncoder.matches(PASSWORD, teacherRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by teacher's id")))).thenReturn(false);
         Assertions.assertThrows(InvalidOldPasswordException.class, () -> teacherService.changePassword(EMAIL, PASSWORD, newPassword));
     }
 }

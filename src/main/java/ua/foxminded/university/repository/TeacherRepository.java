@@ -17,7 +17,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             "FROM teachers t " +
             "JOIN users u ON t.user_id = u.user_id " +
             "WHERE t.user_id = ?", nativeQuery = true)
-    String findPasswordById(int id);
+    Optional<String> findPasswordById(int id);
 
     @Modifying
     @Transactional
@@ -32,7 +32,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             "FROM teachers t " +
             "JOIN users u ON t.user_id = u.user_id " +
             "WHERE u.isEnabled = true", nativeQuery = true)
-    List<Teacher> findAllEnabledTeachers();
+    Optional<List<Teacher>> findAllEnabledTeachers();
 
     @Modifying
     @Transactional

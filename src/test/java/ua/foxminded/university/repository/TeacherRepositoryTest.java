@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
 
 import java.util.List;
@@ -36,40 +35,41 @@ public class TeacherRepositoryTest {
 
     @Test
     public void teacherRepository_shouldReturnTeacherByEmail_whenInputHasEmail() {
-        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL,"password");
+        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL, "password");
         Optional<Teacher> actual = teacherRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(expected), actual);
     }
 
     @Test
     public void teacherRepository_shouldReturnPassword_whenInputHasUserId() {
-        String expected = "password";
-        String actual = teacherRepository.findPasswordById(1);
+        Optional<String> expected = Optional.of("password");
+        Optional<String> actual = teacherRepository.findPasswordById(1);
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void teacherRepository_shouldChangePassword_whenInputHasNewPasswordAndUserId() {
-        String expected = "newPassword";
+        Optional<String> expected = Optional.of("newPassword");
         teacherRepository.changePasswordById("newPassword", 1);
 
-        String actual = teacherRepository.findPasswordById(1);
+        Optional<String> actual = teacherRepository.findPasswordById(1);
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void teacherRepository_shouldReturnTeacher_whenInputHasUserId() {
-        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL,"password");
+        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL, "password");
         Teacher actual = teacherRepository.findById(1).get();
         Assertions.assertEquals(expected, actual);
     }
+
     @Test
     public void teacherRepository_shouldReturnListOfTeachers_whenTheirAccountsAreEnabled() {
         String disableUserAccountQuery = "UPDATE users SET isEnabled = FALSE WHERE user_id = ?";
 
         jdbcTemplate.update(disableUserAccountQuery, 1);
-        List<Teacher> actual = teacherRepository.findAllEnabledTeachers();
-        List<Teacher> expected = List.of(new Teacher(2,"Alex","Third","alex.third@example.com","password"));
+        Optional<List<Teacher>> actual = teacherRepository.findAllEnabledTeachers();
+        Optional<List<Teacher>> expected = Optional.of(List.of(new Teacher(2, "Alex", "Third", "alex.third@example.com", "password")));
         Assertions.assertEquals(expected, actual);
     }
 }

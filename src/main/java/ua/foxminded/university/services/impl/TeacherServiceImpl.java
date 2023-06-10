@@ -41,12 +41,17 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher getById(Integer teacherId) {
-        return teacherRepository.findById(teacherId).get();
+        return teacherRepository.findById(teacherId).orElseThrow(() -> new IllegalArgumentException("Teacher id was not found"));
     }
 
     @Override
     public List<Teacher> getAll() {
         return teacherRepository.findAll();
+    }
+
+    @Override
+    public String getPasswordById(int id) {
+        return teacherRepository.findPasswordById(id).orElseThrow(() -> new IllegalArgumentException("Password was not found by teacher's id"));
     }
 
     @Override
@@ -57,8 +62,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void changePassword(String email, String oldPassword, String newPassword) {
-        Teacher teacher = teacherRepository.findByEmail(email).get();
-        String oldPass = teacherRepository.findPasswordById(teacher.getId());
+        Teacher teacher = getByEmail(email);
+        String oldPass = getPasswordById(teacher.getId());
         if (passwordEncoder.matches(oldPassword, oldPass)) {
             teacherRepository.changePasswordById(passwordEncoder.encode(newPassword), teacher.getId());
             teacherRepository.save(teacher);
@@ -74,18 +79,18 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher getByEmail(String email) {
-        return teacherRepository.findByEmail(email).get();
+        return teacherRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Teacher was not found by email"));
     }
 
     @Override
     public List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to) {
-        Teacher teacher = teacherRepository.findById(id).get();
+        Teacher teacher = getById(id);
         return lessonService.getAllByTeacherAndDateBetween(teacher, from, to);
     }
 
     @Override
     public List<Teacher> getAllEnabledTeachers() {
-        return teacherRepository.findAllEnabledTeachers();
+        return teacherRepository.findAllEnabledTeachers().orElseThrow(() -> new IllegalArgumentException("All enabled teachers were not found"));
     }
 
     @Override

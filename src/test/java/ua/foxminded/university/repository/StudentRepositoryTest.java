@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ua.foxminded.university.info.Student;
 
-import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,25 +34,25 @@ public class StudentRepositoryTest {
 
     @Test
     public void studentRepository_shouldReturnStudentByEmail_whenInputHasEmail() {
-        Student expected = new Student(1, "Alex", "First", EMAIL, null,"password");
+        Student expected = new Student(1, "Alex", "First", EMAIL, null, "password");
         Optional<Student> actual = studentRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(expected), actual);
     }
 
     @Test
     public void studentRepository_shouldReturnPassword_whenInputHasStudentId() {
-        String expected = "password";
+        Optional<String> expected = Optional.of("password");
 
-        String actual = studentRepository.findPasswordById(1);
+        Optional<String> actual = studentRepository.findPasswordById(1);
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     public void studentRepository_shouldChangePassword_whenInputHasNewPasswordAndStudentId() {
-        String expected = "newPassword";
+        Optional<String> expected = Optional.of("newPassword");
         studentRepository.changePasswordById("newPassword", 1);
 
-        String actual = studentRepository.findPasswordById(1);
+        Optional<String> actual = studentRepository.findPasswordById(1);
         Assertions.assertEquals(expected, actual);
     }
 
@@ -62,8 +61,8 @@ public class StudentRepositoryTest {
         String disableUserAccountQuery = "UPDATE users SET isEnabled = FALSE WHERE user_id = ?";
 
         jdbcTemplate.update(disableUserAccountQuery, 1);
-        List<Student> actual = studentRepository.findAllEnabledStudents();
-        List<Student> expected = List.of(new Student(2,"Bob","Second","bob.second@example.com",null,"password"));
+        Optional<List<Student>> actual = studentRepository.findAllEnabledStudents();
+        Optional<List<Student>> expected = Optional.of(List.of(new Student(2, "Bob", "Second", "bob.second@example.com", null, "password")));
         Assertions.assertEquals(expected, actual);
     }
 

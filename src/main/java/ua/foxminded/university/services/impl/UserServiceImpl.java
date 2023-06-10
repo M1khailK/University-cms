@@ -15,8 +15,8 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder encoder;
 
     @Override
-    public Integer getUserIdByEmail(String email) {
-        return userRepository.findUserIdByEmail(email);
+    public int getUserIdByEmail(String email) {
+        return userRepository.findUserIdByEmail(email).orElseThrow(() -> new IllegalArgumentException("User was not found by id"));
     }
 
     @Override

@@ -21,7 +21,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group getById(Integer groupId) {
-        return groupRepository.findById(groupId).get();
+        return groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group was not found by id"));
     }
 
     @Override
@@ -36,6 +36,6 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group getByName(String groupName) {
-        return groupRepository.findByName(groupName);
+        return groupRepository.findByName(groupName).orElseThrow(() -> new IllegalArgumentException("Group was not found by name"));
     }
 }

@@ -8,5 +8,6 @@ public interface StudentService extends EntityService<Student>, UserManagerServi
 
     List<Student> getAllEnabledStudents();
 
+    String getPasswordById(int id);
 
 }

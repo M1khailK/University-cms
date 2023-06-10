@@ -38,7 +38,7 @@ public class StudentServiceImplTest {
     @BeforeEach
     public void setUp() {
        when(studentRepository.findByEmail(EMAIL)).thenReturn(Optional.of(student));
-       when(studentRepository.findPasswordById(student.getId())).thenReturn(PASSWORD);
+       when(studentRepository.findPasswordById(student.getId())).thenReturn(Optional.of(PASSWORD));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class StudentServiceImplTest {
         String newPassword = "newPassword";
         Student student = new Student(ID, "Alex", "First", EMAIL, null,"password");
 
-        when(passwordEncoder.matches(oldPassword, studentRepository.findPasswordById(ID))).thenReturn(true);
+        when(passwordEncoder.matches(oldPassword, studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")))).thenReturn(true);
         when(passwordEncoder.encode(newPassword)).thenReturn(newPassword);
         doNothing().when(studentRepository).changePasswordById(newPassword, student.getId());
 
@@ -55,7 +55,7 @@ public class StudentServiceImplTest {
 
         verify(studentRepository).findByEmail(EMAIL);
         verify(studentRepository, times(2)).findPasswordById(ID);
-        verify(passwordEncoder).matches(oldPassword, studentRepository.findPasswordById(ID));
+        verify(passwordEncoder).matches(oldPassword, studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")));
         verify(studentRepository).changePasswordById(newPassword, student.getId());
         verify(studentRepository).save(student);
 
@@ -63,7 +63,7 @@ public class StudentServiceImplTest {
 
     @Test
     public void studentService_shouldThrowAnException_whenInputOldPasswordDoesNotMatchStudentPassword() {
-        when(passwordEncoder.matches(PASSWORD, studentRepository.findPasswordById(ID))).thenReturn(false);
+        when(passwordEncoder.matches(PASSWORD, studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")))).thenReturn(false);
         Assertions.assertThrows(InvalidOldPasswordException.class, () -> studentService.changePassword(EMAIL, PASSWORD, newPassword));
     }
 }

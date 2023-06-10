@@ -1,8 +1,10 @@
 package ua.foxminded.university.repository;
 
+import java.util.Optional;
+
 public interface UserRepository {
 
-    Integer findUserIdByEmail(String email);
+    Optional<Integer> findUserIdByEmail(String email);
 
     void deactivateUserAccountById(Integer id);
 }

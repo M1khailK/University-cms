@@ -31,7 +31,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public Lesson getById(Integer lessonId) {
-        return lessonRepository.findById(lessonId).get();
+        return lessonRepository.findById(lessonId).orElseThrow(() -> new IllegalArgumentException("Lesson was not found by id"));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class LessonServiceImpl implements LessonService {
         if (to == null) {
             to = from.plusDays(1);
         }
-        return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), from, to);
+        return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), from, to).orElseThrow(() -> new IllegalArgumentException("Lessons were not found by teacher's id and date between"));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class LessonServiceImpl implements LessonService {
         if (to == null) {
             to = from;
         }
-        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to);
+        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to).orElseThrow(() -> new IllegalArgumentException("Lessons were not found by group's id and date between"));
     }
 
     private LocalDate getDefaultDate() {
