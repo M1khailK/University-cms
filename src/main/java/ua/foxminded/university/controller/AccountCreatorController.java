@@ -4,14 +4,11 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
-import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.customexceptions.handler.CustomExceptionHandler;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.info.Group;
@@ -55,7 +52,7 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
         Student student = new Student(null, user.getFirstName(), user.getLastName(), user.getEmail(), group,
                 passwordEncoder.encode(user.getPassword()));
         studentService.save(student);
-        prepareUserPasswordEmailParams(user);
+        sendRegistrationEmail(user);
         return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
 
@@ -65,7 +62,7 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
                 passwordEncoder.encode(user.getPassword()));
         teacherService.save(teacher);
 
-        prepareUserPasswordEmailParams(user);
+        sendRegistrationEmail(user);
         return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
 
@@ -75,11 +72,11 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
                 passwordEncoder.encode(user.getPassword()));
         teacherService.saveTeacherAsAdmin(adminTeacher);
 
-        prepareUserPasswordEmailParams(user);
+        sendRegistrationEmail(user);
         return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
 
-    private void prepareUserPasswordEmailParams(User user) {
+    private void sendRegistrationEmail(User user) {
         Map<String, Object> templateParams = new HashMap<>();
         templateParams.put("name", user.getFirstName());
         templateParams.put("surname", user.getLastName());
