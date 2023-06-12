@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
+import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
@@ -40,6 +41,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @MockBean(DataSource.class)
 @MockBean(ServiceManager.class)
 @MockBean(EmailSenderService.class)
+@MockBean(PasswordGenerator.class)
 @Import(SecurityConfig.class)
 public class ScheduleControllerTest {
 

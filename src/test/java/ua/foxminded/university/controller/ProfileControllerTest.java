@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
+import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
@@ -24,6 +25,7 @@ import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -33,6 +35,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
+@MockBean(PasswordGenerator.class)
 @MockBean(DataSource.class)
 @MockBean(LessonService.class)
 @MockBean(GroupService.class)
@@ -56,14 +59,8 @@ public class ProfileControllerTest {
         Student student = new Student(1, "Alex", "First", "studentName", null,"password");
         Teacher teacher = new Teacher(1, "Bob", "Second", "teacherName","password");
 
-        doNothing().when(serviceManager).register("ROLE_STUDENT", studentService);
-        doNothing().when(serviceManager).register("ROLE_TEACHER", teacherService);
-
-        when(serviceManager.getServiceByRole("ROLE_STUDENT")).thenReturn(Optional.of(studentService));
-        when(serviceManager.getServiceByRole("ROLE_TEACHER")).thenReturn(Optional.of(teacherService));
-
-        when(Optional.of(studentService).get().getByEmail(student.getEmail())).thenReturn(student);
-        when(Optional.of(teacherService).get().getByEmail(teacher.getEmail())).thenReturn(teacher);
+        when(serviceManager.getUserManagerServices()).thenReturn(List.of(studentService, teacherService));
+        when(List.of(studentService, teacherService).get(0).getByEmail("username")).thenReturn(student);
 
 
     }
@@ -99,7 +96,7 @@ public class ProfileControllerTest {
 
     private static Stream<RequestPostProcessor> provideRoles() {
         return Stream.of(
-                user("studentName").roles("STUDENT"),
-                user("teacherName").roles("TEACHER"));
+                user("username").roles("STUDENT"),
+                user("username").roles("TEACHER"));
     }
 }

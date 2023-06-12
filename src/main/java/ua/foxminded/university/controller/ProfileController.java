@@ -2,7 +2,6 @@ package ua.foxminded.university.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,35 +13,25 @@ import org.springframework.web.servlet.ModelAndView;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.customexceptions.handler.CustomExceptionHandler;
 import ua.foxminded.university.manager.ServiceManager;
-import ua.foxminded.university.services.StudentService;
-import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserManagerService;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Controller
 public class ProfileController implements CustomExceptionHandler<InvalidOldPasswordException> {
 
     @Autowired
     private ServiceManager serviceManager;
-    @Autowired
-    private StudentService studentService;
-    @Autowired
-    private TeacherService teacherService;
 
     @GetMapping("/profile")
     public String profile(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        serviceManager.register(studentService.getRole(), studentService);
-        serviceManager.register(teacherService.getRole(), teacherService);
-        Collection<? extends GrantedAuthority> userRolesCollection = authentication.getAuthorities();
-        String userRoles = userRolesCollection.stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(", "));
-        model.addAttribute("user", serviceManager.getServiceByRole(userRoles).get().getByEmail(authentication.getName()));
+        List<UserManagerService> services = serviceManager.getUserManagerServices();
+        model.addAttribute("user", services.get(0).getByEmail(authentication.getName()));
         return "profile";
     }
+
 
     @GetMapping("/settings")
     public String settings() {
@@ -54,11 +43,8 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
                                  @RequestParam("newPass") String newPass) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
-        Collection<? extends GrantedAuthority> userRolesCollection = authentication.getAuthorities();
-        String userRoles = userRolesCollection.stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(", "));
-        serviceManager.getServiceByRole(userRoles).get().changePassword(userEmail, oldPass, newPass);
+        List<UserManagerService> services = serviceManager.getUserManagerServices();
+        services.get(0).changePassword(userEmail, oldPass, newPass);
         return "redirect:/profile";
     }
 

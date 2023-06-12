@@ -8,7 +8,7 @@ import ua.foxminded.university.generator.PasswordGenerator;
 
 @SpringBootTest
 public class PasswordGeneratorImplTest {
-    
+
     @Autowired
     private PasswordGenerator passwordGenerator;
 
