@@ -37,18 +37,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student getById(Integer studentId) {
+    public Student getById(int studentId) {
         return studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student was not found by id"));
     }
 
     @Override
     public List<Student> getAll() {
         return studentRepository.findAll();
-    }
-
-    @Override
-    public void deleteById(Integer studentId) {
-        studentRepository.deleteById(studentId);
     }
 
     @Override

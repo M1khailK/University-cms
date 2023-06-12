@@ -6,10 +6,7 @@ public interface EntityService<T>{
 
     void save(T entity);
 
-    T getById(Integer id);
+    T getById(int id);
 
     List<T> getAll();
-
-    void deleteById(Integer id);
-
 }

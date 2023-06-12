@@ -20,18 +20,13 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group getById(Integer groupId) {
+    public Group getById(int groupId) {
         return groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group was not found by id"));
     }
 
     @Override
     public List<Group> getAll() {
         return groupRepository.findAll();
-    }
-
-    @Override
-    public void deleteById(Integer groupId) {
-        groupRepository.deleteById(groupId);
     }
 
     @Override

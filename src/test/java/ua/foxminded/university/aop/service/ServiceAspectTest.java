@@ -73,8 +73,8 @@ public class ServiceAspectTest {
         groupService.getById(GROUP_ID);
         List<ILoggingEvent> logList = listAppender.list;
 
-        String firstExpected = "Calling: Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer)";
-        String secondExpected = "Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer) response: Group(id=1, name=Group)";
+        String firstExpected = "Calling: Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int)";
+        String secondExpected = "Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int) response: Group(id=1, name=Group)";
         Assertions.assertEquals(firstExpected, logList.get(0).getFormattedMessage());
         Assertions.assertEquals(secondExpected, logList.get(1).getFormattedMessage());
         Assertions.assertEquals(Level.TRACE, logList.get(0).getLevel());

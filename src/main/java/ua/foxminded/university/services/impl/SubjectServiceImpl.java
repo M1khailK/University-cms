@@ -20,17 +20,12 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Subject getById(Integer subjectId) {
+    public Subject getById(int subjectId) {
         return subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalArgumentException("Subject was not found by id"));
     }
 
     @Override
     public List<Subject> getAll() {
         return subjectRepository.findAll();
-    }
-
-    @Override
-    public void deleteById(Integer subjectId) {
-        subjectRepository.deleteById(subjectId);
     }
 }

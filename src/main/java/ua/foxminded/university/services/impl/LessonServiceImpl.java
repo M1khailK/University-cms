@@ -30,7 +30,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public Lesson getById(Integer lessonId) {
+    public Lesson getById(int lessonId) {
         return lessonRepository.findById(lessonId).orElseThrow(() -> new IllegalArgumentException("Lesson was not found by id"));
     }
 
@@ -68,10 +68,5 @@ public class LessonServiceImpl implements LessonService {
         } else {
             return today;
         }
-    }
-
-    @Override
-    public void deleteById(Integer lessonId) {
-        lessonRepository.deleteById(lessonId);
     }
 }

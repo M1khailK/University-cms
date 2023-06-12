@@ -47,11 +47,6 @@ public class UserDeactivationControllerTest {
     @MockBean
     private TeacherService teacherService;
 
-    @BeforeEach
-    public void setUp() {
-        doThrow(InvalidUserIdException.class).when(userService).disableUserById(null);
-    }
-
     @Test
     public void userDeactivationController_shouldShowDeactivationPage_whenUserIsAdmin() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/deactivationPage").with(user("admin").roles("ADMIN")))
@@ -81,15 +76,6 @@ public class UserDeactivationControllerTest {
     public void userDeactivationController_shouldNotDeactivateUser_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/deactivateUser").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
-    }
-
-    @Test
-    public void userDeactivationController_shouldThrowException_whenInputUserIdIsNull() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/deactivateUser").with(user("admin").roles("ADMIN")))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.model().size(2))
-                .andExpect(MockMvcResultMatchers.view().name("errorPage"));
-
     }
 
     private static Stream<RequestPostProcessor> provideRoles() {

@@ -4,6 +4,6 @@ public interface UserService {
 
     int getUserIdByEmail(String email);
 
-    void disableUserById(Integer id);
+    void disableUserById(int id);
 
 }

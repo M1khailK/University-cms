@@ -40,7 +40,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public Teacher getById(Integer teacherId) {
+    public Teacher getById(int teacherId) {
         return teacherRepository.findById(teacherId).orElseThrow(() -> new IllegalArgumentException("Teacher id was not found"));
     }
 
@@ -53,12 +53,6 @@ public class TeacherServiceImpl implements TeacherService {
     public String getPasswordById(int id) {
         return teacherRepository.findPasswordById(id).orElseThrow(() -> new IllegalArgumentException("Password was not found by teacher's id"));
     }
-
-    @Override
-    public void deleteById(Integer teacherId) {
-        teacherRepository.deleteById(teacherId);
-    }
-
 
     @Override
     public void changePassword(String email, String oldPassword, String newPassword) {
