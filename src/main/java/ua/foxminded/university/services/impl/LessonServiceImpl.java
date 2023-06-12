@@ -47,7 +47,7 @@ public class LessonServiceImpl implements LessonService {
         if (to == null) {
             to = from.plusDays(1);
         }
-        return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), from, to).orElseThrow(() -> new IllegalArgumentException("Lessons were not found by teacher's id and date between"));
+        return lessonRepository.findAllByTeacherIdAndDateBetween(teacher.getId(), from, to);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class LessonServiceImpl implements LessonService {
         if (to == null) {
             to = from;
         }
-        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to).orElseThrow(() -> new IllegalArgumentException("Lessons were not found by group's id and date between"));
+        return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to);
     }
 
     private LocalDate getDefaultDate() {

@@ -81,6 +81,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> getAllEnabledStudents() {
-        return studentRepository.findAllEnabledStudents().orElseThrow(() -> new IllegalArgumentException("All enabled students were not found"));
+        return studentRepository.findAllEnabledStudents();
     }
 }

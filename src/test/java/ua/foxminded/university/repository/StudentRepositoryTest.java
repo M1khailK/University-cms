@@ -61,8 +61,8 @@ public class StudentRepositoryTest {
         String disableUserAccountQuery = "UPDATE users SET isEnabled = FALSE WHERE user_id = ?";
 
         jdbcTemplate.update(disableUserAccountQuery, 1);
-        Optional<List<Student>> actual = studentRepository.findAllEnabledStudents();
-        Optional<List<Student>> expected = Optional.of(List.of(new Student(2, "Bob", "Second", "bob.second@example.com", null, "password")));
+       List<Student> actual = studentRepository.findAllEnabledStudents();
+       List<Student> expected = List.of(new Student(2, "Bob", "Second", "bob.second@example.com", null, "password"));
         Assertions.assertEquals(expected, actual);
     }
 

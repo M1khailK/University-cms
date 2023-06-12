@@ -68,8 +68,8 @@ public class TeacherRepositoryTest {
         String disableUserAccountQuery = "UPDATE users SET isEnabled = FALSE WHERE user_id = ?";
 
         jdbcTemplate.update(disableUserAccountQuery, 1);
-        Optional<List<Teacher>> actual = teacherRepository.findAllEnabledTeachers();
-        Optional<List<Teacher>> expected = Optional.of(List.of(new Teacher(2, "Alex", "Third", "alex.third@example.com", "password")));
+        List<Teacher> actual = teacherRepository.findAllEnabledTeachers();
+        List<Teacher> expected = List.of(new Teacher(2, "Alex", "Third", "alex.third@example.com", "password"));
         Assertions.assertEquals(expected, actual);
     }
 }

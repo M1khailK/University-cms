@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LessonRepository extends JpaRepository<Lesson, Integer> {
-    Optional<List<Lesson>> findAllByGroupIdAndDateBetween(Integer groupId, LocalDate from, LocalDate to);
+    List<Lesson> findAllByGroupIdAndDateBetween(Integer groupId, LocalDate from, LocalDate to);
 
-    Optional<List<Lesson>> findAllByTeacherIdAndDateBetween(Integer teacherId, LocalDate from, LocalDate to);
+    List<Lesson> findAllByTeacherIdAndDateBetween(Integer teacherId, LocalDate from, LocalDate to);
 }

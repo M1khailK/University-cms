@@ -84,7 +84,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Teacher> getAllEnabledTeachers() {
-        return teacherRepository.findAllEnabledTeachers().orElseThrow(() -> new IllegalArgumentException("All enabled teachers were not found"));
+        return teacherRepository.findAllEnabledTeachers();
     }
 
     @Override

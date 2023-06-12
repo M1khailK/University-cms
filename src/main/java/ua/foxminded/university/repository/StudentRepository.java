@@ -32,7 +32,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
             "FROM students s " +
             "JOIN users u ON s.user_id = u.user_id " +
             "WHERE u.isEnabled = true", nativeQuery = true)
-    Optional<List<Student>> findAllEnabledStudents();
+    List<Student> findAllEnabledStudents();
 
     @Modifying
     @Transactional
