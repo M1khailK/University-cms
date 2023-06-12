@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.handler.CustomExceptionHandler;
 import ua.foxminded.university.dto.User;
+import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
@@ -40,6 +41,8 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
     private EmailSenderService emailSenderService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordGenerator passwordGenerator;
 
     @GetMapping("/accountCreatorPage")
     public String accountCreatorPage() {
@@ -48,6 +51,7 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
 
     @PostMapping("/createStudent")
     public String createStudentAccount(@Valid User user) {
+        user.setPassword(passwordGenerator.generatePassword());
         Group group = groupService.getByName(user.getGroupName());
         Student student = new Student(null, user.getFirstName(), user.getLastName(), user.getEmail(), group,
                 passwordEncoder.encode(user.getPassword()));
@@ -58,6 +62,7 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
 
     @PostMapping("/createTeacher")
     public String createTeacherAccount(@Valid User user) {
+        user.setPassword(passwordGenerator.generatePassword());
         Teacher teacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
                 passwordEncoder.encode(user.getPassword()));
         teacherService.save(teacher);
@@ -68,6 +73,7 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
 
     @PostMapping("/createAdmin")
     public String createAdminAccount(@Valid User user) {
+        user.setPassword(passwordGenerator.generatePassword());
         Teacher adminTeacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
                 passwordEncoder.encode(user.getPassword()));
         teacherService.saveTeacherAsAdmin(adminTeacher);
