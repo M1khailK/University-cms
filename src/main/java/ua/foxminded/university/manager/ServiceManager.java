@@ -1,6 +1,5 @@
 package ua.foxminded.university.manager;
 
-import org.springframework.security.core.Authentication;
 import ua.foxminded.university.services.UserManagerService;
 
 import java.util.List;

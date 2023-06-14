@@ -1,5 +1,6 @@
 package ua.foxminded.university.services.impl;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,6 +9,7 @@ import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Teacher;
+import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
@@ -30,6 +32,7 @@ public class TeacherServiceImpl implements TeacherService {
     private PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public void save(Teacher teacher) {
         try {
             teacherRepository.save(teacher);
@@ -55,6 +58,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional
     public void changePassword(String email, String oldPassword, String newPassword) {
         Teacher teacher = getByEmail(email);
         String oldPass = getPasswordById(teacher.getId());
@@ -83,11 +87,17 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public void register(ServiceManager manager) {
+            manager.register(getRole(), this);
+    }
+
+    @Override
     public List<Teacher> getAllEnabledTeachers() {
         return teacherRepository.findAllEnabledTeachers();
     }
 
     @Override
+    @Transactional
     public void saveTeacherAsAdmin(Teacher teacher) {
         try {
             teacherRepository.save(teacher);

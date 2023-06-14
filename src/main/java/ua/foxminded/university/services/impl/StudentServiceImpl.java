@@ -1,5 +1,6 @@
 package ua.foxminded.university.services.impl;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,6 +9,7 @@ import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
+import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
@@ -27,6 +29,7 @@ public class StudentServiceImpl implements StudentService {
     private PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public void save(Student student) {
         try {
             studentRepository.save(student);
@@ -58,11 +61,17 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public void register(ServiceManager manager) {
+        manager.register(getRole(), this);
+    }
+
+    @Override
     public String getPasswordById(int id) {
         return studentRepository.findPasswordById(id).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id"));
     }
 
     @Override
+    @Transactional
     public void changePassword(String email, String oldPassword, String newPassword) {
         Student student = getByEmail(email);
         String oldPass = getPasswordById(student.getId());
