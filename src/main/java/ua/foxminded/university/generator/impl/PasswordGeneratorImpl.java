@@ -11,13 +11,12 @@ public class PasswordGeneratorImpl implements PasswordGenerator {
     private static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     @Override
-    public String generatePassword() {
+    public char[] generatePassword() {
         SecureRandom random = new SecureRandom();
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            int randomIndex = random.nextInt(CHARS.length());
-            stringBuilder.append(CHARS.charAt(randomIndex));
+        char[] password = new char[8];
+        for (int i = 0; i < password.length; ++i) {
+            password[i] = CHARS.charAt(random.nextInt(CHARS.length()));
         }
-        return stringBuilder.toString();
+        return password;
     }
 }
