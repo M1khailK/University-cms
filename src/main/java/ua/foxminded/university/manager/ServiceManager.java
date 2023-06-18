@@ -2,7 +2,6 @@ package ua.foxminded.university.manager;
 
 import ua.foxminded.university.services.UserManagerService;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ServiceManager {
@@ -10,5 +9,5 @@ public interface ServiceManager {
 
     Optional<UserManagerService> getServiceByRole(String role);
 
-    List<UserManagerService> getUserManagerServices();
+    UserManagerService getUserManagerService();
 }

@@ -28,7 +28,7 @@ public class ServiceManagerImpl implements ServiceManager {
     }
 
     @Override
-    public List<UserManagerService> getUserManagerServices() {
+    public UserManagerService getUserManagerService() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<UserManagerService> services = authentication.getAuthorities()
                 .stream()
@@ -43,6 +43,5 @@ public class ServiceManagerImpl implements ServiceManager {
         if (services.size() > 1) {
             throw new IllegalStateException("Multiple services found for the user.");
         }
-        return services;
-    }
+        return services.get(0);    }
 }

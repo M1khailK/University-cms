@@ -18,7 +18,6 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;

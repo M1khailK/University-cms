@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ua.foxminded.university.generator.PasswordGenerator;
 
-import java.nio.CharBuffer;
-import java.util.Arrays;
-
 @SpringBootTest
 public class PasswordGeneratorImplTest {
 

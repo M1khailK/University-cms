@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.manager.ServiceManager;
+import ua.foxminded.university.services.AccountCreatorService;
 import ua.foxminded.university.services.EmailSenderService;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
@@ -31,6 +32,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @MockBean(PasswordGenerator.class)
 @MockBean(DataSource.class)
 @MockBean(EmailSenderService.class)
+@MockBean(AccountCreatorService.class)
 @MockBean(LessonService.class)
 @MockBean(GroupService.class)
 @MockBean(SubjectService.class)

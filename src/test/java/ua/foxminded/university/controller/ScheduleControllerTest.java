@@ -1,6 +1,5 @@
 package ua.foxminded.university.controller;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +12,8 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.generator.PasswordGenerator;
-import ua.foxminded.university.info.Group;
-import ua.foxminded.university.info.Lesson;
-import ua.foxminded.university.info.Student;
-import ua.foxminded.university.info.Subject;
-import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
+import ua.foxminded.university.services.AccountCreatorService;
 import ua.foxminded.university.services.EmailSenderService;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
@@ -28,12 +23,8 @@ import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 import java.util.stream.Stream;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
@@ -42,6 +33,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @MockBean(ServiceManager.class)
 @MockBean(EmailSenderService.class)
 @MockBean(PasswordGenerator.class)
+@MockBean(AccountCreatorService.class)
 @Import(SecurityConfig.class)
 public class ScheduleControllerTest {
 

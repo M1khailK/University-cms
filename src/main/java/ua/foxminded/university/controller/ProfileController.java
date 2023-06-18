@@ -16,7 +16,6 @@ import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.UserManagerService;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Controller
 public class ProfileController implements CustomExceptionHandler<InvalidOldPasswordException> {
@@ -27,8 +26,8 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
     @GetMapping("/profile")
     public String profile(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<UserManagerService> services = serviceManager.getUserManagerServices();
-        model.addAttribute("user", services.get(0).getByEmail(authentication.getName()));
+        UserManagerService service = serviceManager.getUserManagerService();
+        model.addAttribute("user", service.getByEmail(authentication.getName()));
         return "profile";
     }
 
@@ -43,8 +42,8 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
                                  @RequestParam("newPass") String newPass) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
-        List<UserManagerService> services = serviceManager.getUserManagerServices();
-        services.get(0).changePassword(userEmail, oldPass, newPass);
+        UserManagerService service = serviceManager.getUserManagerService();
+        service.changePassword(userEmail, oldPass, newPass);
         return "redirect:/profile";
     }
 

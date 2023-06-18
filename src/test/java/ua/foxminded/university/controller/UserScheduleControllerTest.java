@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -19,6 +18,7 @@ import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
+import ua.foxminded.university.services.AccountCreatorService;
 import ua.foxminded.university.services.EmailSenderService;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
@@ -31,7 +31,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
@@ -41,6 +40,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @MockBean(EmailSenderService.class)
 @MockBean(GroupService.class)
 @MockBean(UserService.class)
+@MockBean(AccountCreatorService.class)
 @MockBean(SubjectService.class)
 @MockBean(PasswordEncoder.class)
 public class UserScheduleControllerTest {
@@ -69,11 +69,12 @@ public class UserScheduleControllerTest {
                 LocalDate.of(2023, 1, 15), null, null, subject,
                 group, teacher);
 
-        when(serviceManager.getUserManagerServices()).thenReturn(List.of(studentService, teacherService));
+        when(serviceManager.getUserManagerService()).thenReturn(teacherService);
+        when(serviceManager.getUserManagerService()).thenReturn(studentService);
         when(userService.getUserIdByEmail("username")).thenReturn(ID);
 
-        when(List.of(studentService, teacherService).get(0).getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
-        when(List.of(studentService, teacherService).get(0).getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
+        when(teacherService.getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
+        when(studentService.getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
     }
 
     @ParameterizedTest

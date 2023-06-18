@@ -47,8 +47,8 @@ public class UserScheduleController implements CustomExceptionHandler<InvalidDat
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int id = userService.getUserIdByEmail(authentication.getName());
-        List<UserManagerService> services = serviceManager.getUserManagerServices();
-        List<Lesson> userLessons = services.get(0).getLessonsByUserIdAndDateBetween(id, dateFrom, dateTo);
+      UserManagerService service = serviceManager.getUserManagerService();
+        List<Lesson> userLessons = service.getLessonsByUserIdAndDateBetween(id, dateFrom, dateTo);
         model.addAttribute("userLessons", userLessons);
         return "userSchedule";
     }

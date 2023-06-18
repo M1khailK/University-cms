@@ -16,6 +16,7 @@ import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
+import ua.foxminded.university.services.AccountCreatorService;
 import ua.foxminded.university.services.EmailSenderService;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
@@ -25,11 +26,8 @@ import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -37,6 +35,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @WebMvcTest
 @MockBean(PasswordGenerator.class)
 @MockBean(DataSource.class)
+@MockBean(AccountCreatorService.class)
 @MockBean(LessonService.class)
 @MockBean(GroupService.class)
 @MockBean(UserService.class)
@@ -59,8 +58,10 @@ public class ProfileControllerTest {
         Student student = new Student(1, "Alex", "First", "studentName", null,"password");
         Teacher teacher = new Teacher(1, "Bob", "Second", "teacherName","password");
 
-        when(serviceManager.getUserManagerServices()).thenReturn(List.of(studentService, teacherService));
-        when(List.of(studentService, teacherService).get(0).getByEmail("username")).thenReturn(student);
+        when(serviceManager.getUserManagerService()).thenReturn(teacherService);
+        when(serviceManager.getUserManagerService()).thenReturn(studentService);
+        when(studentService.getByEmail("username")).thenReturn(student);
+        when(teacherService.getByEmail("username")).thenReturn(teacher);
 
 
     }
