@@ -9,8 +9,6 @@ import java.util.List;
 public interface UserManagerService<T> {
     void changePassword(String email, String oldPassword, String newPassword);
 
-    String getRole();
-
     T getByEmail(String email);
 
     List<Lesson> getLessonsByUserIdAndDateBetween(int id, LocalDate from, LocalDate to);

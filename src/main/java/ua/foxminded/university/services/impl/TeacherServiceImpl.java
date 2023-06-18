@@ -71,11 +71,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public String getRole() {
-        return "ROLE_TEACHER";
-    }
-
-    @Override
     public Teacher getByEmail(String email) {
         return teacherRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Teacher was not found by email"));
     }
@@ -88,7 +83,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void register(ServiceManager manager) {
-            manager.register(getRole(), this);
+            manager.register("ROLE_TEACHER", this);
     }
 
     @Override

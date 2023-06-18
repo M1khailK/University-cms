@@ -62,7 +62,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void register(ServiceManager manager) {
-        manager.register(getRole(), this);
+        manager.register("ROLE_STUDENT", this);
     }
 
     @Override
@@ -81,11 +81,6 @@ public class StudentServiceImpl implements StudentService {
         } else {
             throw new InvalidOldPasswordException("The old password is incorrect!");
         }
-    }
-
-    @Override
-    public String getRole() {
-        return "ROLE_STUDENT";
     }
 
     @Override
