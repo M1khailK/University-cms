@@ -20,7 +20,6 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
 
     private static final String REDIRECT_ACCOUNT_CREATOR_PAGE = "redirect:/createAccount";
 
-
     @Autowired
     private AccountCreatorService accountCreatorService;
     @Autowired

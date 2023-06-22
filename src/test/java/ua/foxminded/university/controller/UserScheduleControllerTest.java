@@ -1,6 +1,5 @@
 package ua.foxminded.university.controller;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.generator.PasswordGenerator;
-import ua.foxminded.university.info.Group;
-import ua.foxminded.university.info.Lesson;
-import ua.foxminded.university.info.Subject;
-import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.AccountCreatorService;
 import ua.foxminded.university.services.EmailSenderService;
@@ -28,7 +24,6 @@ import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.when;
@@ -58,25 +53,6 @@ public class UserScheduleControllerTest {
     @MockBean
     private Authentication authentication;
 
-    @BeforeEach
-    public void setUp() {
-        LocalDate localDateFrom = LocalDate.of(2023, 1, 1);
-        LocalDate localDateTo = LocalDate.of(2023, 1, 30);
-        Subject subject = new Subject(1, "Math");
-        Teacher teacher = new Teacher(1, "Viktoria", "Second", "teacher@gmail.com", "password");
-        Group group = new Group(1, "AA-10");
-        Lesson lesson = new Lesson(1, "Lesson of mathematics",
-                LocalDate.of(2023, 1, 15), null, null, subject,
-                group, teacher);
-
-        when(serviceManager.getUserManagerService()).thenReturn(teacherService);
-        when(serviceManager.getUserManagerService()).thenReturn(studentService);
-        when(userService.getUserIdByEmail("username")).thenReturn(ID);
-
-        when(teacherService.getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
-        when(studentService.getLessonsByUserIdAndDateBetween(ID, localDateFrom, localDateTo)).thenReturn(List.of(lesson));
-    }
-
     @ParameterizedTest
     @MethodSource("provideRoles")
     void userScheduleController_shouldShowUserSchedulePage_whenUserIsAuthorized(RequestPostProcessor user) throws Exception {
@@ -98,6 +74,7 @@ public class UserScheduleControllerTest {
     @ParameterizedTest
     @MethodSource("provideRoles")
     public void userScheduleController_shouldThrowAnException_whenDateFromIsNull(RequestPostProcessor user) throws Exception {
+        when(userService.getUserLessons(null, LocalDate.of(2023, 1, 30))).thenThrow(InvalidDateRangeException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/getUserSchedule").with(user)
                 .param("dateFrom", "")
                 .param("dateTo", "2023-01-30"))
