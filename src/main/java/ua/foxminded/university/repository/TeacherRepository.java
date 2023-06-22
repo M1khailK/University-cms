@@ -28,21 +28,11 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             "WHERE user_id = ?2)", nativeQuery = true)
     void changePasswordById(String newPassword, int id);
 
-    @Query(value = "SELECT t.*, u.email, u.first_name, u.last_name, u.password " +
+    @Query(value = "SELECT t.*, u.email, u.first_name, u.last_name, u.password, ur.role " +
             "FROM teachers t " +
             "JOIN users u ON t.user_id = u.user_id " +
+            "JOIN user_role ur ON u.user_id = ur.user_id " +
             "WHERE u.isEnabled = true", nativeQuery = true)
     List<Teacher> findAllEnabledTeachers();
 
-    @Modifying
-    @Transactional
-    @Query(value = "INSERT INTO user_role (user_id, role) " +
-            "VALUES (?, 'TEACHER')", nativeQuery = true)
-    void setTeacherRole(int teacherId);
-
-    @Modifying
-    @Transactional
-    @Query(value = "INSERT INTO user_role (user_id, role) " +
-            "VALUES (?, 'ADMIN')", nativeQuery = true)
-    void setAdminRole(int id);
 }

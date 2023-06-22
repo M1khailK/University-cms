@@ -55,8 +55,8 @@ public class ProfileControllerTest {
 
     @BeforeEach
     public void setUp() {
-        Student student = new Student(1, "Alex", "First", "studentName", null,"password");
-        Teacher teacher = new Teacher(1, "Bob", "Second", "teacherName","password");
+        Student student = new Student(1, "Alex", "First", "studentName", null,"password","STUDENT");
+        Teacher teacher = new Teacher(1, "Bob", "Second", "teacherName","password","TEACHER");
 
         when(serviceManager.getUserManagerService()).thenReturn(teacherService);
         when(serviceManager.getUserManagerService()).thenReturn(studentService);

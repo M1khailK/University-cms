@@ -37,7 +37,7 @@ public class UserDeactivationController implements CustomExceptionHandler<Invali
     }
 
     @GetMapping("/deactivateUser")
-    public String deactivate(@RequestParam(value = "userId", required = false) Integer userId) {
+    public String deactivate(@RequestParam(value = "userId") Integer userId) {
         userService.disableUserById(userId);
         return "redirect:/deactivationPage";
     }

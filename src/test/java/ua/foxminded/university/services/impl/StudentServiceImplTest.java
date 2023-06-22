@@ -30,7 +30,7 @@ public class StudentServiceImplTest {
     private static final char[] NEW_PASS = new char[]{'n', 'e', 'w', 'P', 'a', 's', 's', 'w', 'o', 'r', 'd'};
 
     private static final int ID = 1;
-    private static final Student student = new Student(ID, "Alex", "First", EMAIL, null, "password");
+    private static final Student student = new Student(ID, "Alex", "First", EMAIL, null, "password","STUDENT");
 
     @Autowired
     private StudentService studentService;
@@ -49,7 +49,7 @@ public class StudentServiceImplTest {
     public void studentService_shouldChangePassword_whenInputHasOldPasswordNewPasswordAndEmail() {
         char[] oldPassword = new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'};
         char[] newPassword = new char[]{'n', 'e', 'w', 'P', 'a', 's', 's', 'w', 'o', 'r', 'd'};
-        Student student = new Student(ID, "Alex", "First", EMAIL, null, "password");
+        Student student = new Student(ID, "Alex", "First", EMAIL, null, "password","STUDENT");
 
         when(passwordEncoder.matches(CharBuffer.wrap(oldPassword), studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")))).thenReturn(true);
         when(passwordEncoder.encode(CharBuffer.wrap(newPassword))).thenReturn(Arrays.toString(newPassword));

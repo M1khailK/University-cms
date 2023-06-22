@@ -35,7 +35,6 @@ public class StudentServiceImpl implements StudentService {
     public void save(Student student) {
         try {
             studentRepository.save(student);
-            studentRepository.setStudentRole(student.getId());
         } catch (DataIntegrityViolationException exception) {
             throw new DuplicateEmailException("Email already exists. Please choose a different email.");
         }

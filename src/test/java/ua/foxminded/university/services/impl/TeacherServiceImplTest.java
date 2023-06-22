@@ -29,7 +29,7 @@ public class TeacherServiceImplTest {
 
     private static final char[] NEW_PASS = new char[]{'n', 'e', 'w', 'P', 'a', 's', 's', 'w', 'o', 'r', 'd'};
     private static final int ID = 1;
-    private static final Teacher teacher = new Teacher(ID, "Bob", "First", EMAIL,"password");
+    private static final Teacher teacher = new Teacher(ID, "Bob", "First", EMAIL,"password","TEACHER");
 
 
     @Autowired

@@ -39,7 +39,6 @@ public class TeacherServiceImpl implements TeacherService {
     public void save(Teacher teacher) {
         try {
             teacherRepository.save(teacher);
-            teacherRepository.setTeacherRole(teacher.getId());
         } catch (DataIntegrityViolationException exception) {
             throw new DuplicateEmailException(DUPLICATED_EMAIL_MESSAGE);
         }
@@ -95,14 +94,4 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherRepository.findAllEnabledTeachers();
     }
 
-    @Override
-    @Transactional
-    public void saveTeacherAsAdmin(Teacher teacher) {
-        try {
-            teacherRepository.save(teacher);
-            teacherRepository.setAdminRole(teacher.getId());
-        } catch (DataIntegrityViolationException exception) {
-            throw new DuplicateEmailException(DUPLICATED_EMAIL_MESSAGE);
-        }
-    }
 }

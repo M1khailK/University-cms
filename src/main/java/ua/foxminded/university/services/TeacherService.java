@@ -10,6 +10,4 @@ public interface TeacherService extends EntityService<Teacher>, UserManagerServi
 
     String getPasswordById(int id);
 
-    void saveTeacherAsAdmin(Teacher teacher);
-
 }

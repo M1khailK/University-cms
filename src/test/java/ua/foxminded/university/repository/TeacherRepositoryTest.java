@@ -35,7 +35,7 @@ public class TeacherRepositoryTest {
 
     @Test
     public void teacherRepository_shouldReturnTeacherByEmail_whenInputHasEmail() {
-        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL, "password");
+        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL, "password","TEACHER");
         Optional<Teacher> actual = teacherRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(expected), actual);
     }
@@ -58,7 +58,7 @@ public class TeacherRepositoryTest {
 
     @Test
     public void teacherRepository_shouldReturnTeacher_whenInputHasUserId() {
-        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL, "password");
+        Teacher expected = new Teacher(1, "Bob", "Second", EMAIL, "password","TEACHER");
         Teacher actual = teacherRepository.findById(1).get();
         Assertions.assertEquals(expected, actual);
     }
@@ -69,7 +69,7 @@ public class TeacherRepositoryTest {
 
         jdbcTemplate.update(disableUserAccountQuery, 1);
         List<Teacher> actual = teacherRepository.findAllEnabledTeachers();
-        List<Teacher> expected = List.of(new Teacher(2, "Alex", "Third", "alex.third@example.com", "password"));
+        List<Teacher> expected = List.of(new Teacher(2, "Alex", "Third", "alex.third@example.com", "password","TEACHER"));
         Assertions.assertEquals(expected, actual);
     }
 }

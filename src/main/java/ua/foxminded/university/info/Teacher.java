@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "teachers")
 @Data
 @SecondaryTable(name = "users", pkJoinColumns = @PrimaryKeyJoinColumn(name = "user_id"))
+@SecondaryTable(name = "user_role", pkJoinColumns = @PrimaryKeyJoinColumn(name = "user_id"))
 public class Teacher {
 
     @Id
@@ -38,4 +39,6 @@ public class Teacher {
     private String email;
     @Column(name = "password",table = "users",nullable = false)
     private String password;
+    @Column(name = "role", table = "user_role", length = 15, nullable = false)
+    private String role;
 }

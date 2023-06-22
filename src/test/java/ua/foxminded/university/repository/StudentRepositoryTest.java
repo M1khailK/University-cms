@@ -34,7 +34,7 @@ public class StudentRepositoryTest {
 
     @Test
     public void studentRepository_shouldReturnStudentByEmail_whenInputHasEmail() {
-        Student expected = new Student(1, "Alex", "First", EMAIL, null, "password");
+        Student expected = new Student(1, "Alex", "First", EMAIL, null, "password","STUDENT");
         Optional<Student> actual = studentRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(expected), actual);
     }
@@ -62,7 +62,7 @@ public class StudentRepositoryTest {
 
         jdbcTemplate.update(disableUserAccountQuery, 1);
        List<Student> actual = studentRepository.findAllEnabledStudents();
-       List<Student> expected = List.of(new Student(2, "Bob", "Second", "bob.second@example.com", null, "password"));
+       List<Student> expected = List.of(new Student(2, "Bob", "Second", "bob.second@example.com", null, "password","STUDENT"));
         Assertions.assertEquals(expected, actual);
     }
 

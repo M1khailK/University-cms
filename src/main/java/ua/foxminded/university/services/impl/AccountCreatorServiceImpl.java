@@ -27,7 +27,7 @@ public class AccountCreatorServiceImpl implements AccountCreatorService {
     public void createTeacherAccount(User user) {
         passwordService.generateAndSendPasswordForUser(user);
         Teacher teacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
-                user.getPassword());
+                user.getPassword(),"TEACHER");
         teacherService.save(teacher);
     }
 
@@ -35,15 +35,15 @@ public class AccountCreatorServiceImpl implements AccountCreatorService {
         passwordService.generateAndSendPasswordForUser(user);
         Group group = groupService.getByName(user.getGroupName());
         Student student = new Student(null, user.getFirstName(), user.getLastName(), user.getEmail(), group,
-                user.getPassword());
+                user.getPassword(),"STUDENT");
         studentService.save(student);
     }
 
     public void createAdminAccount(User user) {
         passwordService.generateAndSendPasswordForUser(user);
         Teacher adminTeacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
-                user.getPassword());
-        teacherService.saveTeacherAsAdmin(adminTeacher);
+                user.getPassword(),"ADMIN");
+        teacherService.save(adminTeacher);
     }
 
 }
