@@ -75,7 +75,7 @@ public class AccountCreatorControllerTest {
         user.setPassword("password");
         mockMvc.perform(MockMvcRequestBuilders.post("/createStudent").with(user("admin").roles("ADMIN")).with(csrf()).flashAttr("user", user))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.view().name("redirect:/accountCreatorPage"))
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/createAccount"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
     }
     @Test
@@ -87,7 +87,7 @@ public class AccountCreatorControllerTest {
         user.setPassword("password");
         mockMvc.perform(MockMvcRequestBuilders.post("/createTeacher").with(user("admin").roles("ADMIN")).with(csrf()).flashAttr("user", user))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.view().name("redirect:/accountCreatorPage"))
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/createAccount"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
     }
     @Test
@@ -99,7 +99,7 @@ public class AccountCreatorControllerTest {
         user.setPassword("password");
         mockMvc.perform(MockMvcRequestBuilders.post("/createAdmin").with(user("admin").roles("ADMIN")).with(csrf()).flashAttr("user", user))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.view().name("redirect:/accountCreatorPage"))
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/createAccount"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
     }
 
