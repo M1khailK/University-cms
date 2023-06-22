@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface UserManagerService<T> {
-    void changePassword(String email, String oldPassword, String newPassword);
+    void changePassword(String email, char[] oldPassword, char[] newPassword);
 
     T getByEmail(String email);
 

@@ -14,7 +14,9 @@ import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
 
+import java.nio.CharBuffer;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -61,6 +63,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Autowired
     public void register(ServiceManager manager) {
         manager.register("ROLE_STUDENT", this);
     }
@@ -72,11 +75,11 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public void changePassword(String email, String oldPassword, String newPassword) {
+    public void changePassword(String email, char[] oldPassword, char[] newPassword) {
         Student student = getByEmail(email);
         String oldPass = getPasswordById(student.getId());
-        if (passwordEncoder.matches(oldPassword, oldPass)) {
-            studentRepository.changePasswordById(passwordEncoder.encode(newPassword), student.getId());
+        if (passwordEncoder.matches(CharBuffer.wrap(oldPassword), oldPass)) {
+            studentRepository.changePasswordById(passwordEncoder.encode(CharBuffer.wrap(newPassword)), student.getId());
             studentRepository.save(student);
         } else {
             throw new InvalidOldPasswordException("The old password is incorrect!");

@@ -8,7 +8,9 @@ import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.services.EmailSenderService;
 import ua.foxminded.university.services.PasswordService;
 
+import java.lang.reflect.Array;
 import java.nio.CharBuffer;
+import java.util.Arrays;
 
 @Service
 public class PasswordServiceImpl implements PasswordService {
@@ -21,8 +23,10 @@ public class PasswordServiceImpl implements PasswordService {
 
     @Override
     public void generateAndSendPasswordForUser(User user) {
-        CharSequence password = CharBuffer.wrap(passwordGenerator.generatePassword());
-        emailSenderService.sendRegistrationEmail(user,password);
-        user.setPassword(passwordEncoder.encode(password));
+        char[] password = passwordGenerator.generatePassword();
+        CharSequence sequencePassword = CharBuffer.wrap(password);
+        emailSenderService.sendRegistrationEmail(user, sequencePassword);
+        user.setPassword(passwordEncoder.encode(sequencePassword));
+        Arrays.fill(password, '\0');
     }
 }

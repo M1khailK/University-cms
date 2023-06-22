@@ -38,8 +38,8 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
     }
 
     @PostMapping("/updatePassword")
-    public String changePassword(@RequestParam("oldPass") String oldPass,
-                                 @RequestParam("newPass") String newPass) {
+    public String changePassword(@RequestParam("oldPass") char[] oldPass,
+                                 @RequestParam("newPass") char[] newPass) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         UserManagerService service = serviceManager.getUserManagerService();

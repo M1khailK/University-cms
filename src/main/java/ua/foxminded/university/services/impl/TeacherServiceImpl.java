@@ -1,5 +1,6 @@
 package ua.foxminded.university.services.impl;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,7 +15,9 @@ import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
 
+import java.nio.CharBuffer;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -59,11 +62,11 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public void changePassword(String email, String oldPassword, String newPassword) {
+    public void changePassword(String email, char[] oldPassword, char[] newPassword) {
         Teacher teacher = getByEmail(email);
         String oldPass = getPasswordById(teacher.getId());
-        if (passwordEncoder.matches(oldPassword, oldPass)) {
-            teacherRepository.changePasswordById(passwordEncoder.encode(newPassword), teacher.getId());
+        if (passwordEncoder.matches(CharBuffer.wrap(oldPassword), oldPass)) {
+            teacherRepository.changePasswordById(passwordEncoder.encode(CharBuffer.wrap(newPassword)), teacher.getId());
             teacherRepository.save(teacher);
         } else {
             throw new InvalidOldPasswordException(PASSWORD_IS_INCORRECT);
@@ -82,8 +85,9 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Autowired
     public void register(ServiceManager manager) {
-            manager.register("ROLE_TEACHER", this);
+        manager.register("ROLE_TEACHER", this);
     }
 
     @Override

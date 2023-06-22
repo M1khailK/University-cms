@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.handler.CustomExceptionHandler;
 import ua.foxminded.university.dto.User;
+import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.AccountCreatorService;
 
 import java.time.LocalDateTime;
@@ -17,11 +18,13 @@ import java.time.LocalDateTime;
 @Controller
 public class AccountCreatorController implements CustomExceptionHandler<DuplicateEmailException> {
 
-    private static final String REDIRECT_ACCOUNT_CREATOR_PAGE = "redirect:/accountCreatorPage";
+    private static final String REDIRECT_ACCOUNT_CREATOR_PAGE = "redirect:/createAccount";
 
 
     @Autowired
     private AccountCreatorService accountCreatorService;
+    @Autowired
+    private ServiceManager serviceManager;
 
     @GetMapping("/createAccount")
     public String createAccountPage() {
