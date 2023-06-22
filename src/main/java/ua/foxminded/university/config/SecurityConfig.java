@@ -29,7 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain config(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests()
                 .requestMatchers("/login").anonymous()
-                .requestMatchers("/deactivationPage","/deactivateUser","/createTeacher","/createAdmin","/createStudent","/accountCreatorPage").hasRole("ADMIN")
+                .requestMatchers("/deactivationPage","/deactivateUser","/createTeacher","/createAdmin","/createStudent","/createAccount").hasRole("ADMIN")
                 .requestMatchers("/profile","/settings","/updatePassword","/mySchedule").hasAnyRole( "STUDENT", "TEACHER")
                 .requestMatchers("/getUserSchedule").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
                 .requestMatchers("/generalSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()

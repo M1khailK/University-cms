@@ -52,7 +52,7 @@ public class AccountCreatorControllerTest {
 
     @Test
     public void accountCreatorController_shouldShowAccountCreatorPage_whenUserIsAdmin() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/accountCreatorPage").with(user("admin").roles("ADMIN")))
+        mockMvc.perform(MockMvcRequestBuilders.get("/createAccount").with(user("admin").roles("ADMIN")))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountCreator"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
@@ -61,7 +61,7 @@ public class AccountCreatorControllerTest {
     @ParameterizedTest
     @MethodSource("provideRoles")
     public void accountCreatorController_shouldNotCreateStudentAccount_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/accountCreatorPage").with(user))
+        mockMvc.perform(MockMvcRequestBuilders.get("/createAccount").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
@@ -106,7 +106,7 @@ public class AccountCreatorControllerTest {
     @ParameterizedTest
     @MethodSource("provideRoles")
     public void accountCreatorController_shouldNotShowAccountCreatorPage_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/accountCreatorPage").with(user))
+        mockMvc.perform(MockMvcRequestBuilders.get("/createAccount").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 

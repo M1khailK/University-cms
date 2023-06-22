@@ -23,8 +23,8 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
     @Autowired
     private AccountCreatorService accountCreatorService;
 
-    @GetMapping("/accountCreatorPage")
-    public String accountCreatorPage() {
+    @GetMapping("/createAccount")
+    public String createAccountPage() {
         return "accountCreator";
     }
 
