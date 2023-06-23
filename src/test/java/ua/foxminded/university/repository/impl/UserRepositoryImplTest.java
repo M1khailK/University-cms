@@ -6,26 +6,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.university.repository.UserRepository;
 
 import java.util.Optional;
 
 @SpringBootTest
+@Sql(scripts = "/test_data.sql")
 public class UserRepositoryImplTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @BeforeEach
-    public void setup() {
-        jdbcTemplate.execute("TRUNCATE TABLE users, groups, subjects, teachers, students, lessons, user_role;");
-        jdbcTemplate.execute("ALTER SEQUENCE user_seq RESTART WITH 1;");
-        jdbcTemplate.execute("INSERT INTO users (user_id,first_name, last_name, email, password) VALUES " +
-                "(nextval('user_seq'), 'Alex', 'First', 'alex.first@example.com', 'password');");
-        jdbcTemplate.execute("INSERT INTO students (user_id) VALUES (1);");
-        jdbcTemplate.execute("INSERT INTO user_role (user_id, role) VALUES (1, 'STUDENT')");
-    }
 
     @Test
     public void userRepository_shouldDeactivateUserAccount_whenInputHasUserId() {
@@ -42,7 +34,7 @@ public class UserRepositoryImplTest {
 
     @Test
     public void userRepository_shouldFindUserId_whenInputHasUserEmail() {
-        Optional<Integer> id = userRepository.findUserIdByEmail("alex.first@example.com");
+        Optional<Integer> id = userRepository.findUserIdByEmail("alex.1@example.com");
         Assertions.assertEquals(Optional.of(1), id);
     }
 }

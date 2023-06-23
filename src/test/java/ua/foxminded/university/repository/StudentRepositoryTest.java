@@ -6,31 +6,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.university.info.Student;
 
 import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
+@Sql(scripts = "/test_data.sql")
 public class StudentRepositoryTest {
 
-    private static final String EMAIL = "alex.first@example.com";
+    private static final String EMAIL = "alex.1@example.com";
 
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @BeforeEach
-    public void setup() {
-        jdbcTemplate.execute("TRUNCATE TABLE users, groups, subjects, teachers, students, lessons, user_role;");
-        jdbcTemplate.execute("ALTER SEQUENCE user_seq RESTART WITH 1;");
-        jdbcTemplate.execute("INSERT INTO users (user_id,first_name, last_name, email, password) VALUES" +
-                "(nextval('user_seq'),'Alex', 'First', 'alex.first@example.com', 'password')," +
-                "(nextval('user_seq'),'Bob','Second','bob.second@example.com','password');");
-        jdbcTemplate.execute("INSERT INTO students (user_id) VALUES (1),(2);");
-        jdbcTemplate.execute("INSERT INTO user_role (user_id, role) VALUES (1, 'STUDENT'),(2,'STUDENT');");
-    }
 
     @Test
     public void studentRepository_shouldReturnStudentByEmail_whenInputHasEmail() {
@@ -58,11 +49,8 @@ public class StudentRepositoryTest {
 
     @Test
     public void studentRepository_shouldReturnListOfStudents_whenTheirAccountsAreEnabled() {
-        String disableUserAccountQuery = "UPDATE users SET isEnabled = FALSE WHERE user_id = ?";
-
-        jdbcTemplate.update(disableUserAccountQuery, 1);
        List<Student> actual = studentRepository.findAllEnabledStudents();
-       List<Student> expected = List.of(new Student(2, "Bob", "Second", "bob.second@example.com", null, "password","STUDENT"));
+       List<Student> expected = List.of(new Student(2, "Bob", "Second", "bob.2@example.com", null, "password","STUDENT"));
         Assertions.assertEquals(expected, actual);
     }
 
