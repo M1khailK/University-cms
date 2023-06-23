@@ -36,7 +36,7 @@
                     </optgroup>
 
                 </select>
-                <button type="submit" class="submit-btn">Deactivate</button>
+                <button type="submit" class="submit-btn" disabled>Deactivate</button>
 
             </ul>
         </div>
@@ -45,7 +45,16 @@
 </div>
 <script>
 $(document).ready(function () {
-   $("select").select2();
+    $("select").select2();
+
+    $("select").on("change", function () {
+        var selectedOption = $(this).find("option:selected").parent().attr("label");
+        if (selectedOption === "Teachers" || selectedOption === "Students") {
+            $(".submit-btn").prop("disabled", false);
+        } else {
+            $(".submit-btn").prop("disabled", true);
+        }
+    });
 });
 </script>
 </body>

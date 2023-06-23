@@ -24,7 +24,6 @@ import java.util.List;
 @Service
 public class TeacherServiceImpl implements TeacherService {
 
-    private static final String DUPLICATED_EMAIL_MESSAGE = "Email already exists. Please choose a different email.";
     private static final String PASSWORD_IS_INCORRECT = "The old password is incorrect!";
 
     @Autowired
