@@ -37,11 +37,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional
     public void save(Teacher teacher) {
-        try {
             teacherRepository.save(teacher);
-        } catch (DataIntegrityViolationException exception) {
-            throw new DuplicateEmailException(DUPLICATED_EMAIL_MESSAGE);
-        }
     }
 
     @Override

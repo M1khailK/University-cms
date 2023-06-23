@@ -44,5 +44,5 @@ public class AccountCreatorServiceImpl implements AccountCreatorService {
             throw new DuplicateEmailException("Email already exists. Please choose a different email.");
         }
     }
-    
+
 }
