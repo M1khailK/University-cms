@@ -1,7 +1,9 @@
 package ua.foxminded.university.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Student;
@@ -24,26 +26,23 @@ public class AccountCreatorServiceImpl implements AccountCreatorService {
     @Autowired
     private PasswordService passwordService;
 
-    public void createTeacherAccount(User user) {
+    public void createUserAccount(User user, String role) {
         passwordService.generateAndSendPasswordForUser(user);
-        Teacher teacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
-                user.getPassword(),"TEACHER");
-        teacherService.save(teacher);
+        try {
+            if (role.equals("STUDENT")) {
+                Group group = groupService.getByName(user.getGroupName());
+                Student student = new Student(null, user.getFirstName(), user.getLastName(), user.getEmail(), group,
+                        user.getPassword(), role);
+                studentService.save(student);
+            } else {
+                Teacher teacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
+                        user.getPassword(), role);
+                teacherService.save(teacher);
+            }
+        } catch (
+                DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+        }
     }
-
-    public void createStudentAccount(User user) {
-        passwordService.generateAndSendPasswordForUser(user);
-        Group group = groupService.getByName(user.getGroupName());
-        Student student = new Student(null, user.getFirstName(), user.getLastName(), user.getEmail(), group,
-                user.getPassword(),"STUDENT");
-        studentService.save(student);
-    }
-
-    public void createAdminAccount(User user) {
-        passwordService.generateAndSendPasswordForUser(user);
-        Teacher adminTeacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
-                user.getPassword(),"ADMIN");
-        teacherService.save(adminTeacher);
-    }
-
+    
 }

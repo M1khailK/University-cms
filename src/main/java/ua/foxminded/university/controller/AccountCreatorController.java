@@ -19,6 +19,9 @@ import java.time.LocalDateTime;
 public class AccountCreatorController implements CustomExceptionHandler<DuplicateEmailException> {
 
     private static final String REDIRECT_ACCOUNT_CREATOR_PAGE = "redirect:/createAccount";
+    private static final String STUDENT = "STUDENT";
+    private static final String TEACHER = "TEACHER";
+    private static final String ADMIN = "ADMIN";
 
     @Autowired
     private AccountCreatorService accountCreatorService;
@@ -32,20 +35,19 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
 
     @PostMapping("/createStudent")
     public String createStudentAccount(@Valid User user) {
-        accountCreatorService.createStudentAccount(user);
+        accountCreatorService.createUserAccount(user, STUDENT);
         return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
 
     @PostMapping("/createTeacher")
     public String createTeacherAccount(@Valid User user) {
-        accountCreatorService.createTeacherAccount(user);
-
+        accountCreatorService.createUserAccount(user, TEACHER);
         return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
 
     @PostMapping("/createAdmin")
     public String createAdminAccount(@Valid User user) {
-        accountCreatorService.createAdminAccount(user);
+        accountCreatorService.createUserAccount(user, ADMIN);
         return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
 

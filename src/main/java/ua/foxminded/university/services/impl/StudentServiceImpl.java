@@ -33,11 +33,8 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public void save(Student student) {
-        try {
             studentRepository.save(student);
-        } catch (DataIntegrityViolationException exception) {
-            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
-        }
+
     }
 
     @Override
