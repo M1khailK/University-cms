@@ -1,18 +1,23 @@
 package ua.foxminded.university.repository.impl;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
+import ua.foxminded.university.config.repository.RepositoriesTestConfig;
 import ua.foxminded.university.repository.UserRepository;
 
 import java.util.Optional;
 
 @SpringBootTest
+@EnableAutoConfiguration
 @Sql(scripts = "/test_data.sql")
+@ContextConfiguration(classes = {RepositoriesTestConfig.class, EntityManager.class})
 public class UserRepositoryImplTest {
     @Autowired
     private UserRepository userRepository;

@@ -8,15 +8,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import ua.foxminded.university.config.aspect.ServiceAspectTestConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.repository.GroupRepository;
-import ua.foxminded.university.repository.LessonRepository;
-import ua.foxminded.university.repository.StudentRepository;
-import ua.foxminded.university.repository.SubjectRepository;
-import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.impl.GroupServiceImpl;
 
 import java.util.List;
@@ -25,11 +22,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest()
-@EnableAutoConfiguration()
-@MockBean(TeacherRepository.class)
-@MockBean(LessonRepository.class)
-@MockBean(StudentRepository.class)
-@MockBean(SubjectRepository.class)
+@ContextConfiguration(classes = ServiceAspectTestConfig.class)
 public class ServiceAspectTest {
 
     private static final String GROUP_NAME = "Group";

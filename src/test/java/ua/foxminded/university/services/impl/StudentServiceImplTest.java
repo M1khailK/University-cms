@@ -7,12 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
+import ua.foxminded.university.config.service.ServicesTestConfig;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.info.Student;
+import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.repository.StudentRepository;
+import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.StudentService;
 
 import java.nio.CharBuffer;
+import java.time.Clock;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -22,6 +27,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@MockBean(LessonRepository.class)
+@MockBean(TeacherRepository.class)
+@MockBean(Clock.class)
+@ContextConfiguration(classes = ServicesTestConfig.class)
 public class StudentServiceImplTest {
 
     private static final String EMAIL = "student@example.com";

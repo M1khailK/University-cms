@@ -5,9 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
+import ua.foxminded.university.config.service.ServicesTestConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.repository.LessonRepository;
+import ua.foxminded.university.repository.StudentRepository;
+import ua.foxminded.university.repository.TeacherRepository;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -23,6 +28,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@MockBean(TeacherRepository.class)
+@MockBean(StudentRepository.class)
+@MockBean(PasswordEncoder.class)
+@ContextConfiguration(classes = ServicesTestConfig.class)
 public class LessonServiceImplTest {
 
     private static final int ID = 1;

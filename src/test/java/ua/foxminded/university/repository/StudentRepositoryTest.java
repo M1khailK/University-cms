@@ -1,19 +1,23 @@
 package ua.foxminded.university.repository;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
+import ua.foxminded.university.config.repository.RepositoriesTestConfig;
 import ua.foxminded.university.info.Student;
 
 import java.util.List;
 import java.util.Optional;
 
-@SpringBootTest
-@Sql(scripts = "/test_data.sql")
+@DataJpaTest
+@Sql(scripts = {"/test_data.sql"})
+@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+@ContextConfiguration(classes = RepositoriesTestConfig.class)
 public class StudentRepositoryTest {
 
     private static final String EMAIL = "alex.1@example.com";

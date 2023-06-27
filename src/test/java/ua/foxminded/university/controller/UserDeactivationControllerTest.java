@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
+import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.AccountCreatorService;
@@ -29,24 +31,14 @@ import java.util.stream.Stream;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
-@MockBean(PasswordGenerator.class)
-@MockBean(DataSource.class)
-@MockBean(EmailSenderService.class)
-@MockBean(AccountCreatorService.class)
-@MockBean(LessonService.class)
-@MockBean(GroupService.class)
-@MockBean(SubjectService.class)
 @MockBean(ServiceManager.class)
-@Import(SecurityConfig.class)
+@MockBean(TeacherService.class)
+@MockBean(StudentService.class)
+@MockBean(UserService.class)
+@ContextConfiguration(classes = ControllersTestConfig.class)
 public class UserDeactivationControllerTest {
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
-    private UserService userService;
-    @MockBean
-    private StudentService studentService;
-    @MockBean
-    private TeacherService teacherService;
 
     @Test
     public void userDeactivationController_shouldShowDeactivationPage_whenUserIsAdmin() throws Exception {

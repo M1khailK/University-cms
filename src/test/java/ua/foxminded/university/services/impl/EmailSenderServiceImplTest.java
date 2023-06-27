@@ -11,12 +11,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
+import ua.foxminded.university.config.service.ServicesTestConfig;
 import ua.foxminded.university.customexceptions.MailSenderServiceException;
+import ua.foxminded.university.repository.LessonRepository;
+import ua.foxminded.university.repository.StudentRepository;
+import ua.foxminded.university.repository.TeacherRepository;
 
+import java.time.Clock;
 import java.util.HashMap;
 import java.util.Map;
 
 @SpringBootTest()
+@MockBean(LessonRepository.class)
+@MockBean(TeacherRepository.class)
+@MockBean(StudentRepository.class)
+@MockBean(Clock.class)
+@MockBean(PasswordEncoder.class)
+@ContextConfiguration(classes = ServicesTestConfig.class)
 public class EmailSenderServiceImplTest {
 
     private static final String EMAIL = "mailsenderexample515@gmail.com";

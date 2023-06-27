@@ -6,15 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
+import ua.foxminded.university.config.controller.ControllersTestConfig;
+import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
 import java.util.stream.Stream;
@@ -23,13 +27,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest(controllers = HomePageController.class)
-@MockBean(ScheduleController.class)
+@MockBean(ServiceManager.class)
 @MockBean(TeacherService.class)
 @MockBean(StudentService.class)
-@MockBean(GroupService.class)
-@MockBean(LessonService.class)
-@MockBean(DataSource.class)
-@Import(SecurityConfig.class)
+@MockBean(UserService.class)
+@ContextConfiguration(classes = ControllersTestConfig.class)
 public class HomePageControllerTest {
 
     @Autowired

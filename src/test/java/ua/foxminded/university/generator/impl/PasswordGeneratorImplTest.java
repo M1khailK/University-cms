@@ -4,9 +4,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import ua.foxminded.university.config.generator.PasswordGeneratorTestConfig;
 import ua.foxminded.university.generator.PasswordGenerator;
 
 @SpringBootTest
+@ContextConfiguration(classes = PasswordGeneratorTestConfig.class)
 public class PasswordGeneratorImplTest {
 
     @Autowired

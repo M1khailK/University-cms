@@ -8,10 +8,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
+import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.AccountCreatorService;
@@ -27,17 +29,11 @@ import javax.sql.DataSource;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
-@MockBean(PasswordGenerator.class)
-@MockBean(AccountCreatorService.class)
-@MockBean(EmailSenderService.class)
+@MockBean(ServiceManager.class)
 @MockBean(TeacherService.class)
 @MockBean(StudentService.class)
-@MockBean(GroupService.class)
-@MockBean(LessonService.class)
 @MockBean(UserService.class)
-@MockBean(DataSource.class)
-@MockBean(ServiceManager.class)
-@Import(SecurityConfig.class)
+@ContextConfiguration(classes = ControllersTestConfig.class)
 public class LoginControllerTest {
 
     @Autowired

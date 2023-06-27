@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.SecurityConfig;
+import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
@@ -33,15 +35,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
-@MockBean(PasswordGenerator.class)
-@MockBean(DataSource.class)
-@MockBean(AccountCreatorService.class)
-@MockBean(LessonService.class)
-@MockBean(GroupService.class)
 @MockBean(UserService.class)
-@MockBean(SubjectService.class)
-@MockBean(EmailSenderService.class)
-@Import(SecurityConfig.class)
+@ContextConfiguration(classes = ControllersTestConfig.class)
 public class ProfileControllerTest {
 
     @Autowired

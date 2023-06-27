@@ -7,10 +7,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.manager.ServiceManager;
@@ -30,28 +32,18 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
-@MockBean(PasswordGenerator.class)
-@MockBean(LessonService.class)
-@MockBean(EmailSenderService.class)
-@MockBean(GroupService.class)
-@MockBean(UserService.class)
-@MockBean(AccountCreatorService.class)
-@MockBean(SubjectService.class)
-@MockBean(PasswordEncoder.class)
+@MockBean(ServiceManager.class)
+@MockBean(TeacherService.class)
+@MockBean(StudentService.class)
+@ContextConfiguration(classes = ControllersTestConfig.class)
 public class UserScheduleControllerTest {
     private static final int ID = 1;
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
-    private ServiceManager serviceManager;
+
     @MockBean
     private UserService userService;
-    @MockBean
-    private StudentService studentService;
-    @MockBean
-    private TeacherService teacherService;
-    @MockBean
-    private Authentication authentication;
+
 
     @ParameterizedTest
     @MethodSource("provideRoles")
