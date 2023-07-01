@@ -6,29 +6,17 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.dto.User;
-import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.manager.ServiceManager;
-import ua.foxminded.university.services.AccountCreatorService;
-import ua.foxminded.university.services.EmailSenderService;
-import ua.foxminded.university.services.GroupService;
-import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
-import ua.foxminded.university.services.SubjectService;
 import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
-
-import javax.sql.DataSource;
-import java.util.stream.Stream;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -53,7 +41,7 @@ public class AccountCreatorControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideRoles")
+    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
     public void accountCreatorController_shouldNotCreateStudentAccount_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/createAccount").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
@@ -98,15 +86,10 @@ public class AccountCreatorControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideRoles")
+    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
     public void accountCreatorController_shouldNotShowAccountCreatorPage_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/createAccount").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
-    private static Stream<RequestPostProcessor> provideRoles() {
-        return Stream.of(
-                user("studentName").roles("STUDENT"),
-                user("teacherName").roles("TEACHER"));
-    }
 }

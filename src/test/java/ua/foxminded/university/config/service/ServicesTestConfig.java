@@ -5,17 +5,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.repository.GroupRepository;
-import ua.foxminded.university.repository.LessonRepository;
-import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.repository.SubjectRepository;
-import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.repository.UserRepository;
-
-import java.time.Clock;
 
 @Configuration
 @ComponentScan({"ua.foxminded.university.services","ua.foxminded.university.manager"})
