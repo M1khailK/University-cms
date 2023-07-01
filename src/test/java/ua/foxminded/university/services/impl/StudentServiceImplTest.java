@@ -34,9 +34,9 @@ import static org.mockito.Mockito.when;
 public class StudentServiceImplTest {
 
     private static final String EMAIL = "student@example.com";
-    private static final char[] PASSWORD = new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'};
+    private static final char[] PASSWORD = "password".toCharArray();
 
-    private static final char[] NEW_PASS = new char[]{'n', 'e', 'w', 'P', 'a', 's', 's', 'w', 'o', 'r', 'd'};
+    private static final char[] NEW_PASS = "newPassword".toCharArray();
 
     private static final int ID = 1;
     private static final Student student = new Student(ID, "Alex", "First", EMAIL, null, "password","STUDENT");
