@@ -56,20 +56,18 @@ public class StudentServiceImplTest {
 
     @Test
     public void studentService_shouldChangePassword_whenInputHasOldPasswordNewPasswordAndEmail() {
-        char[] oldPassword = new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'};
-        char[] newPassword = new char[]{'n', 'e', 'w', 'P', 'a', 's', 's', 'w', 'o', 'r', 'd'};
         Student student = new Student(ID, "Alex", "First", EMAIL, null, "password","STUDENT");
 
-        when(passwordEncoder.matches(CharBuffer.wrap(oldPassword), studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")))).thenReturn(true);
-        when(passwordEncoder.encode(CharBuffer.wrap(newPassword))).thenReturn(Arrays.toString(newPassword));
-        doNothing().when(studentRepository).changePasswordById(Arrays.toString(newPassword), student.getId());
+        when(passwordEncoder.matches(CharBuffer.wrap(PASSWORD), studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")))).thenReturn(true);
+        when(passwordEncoder.encode(CharBuffer.wrap(NEW_PASS))).thenReturn(Arrays.toString(NEW_PASS));
+        doNothing().when(studentRepository).changePasswordById(Arrays.toString(NEW_PASS), student.getId());
 
-        studentService.changePassword(EMAIL, oldPassword, newPassword);
+        studentService.changePassword(EMAIL, PASSWORD, NEW_PASS);
 
         verify(studentRepository).findByEmail(EMAIL);
         verify(studentRepository, times(2)).findPasswordById(ID);
-        verify(passwordEncoder).matches(CharBuffer.wrap(oldPassword), studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")));
-        verify(studentRepository).changePasswordById(Arrays.toString(newPassword), student.getId());
+        verify(passwordEncoder).matches(CharBuffer.wrap(PASSWORD), studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")));
+        verify(studentRepository).changePasswordById(Arrays.toString(NEW_PASS), student.getId());
         verify(studentRepository).save(student);
 
     }
