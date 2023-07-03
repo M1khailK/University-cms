@@ -25,4 +25,6 @@ public class User {
     @Size(min = 5, message = "Set password longer than 4 characters!")
     private String password;
 
+    private String role;
+
 }

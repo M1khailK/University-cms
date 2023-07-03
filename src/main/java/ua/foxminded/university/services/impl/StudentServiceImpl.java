@@ -7,11 +7,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
+import ua.foxminded.university.dto.User;
+import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.repository.StudentRepository;
+import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
+import ua.foxminded.university.services.PasswordService;
 import ua.foxminded.university.services.StudentService;
 
 import java.nio.CharBuffer;
@@ -29,11 +33,15 @@ public class StudentServiceImpl implements StudentService {
     private LessonService lessonService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private GroupService groupService;
+    @Autowired
+    private PasswordService passwordService;
 
     @Override
     @Transactional
     public void save(Student student) {
-            studentRepository.save(student);
+        studentRepository.save(student);
 
     }
 
@@ -79,6 +87,20 @@ public class StudentServiceImpl implements StudentService {
             studentRepository.save(student);
         } else {
             throw new InvalidOldPasswordException("The old password is incorrect!");
+        }
+    }
+
+    @Override
+    public void createUserAccountByRole(User user, String role) {
+        try {
+            passwordService.generateAndSendPasswordForUser(user);
+            Group group = groupService.getByName(user.getGroupName());
+            Student student = new Student(null, user.getFirstName(), user.getLastName(), user.getEmail(), group,
+                    user.getPassword(), role);
+            save(student);
+        } catch (
+                DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
         }
     }
 

@@ -9,5 +9,5 @@ public interface ServiceManager {
 
     Optional<UserManagerService> getServiceByRole(String role);
 
-    UserManagerService getUserManagerService();
+    UserManagerService getUserManagerServiceByAuthentication();
 }

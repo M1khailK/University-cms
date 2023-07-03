@@ -41,8 +41,8 @@ public class ProfileControllerTest {
         Student student = new Student(1, "Alex", "First", "studentName", null,"password","STUDENT");
         Teacher teacher = new Teacher(1, "Bob", "Second", "teacherName","password","TEACHER");
 
-        when(serviceManager.getUserManagerService()).thenReturn(teacherService);
-        when(serviceManager.getUserManagerService()).thenReturn(studentService);
+        when(serviceManager.getUserManagerServiceByAuthentication()).thenReturn(teacherService);
+        when(serviceManager.getUserManagerServiceByAuthentication()).thenReturn(studentService);
         when(studentService.getByEmail("username")).thenReturn(student);
         when(teacherService.getByEmail("username")).thenReturn(teacher);
 

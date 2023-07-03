@@ -28,7 +28,7 @@ public class ServiceManagerImpl implements ServiceManager {
     }
 
     @Override
-    public UserManagerService getUserManagerService() {
+    public UserManagerService getUserManagerServiceByAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<UserManagerService> services = authentication.getAuthorities()
                 .stream()

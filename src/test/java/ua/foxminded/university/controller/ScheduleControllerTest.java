@@ -73,7 +73,7 @@ public class ScheduleControllerTest {
     }
     @ParameterizedTest
     @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideAllRoles")
-    public void teacherScheduleController_shouldThrowAnException_whenDateFromIsInvalid(RequestPostProcessor user) throws Exception {
+    public void teacherScheduleController_shouldThrowAnException_whenDateFromIsnvalid(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/teacherSchedule").with(user)
                 .param("teacherId", "1")
                 .param("dateFrom", "")

@@ -8,11 +8,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
+import ua.foxminded.university.dto.User;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.LessonService;
+import ua.foxminded.university.services.PasswordService;
 import ua.foxminded.university.services.TeacherService;
 
 import java.nio.CharBuffer;
@@ -32,6 +34,8 @@ public class TeacherServiceImpl implements TeacherService {
     private LessonService lessonService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordService passwordService;
 
     @Override
     @Transactional
@@ -68,6 +72,19 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public void createUserAccountByRole(User user, String role) {
+        try {
+            passwordService.generateAndSendPasswordForUser(user);
+            Teacher teacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
+                    user.getPassword(), role);
+            save(teacher);
+        } catch (
+                DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+        }
+    }
+
+    @Override
     public Teacher getByEmail(String email) {
         return teacherRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Teacher was not found by email"));
     }
@@ -82,6 +99,7 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     public void register(ServiceManager manager) {
         manager.register("ROLE_TEACHER", this);
+        manager.register("ROLE_ADMIN",this);
     }
 
     @Override

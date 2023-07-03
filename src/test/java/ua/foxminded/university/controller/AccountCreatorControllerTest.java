@@ -1,5 +1,6 @@
 package ua.foxminded.university.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -18,19 +19,33 @@ import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
 
+import java.util.Optional;
+
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
-@MockBean(ServiceManager.class)
-@MockBean(TeacherService.class)
-@MockBean(StudentService.class)
 @MockBean(UserService.class)
 @ContextConfiguration(classes = ControllersTestConfig.class)
 public class AccountCreatorControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @MockBean
+    private ServiceManager serviceManager;
+    @MockBean
+    private StudentService studentService;
+    @MockBean
+    private TeacherService teacherService;
+
+    @BeforeEach
+    public void setUp() {
+        when(serviceManager.getServiceByRole("ROLE_STUDENT")).thenReturn(Optional.of(studentService));
+        when(serviceManager.getServiceByRole("ROLE_TEACHER")).thenReturn(Optional.of(teacherService));
+        when(serviceManager.getServiceByRole("ROLE_ADMIN")).thenReturn(Optional.of(teacherService));
+    }
 
     @Test
     public void accountCreatorController_shouldShowAccountCreatorPage_whenUserIsAdmin() throws Exception {
@@ -55,11 +70,20 @@ public class AccountCreatorControllerTest {
         user.setFirstName("Name");
         user.setLastName("Surname");
         user.setPassword("password");
-        mockMvc.perform(MockMvcRequestBuilders.post("/createStudent").with(user("admin").roles("ADMIN")).with(csrf()).flashAttr("user", user))
+        user.setRole("STUDENT");
+
+        doNothing().when(studentService).createUserAccountByRole(user, user.getRole());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/createUserAccount")
+                .with(user("admin").roles("ADMIN"))
+                .with(csrf())
+                .flashAttr("user", user)
+                .param("role", user.getRole()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createAccount"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
     }
+
     @Test
     public void accountCreatorController_shouldCreateTeacherAccount_whenInputIsUserObject() throws Exception {
         User user = new User();
@@ -67,11 +91,19 @@ public class AccountCreatorControllerTest {
         user.setFirstName("Name");
         user.setLastName("Surname");
         user.setPassword("password");
-        mockMvc.perform(MockMvcRequestBuilders.post("/createTeacher").with(user("admin").roles("ADMIN")).with(csrf()).flashAttr("user", user))
+        user.setRole("TEACHER");
+
+        doNothing().when(teacherService).createUserAccountByRole(user, user.getRole());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/createUserAccount").with(user("admin").roles("ADMIN"))
+                .with(csrf())
+                .flashAttr("user", user)
+                .param("role", user.getRole()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createAccount"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
     }
+
     @Test
     public void accountCreatorController_shouldCreateAdminAccount_whenInputIsUserObject() throws Exception {
         User user = new User();
@@ -79,7 +111,14 @@ public class AccountCreatorControllerTest {
         user.setFirstName("Name");
         user.setLastName("Surname");
         user.setPassword("password");
-        mockMvc.perform(MockMvcRequestBuilders.post("/createAdmin").with(user("admin").roles("ADMIN")).with(csrf()).flashAttr("user", user))
+        user.setRole("ADMIN");
+
+        doNothing().when(teacherService).createUserAccountByRole(user, user.getRole());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/createUserAccount").with(user("admin").roles("ADMIN"))
+                .with(csrf())
+                .flashAttr("user", user)
+                .param("role", user.getRole()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createAccount"))
                 .andExpect(MockMvcResultMatchers.model().size(0));

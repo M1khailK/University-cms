@@ -6,12 +6,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.handler.CustomExceptionHandler;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.manager.ServiceManager;
-import ua.foxminded.university.services.AccountCreatorService;
+import ua.foxminded.university.services.UserManagerService;
 
 import java.time.LocalDateTime;
 
@@ -19,12 +20,7 @@ import java.time.LocalDateTime;
 public class AccountCreatorController implements CustomExceptionHandler<DuplicateEmailException> {
 
     private static final String REDIRECT_ACCOUNT_CREATOR_PAGE = "redirect:/createAccount";
-    private static final String STUDENT = "STUDENT";
-    private static final String TEACHER = "TEACHER";
-    private static final String ADMIN = "ADMIN";
 
-    @Autowired
-    private AccountCreatorService accountCreatorService;
     @Autowired
     private ServiceManager serviceManager;
 
@@ -33,21 +29,11 @@ public class AccountCreatorController implements CustomExceptionHandler<Duplicat
         return "accountCreator";
     }
 
-    @PostMapping("/createStudent")
-    public String createStudentAccount(@Valid User user) {
-        accountCreatorService.createUserAccount(user, STUDENT);
-        return REDIRECT_ACCOUNT_CREATOR_PAGE;
-    }
-
-    @PostMapping("/createTeacher")
-    public String createTeacherAccount(@Valid User user) {
-        accountCreatorService.createUserAccount(user, TEACHER);
-        return REDIRECT_ACCOUNT_CREATOR_PAGE;
-    }
-
-    @PostMapping("/createAdmin")
-    public String createAdminAccount(@Valid User user) {
-        accountCreatorService.createUserAccount(user, ADMIN);
+    @PostMapping("/createUserAccount")
+    public String createUserAccount(@Valid User user, @RequestParam String role) {
+        String fullRole = "ROLE_" + role;
+        UserManagerService service = serviceManager.getServiceByRole(fullRole).get();
+        service.createUserAccountByRole(user, role);
         return REDIRECT_ACCOUNT_CREATOR_PAGE;
     }
 

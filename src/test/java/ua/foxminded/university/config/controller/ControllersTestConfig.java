@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.generator.PasswordGenerator;
-import ua.foxminded.university.services.AccountCreatorService;
 import ua.foxminded.university.services.EmailSenderService;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
@@ -21,9 +20,6 @@ import javax.sql.DataSource;
 public class ControllersTestConfig {
     @MockBean
     public PasswordGenerator passwordGenerator;
-
-    @MockBean
-    public AccountCreatorService accountCreatorService;
 
     @MockBean
     public GroupService groupService;

@@ -26,7 +26,7 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
     @GetMapping("/profile")
     public String profile(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserManagerService service = serviceManager.getUserManagerService();
+        UserManagerService service = serviceManager.getUserManagerServiceByAuthentication();
         model.addAttribute("user", service.getByEmail(authentication.getName()));
         return "profile";
     }
@@ -42,7 +42,7 @@ public class ProfileController implements CustomExceptionHandler<InvalidOldPassw
                                  @RequestParam("newPass") char[] newPass) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
-        UserManagerService service = serviceManager.getUserManagerService();
+        UserManagerService service = serviceManager.getUserManagerServiceByAuthentication();
         service.changePassword(userEmail, oldPass, newPass);
         return "redirect:/profile";
     }

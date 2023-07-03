@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         int id = getUserIdByEmail(authentication.getName());
-        UserManagerService service = serviceManager.getUserManagerService();
+        UserManagerService service = serviceManager.getUserManagerServiceByAuthentication();
         return service.getLessonsByUserIdAndDateBetween(id, dateFrom, dateTo);
     }
 }
