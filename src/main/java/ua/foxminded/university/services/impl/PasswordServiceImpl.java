@@ -29,4 +29,9 @@ public class PasswordServiceImpl implements PasswordService {
         user.setPassword(passwordEncoder.encode(sequencePassword));
         Arrays.fill(password, '\0');
     }
+    @Override
+    public void clearPasswords(char[] oldPassword, char[] newPassword) {
+        Arrays.fill(oldPassword, '\0');
+        Arrays.fill(newPassword, '\0');
+    }
 }

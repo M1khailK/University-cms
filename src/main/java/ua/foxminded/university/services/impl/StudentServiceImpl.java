@@ -42,7 +42,6 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public void save(Student student) {
         studentRepository.save(student);
-
     }
 
     @Override
@@ -78,16 +77,15 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Transactional
     public void changePassword(String email, char[] oldPassword, char[] newPassword) {
         Student student = getByEmail(email);
         String oldPass = getPasswordById(student.getId());
         if (passwordEncoder.matches(CharBuffer.wrap(oldPassword), oldPass)) {
             studentRepository.changePasswordById(passwordEncoder.encode(CharBuffer.wrap(newPassword)), student.getId());
-            studentRepository.save(student);
         } else {
             throw new InvalidOldPasswordException("The old password is incorrect!");
         }
+        passwordService.clearPasswords(oldPassword,newPassword);
     }
 
     @Override
@@ -108,4 +106,5 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> getAllEnabledStudents() {
         return studentRepository.findAllEnabledStudents();
     }
+
 }

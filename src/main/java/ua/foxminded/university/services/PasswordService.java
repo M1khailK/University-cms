@@ -4,4 +4,6 @@ import ua.foxminded.university.dto.User;
 
 public interface PasswordService {
     void generateAndSendPasswordForUser(User user);
+    void clearPasswords(char[] oldPassword, char[] newPassword);
+
 }

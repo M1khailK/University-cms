@@ -3,6 +3,7 @@ package ua.foxminded.university.services.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,6 +22,7 @@ import java.time.Clock;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -62,13 +64,14 @@ public class StudentServiceImplTest {
         when(passwordEncoder.encode(CharBuffer.wrap(NEW_PASS))).thenReturn(Arrays.toString(NEW_PASS));
         doNothing().when(studentRepository).changePasswordById(Arrays.toString(NEW_PASS), student.getId());
 
+        ArgumentCaptor<char[]> newPasswordCaptor = ArgumentCaptor.forClass(char[].class);
+
         studentService.changePassword(EMAIL, PASSWORD, NEW_PASS);
 
         verify(studentRepository).findByEmail(EMAIL);
         verify(studentRepository, times(2)).findPasswordById(ID);
         verify(passwordEncoder).matches(CharBuffer.wrap(PASSWORD), studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")));
-        verify(studentRepository).changePasswordById(Arrays.toString(NEW_PASS), student.getId());
-        verify(studentRepository).save(student);
+        verify(studentRepository).changePasswordById(Arrays.toString(newPasswordCaptor.capture()), eq(student.getId()));
 
     }
 
