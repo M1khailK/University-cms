@@ -14,6 +14,8 @@ import org.springframework.test.context.ContextConfiguration;
 import ua.foxminded.university.config.aspect.ServiceAspectTestConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.repository.GroupRepository;
+import ua.foxminded.university.services.StudentService;
+import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.impl.GroupServiceImpl;
 
 import java.util.List;

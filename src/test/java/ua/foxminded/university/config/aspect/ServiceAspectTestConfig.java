@@ -8,12 +8,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import ua.foxminded.university.generator.PasswordGenerator;
-import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.repository.SubjectRepository;
 import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.repository.UserRepository;
+import ua.foxminded.university.services.StudentService;
+import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.impl.UserServiceImpl;
 
 import java.time.Clock;
 
@@ -42,5 +44,9 @@ public class ServiceAspectTestConfig {
     @MockBean
     public JavaMailSender javaMailSender;
     @MockBean
-    public ServiceManager serviceManager;
+    public TeacherService teacherService;
+    @MockBean
+    public StudentService studentService;
+    @MockBean
+    public UserServiceImpl userService;
 }
