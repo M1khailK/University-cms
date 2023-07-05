@@ -5,7 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -17,23 +16,21 @@ import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
-import ua.foxminded.university.services.UserService;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @WebMvcTest
-@MockBean(UserService.class)
 @ContextConfiguration(classes = ControllersTestConfig.class)
 public class ProfileControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
+    @Autowired
     private ServiceManager serviceManager;
-    @MockBean
+    @Autowired
     private StudentService studentService;
-    @MockBean
+    @Autowired
     private TeacherService teacherService;
 
     @BeforeEach
@@ -45,8 +42,6 @@ public class ProfileControllerTest {
         when(serviceManager.getUserManagerServiceByAuthentication()).thenReturn(studentService);
         when(studentService.getByEmail("username")).thenReturn(student);
         when(teacherService.getByEmail("username")).thenReturn(teacher);
-
-
     }
 
     @ParameterizedTest

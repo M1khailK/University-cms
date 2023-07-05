@@ -4,7 +4,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -12,9 +11,6 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
-import ua.foxminded.university.manager.ServiceManager;
-import ua.foxminded.university.services.StudentService;
-import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
@@ -22,16 +18,13 @@ import java.time.LocalDate;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest
-@MockBean(ServiceManager.class)
-@MockBean(TeacherService.class)
-@MockBean(StudentService.class)
 @ContextConfiguration(classes = ControllersTestConfig.class)
 public class UserScheduleControllerTest {
     private static final int ID = 1;
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private UserService userService;
 
 

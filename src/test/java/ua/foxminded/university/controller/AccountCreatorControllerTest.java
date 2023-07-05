@@ -33,11 +33,11 @@ public class AccountCreatorControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
+    @Autowired
     private ServiceManager serviceManager;
-    @MockBean
+    @Autowired
     private StudentService studentService;
-    @MockBean
+    @Autowired
     private TeacherService teacherService;
 
     @BeforeEach
