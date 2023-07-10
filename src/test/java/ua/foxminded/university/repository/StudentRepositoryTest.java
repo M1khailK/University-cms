@@ -20,7 +20,7 @@ import java.util.Optional;
 @ContextConfiguration(classes = RepositoriesTestConfig.class)
 public class StudentRepositoryTest {
 
-    private static final String EMAIL = "alex.1@example.com";
+    private static final String EMAIL = "bob.2@example.com";
 
     @Autowired
     private StudentRepository studentRepository;
@@ -29,7 +29,7 @@ public class StudentRepositoryTest {
 
     @Test
     public void studentRepository_shouldReturnStudentByEmail_whenInputHasEmail() {
-        Student expected = new Student(1, "Alex", "First", EMAIL, null, "password","STUDENT");
+        Student expected = new Student(2, "Bob", "Second", EMAIL, null, "password","STUDENT");
         Optional<Student> actual = studentRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(expected), actual);
     }

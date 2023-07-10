@@ -19,16 +19,14 @@ import java.util.Optional;
 @ContextConfiguration(classes = RepositoriesTestConfig.class)
 public class TeacherRepositoryTest {
 
-    private static final String EMAIL = "bob.3@example.com";
+    private static final String EMAIL = "alex.4@example.com";
 
     @Autowired
     private TeacherRepository teacherRepository;
 
     @Test
     public void teacherRepository_shouldReturnTeacherByEmail_whenInputHasEmail() {
-        List<Teacher> teachers = teacherRepository.findAll();
-        teachers.forEach(System.out::println);
-        Teacher expected = new Teacher(3, "Bob", "Third", EMAIL, "password", "TEACHER");
+        Teacher expected = new Teacher(4, "Alex", "Fourth", EMAIL, "password", "TEACHER");
         Optional<Teacher> actual = teacherRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(expected), actual);
     }
@@ -50,8 +48,8 @@ public class TeacherRepositoryTest {
 
     @Test
     public void teacherRepository_shouldReturnTeacher_whenInputHasUserId() {
-        Teacher expected = new Teacher(3, "Bob", "Third", EMAIL, "password", "TEACHER");
-        Teacher actual = teacherRepository.findById(3).get();
+        Teacher expected = new Teacher(4, "Alex", "Fourth", EMAIL, "password", "TEACHER");
+        Teacher actual = teacherRepository.findById(4).get();
         Assertions.assertEquals(expected, actual);
     }
 
