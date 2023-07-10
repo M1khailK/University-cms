@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
+import ua.foxminded.university.roleProvider.RoleProvider;
 import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
@@ -29,7 +30,7 @@ public class UserScheduleControllerTest {
 
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     void userScheduleController_shouldShowUserSchedulePage_whenUserIsAuthorized(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/mySchedule").with(user))
                 .andExpect(MockMvcResultMatchers.model().size(0))
@@ -37,7 +38,7 @@ public class UserScheduleControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     void userScheduleController_shouldShowUserSchedule_whenInputHasDateFromAndDateTo(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/getUserSchedule").with(user)
                 .param("dateFrom", "2023-01-01")
@@ -47,7 +48,7 @@ public class UserScheduleControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     public void userScheduleController_shouldThrowAnException_whenDateFromIsNull(RequestPostProcessor user) throws Exception {
         when(userService.getUserLessons(null, LocalDate.of(2023, 1, 30))).thenThrow(InvalidDateRangeException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/getUserSchedule").with(user)

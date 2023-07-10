@@ -14,6 +14,7 @@ import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
+import ua.foxminded.university.roleProvider.RoleProvider;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 
@@ -45,7 +46,7 @@ public class ProfileControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     void profileController_shouldShowProfilePage_whenUserIsAuthorized(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/profile").with(user))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -54,7 +55,7 @@ public class ProfileControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     void profileController_shouldShowSettingsPage_whenUserIsAuthorized(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/settings").with(user))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -63,7 +64,7 @@ public class ProfileControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     void profileController_shouldUpdateUserPassword_whenUserIsAuthorized(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/updatePassword").with(user).with(csrf())
                 .param("oldPass", "password")

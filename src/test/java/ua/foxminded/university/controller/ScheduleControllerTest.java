@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
+import ua.foxminded.university.roleProvider.RoleProvider;
 
 @WebMvcTest
 @ContextConfiguration(classes = ControllersTestConfig.class)
@@ -19,7 +20,7 @@ public class ScheduleControllerTest {
     private MockMvc mockMvc;
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideAllRoles")
+    @MethodSource(RoleProvider.ALL_ROLES)
     public void generalScheduleController_shouldShowGeneralSchedulePage_whenUserHasRoleOrIsAnonymousAndInputIsEmpty(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/generalSchedule").with(user))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -28,7 +29,7 @@ public class ScheduleControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideAllRoles")
+    @MethodSource(RoleProvider.ALL_ROLES)
     public void studentController_shouldShowStudentSchedule_whenUserHasRoleOrIsAnonymousAndInputHasStudentIdAndDateBetween(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/groupSchedule").with(user)
                 .param("groupId", "1")
@@ -40,7 +41,7 @@ public class ScheduleControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideAllRoles")
+    @MethodSource(RoleProvider.ALL_ROLES)
     public void teacherController_shouldShowTeacherScheduleForAnyUser_whenUserHasRoleOrIsAnonymousAndInputHasTeacherIdAndDateBetween(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/teacherSchedule").with(user)
                 .param("teacherId", "1")
@@ -52,7 +53,7 @@ public class ScheduleControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideAllRoles")
+    @MethodSource(RoleProvider.ALL_ROLES)
     public void groupScheduleController_shouldThrowAnException_whenDateFromIsInvalid(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/groupSchedule").with(user)
                 .param("groupId", "1")
@@ -63,7 +64,7 @@ public class ScheduleControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("errorPage"));
     }
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideAllRoles")
+    @MethodSource(RoleProvider.ALL_ROLES)
     public void teacherScheduleController_shouldThrowAnException_whenDateFromIsnvalid(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/teacherSchedule").with(user)
                 .param("teacherId", "1")

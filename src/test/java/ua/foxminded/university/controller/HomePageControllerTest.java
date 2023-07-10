@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
+import ua.foxminded.university.roleProvider.RoleProvider;
 
 @WebMvcTest(controllers = HomePageController.class)
 @ContextConfiguration(classes = ControllersTestConfig.class)
@@ -19,7 +20,7 @@ public class HomePageControllerTest {
     private MockMvc mockMvc;
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideAllRoles")
+    @MethodSource(RoleProvider.ALL_ROLES)
     public void homepageController_shouldShowHomePage_whenUserHasRoleOrIsAnonymous(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/").with(user))
                 .andExpect(MockMvcResultMatchers.status().isOk())

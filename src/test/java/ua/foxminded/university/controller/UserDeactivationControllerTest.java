@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
+import ua.foxminded.university.roleProvider.RoleProvider;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
@@ -38,14 +39,14 @@ public class UserDeactivationControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     public void userDeactivationController_shouldNotShowDeactivationPage_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/deactivationPage").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     public void userDeactivationController_shouldNotDeactivateUser_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/deactivateUser").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());

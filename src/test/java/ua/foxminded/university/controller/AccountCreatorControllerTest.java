@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.manager.ServiceManager;
+import ua.foxminded.university.roleProvider.RoleProvider;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
@@ -56,7 +57,7 @@ public class AccountCreatorControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     public void accountCreatorController_shouldNotCreateStudentAccount_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/createAccount").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
@@ -125,7 +126,7 @@ public class AccountCreatorControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles")
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     public void accountCreatorController_shouldNotShowAccountCreatorPage_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/createAccount").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());

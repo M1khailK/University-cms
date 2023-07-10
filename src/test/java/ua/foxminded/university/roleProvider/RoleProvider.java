@@ -8,7 +8,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 public class RoleProvider {
-
+    public static final String STUDENT_AND_TEACHER_ROLES = "ua.foxminded.university.roleProvider.RoleProvider#provideStudentAndTeacherRoles";
+    public static final String ALL_ROLES = "ua.foxminded.university.roleProvider.RoleProvider#provideAllRoles";
     private static final String USERNAME = "username";
 
     public static Stream<RequestPostProcessor> provideStudentAndTeacherRoles() {
