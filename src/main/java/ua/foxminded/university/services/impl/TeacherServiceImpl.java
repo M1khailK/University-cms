@@ -101,9 +101,4 @@ public class TeacherServiceImpl implements TeacherService {
         manager.register("ROLE_ADMIN", this);
     }
 
-    @Override
-    public List<Teacher> getAllEnabledTeachers() {
-        return teacherRepository.findAllEnabledTeachers();
-    }
-
 }

@@ -57,7 +57,7 @@ public class TeacherRepositoryTest {
 
     @Test
     public void teacherRepository_shouldReturnListOfTeachers_whenTheirAccountsAreEnabled() {
-        List<Teacher> actual = teacherRepository.findAllEnabledTeachers();
+        List<Teacher> actual = teacherRepository.findAll();
         List<Teacher> expected = List.of(new Teacher(4, "Alex", "Fourth", "alex.4@example.com", "password", "TEACHER"));
         Assertions.assertEquals(expected, actual);
     }

@@ -24,8 +24,8 @@ public class UserDeactivationController {
 
     @GetMapping("/deactivationPage")
     public String deactivateUserAccount(Model model) {
-        List<Student> students = studentService.getAllEnabledStudents();
-        List<Teacher> teachers = teacherService.getAllEnabledTeachers();
+        List<Student> students = studentService.getAll();
+        List<Teacher> teachers = teacherService.getAll();
         model.addAttribute("students", students);
         model.addAttribute("teachers", teachers);
         return "deactivationPage";

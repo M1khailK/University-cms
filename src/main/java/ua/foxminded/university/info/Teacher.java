@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @SecondaryTable(name = "users", pkJoinColumns = @PrimaryKeyJoinColumn(name = "user_id"))
 @SecondaryTable(name = "user_role", pkJoinColumns = @PrimaryKeyJoinColumn(name = "user_id"))
+@Where(clause = "t1_2.isEnabled = true")
 public class Teacher {
 
     @Id

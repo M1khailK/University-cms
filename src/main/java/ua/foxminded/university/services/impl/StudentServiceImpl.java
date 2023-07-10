@@ -103,9 +103,4 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-    @Override
-    public List<Student> getAllEnabledStudents() {
-        return studentRepository.findAllEnabledStudents();
-    }
-
 }

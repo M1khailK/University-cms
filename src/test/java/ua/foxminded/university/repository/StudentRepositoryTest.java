@@ -53,7 +53,7 @@ public class StudentRepositoryTest {
 
     @Test
     public void studentRepository_shouldReturnListOfStudents_whenTheirAccountsAreEnabled() {
-       List<Student> actual = studentRepository.findAllEnabledStudents();
+       List<Student> actual = studentRepository.findAll();
        List<Student> expected = List.of(new Student(2, "Bob", "Second", "bob.2@example.com", null, "password","STUDENT"));
         Assertions.assertEquals(expected, actual);
     }
