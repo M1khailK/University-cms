@@ -7,7 +7,6 @@ import ua.foxminded.university.repository.SubjectRepository;
 import ua.foxminded.university.services.SubjectService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -21,17 +20,12 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public Optional<Subject> getById(Integer subjectId) {
-        return subjectRepository.findById(subjectId);
+    public Subject getById(int subjectId) {
+        return subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalArgumentException("Subject was not found by id"));
     }
 
     @Override
     public List<Subject> getAll() {
         return subjectRepository.findAll();
-    }
-
-    @Override
-    public void deleteById(Integer subjectId) {
-        subjectRepository.deleteById(subjectId);
     }
 }

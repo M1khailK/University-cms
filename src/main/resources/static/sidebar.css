@@ -46,22 +46,6 @@ top: 30px;
     box-shadow: 0 5px 10px rgba(255, 255, 255, 0.4);
     display: none;
 }
-.sidebar-links li:hover a{
-    color: #71695a;
-    transition: 0.3s;
-}
-.sidebar-links li:hover ~ .active{
-display: block;
-}
-.sidebar-links li:nth-child(1):hover ~ .active{
-    top: 0;
-}
-.sidebar-links li:nth-child(2):hover ~ .active{
-    top: 33.3%;
-}
-.sidebar-links li:nth-child(3):hover ~ .active{
-    top: 66.66%;
-}
 
 @media only screen and (max-width: 1000px) {
     .sidebar{

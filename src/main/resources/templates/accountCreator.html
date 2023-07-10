@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Creator Page</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="accountCreatorForm.css">
+    <script src="https://kit.fontawesome.com/8d224a8437.js" crossorigin="anonymous"></script>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="url">
+        <a href="/">Main Page</a>
+    </div>
+    <div class="form-container studentAccount">
+        <h2>Student Account Creation</h2>
+        <form th:action="@{/createUserAccount}" method="post" name="studentForm">
+            <label>First Name</label> <input type="text" name="firstName" required minlength="2" maxlength="50">
+            <label>Last Name</label> <input type="text" name="lastName" required minlength="2" maxlength="50">
+            <label>Email</label> <input type="email" name="email"/>
+            <label>Group(Please enter the group name)</label> <input type="text" name="groupName" required minlength="5" maxlength="50">
+            <input type="text" name="role" value="STUDENT" hidden>
+            <button type="submit" class="submit">Create Student Account</button>
+        </form>
+    </div>
+    <div class="form-container teacherAccount">
+        <h2>Teacher Account Creation</h2>
+        <form th:action="@{/createUserAccount}" method="post" name="teacherForm">
+            <label>First Name</label> <input type="text" name="firstName" required minlength="2" maxlength="50">
+            <label>Last Name</label> <input type="text" name="lastName" required minlength="2" maxlength="50">
+            <label>Email</label> <input type="email" name="email"/>
+            <input type="text" name="role" value="TEACHER" hidden>
+            <button type="submit" class="submit">Create Teacher Account</button>
+        </form>
+    </div>
+    <div class="form-container adminAccount">
+        <h2>Admin Account Creation</h2>
+        <form th:action="@{/createUserAccount}" method="post" name="adminForm">
+            <label>First Name</label> <input type="text" name="firstName" required minlength="2" maxlength="50">
+            <label>Last Name</label> <input type="text" name="lastName" required minlength="2" maxlength="50">
+            <label>Email</label> <input type="email" name="email"/>
+            <input type="text" name="role" value="ADMIN" hidden>
+            <button type="submit" class="submit">Create Admin Account</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

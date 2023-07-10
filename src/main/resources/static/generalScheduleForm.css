@@ -31,6 +31,7 @@
 .group-input-field-date-from {
   position: absolute;
   margin: 35px 15px;
+  padding-top: 10px;
   transform: translate(-170px, 30px);
 }
 
@@ -38,6 +39,8 @@
  .group-input-field-date-to{
   position: absolute;
   margin: -35px 190px;
+  padding-top: 10px;
+
   transform: translate(-170px, 100px);
 }
 .teacher-lessons-container,

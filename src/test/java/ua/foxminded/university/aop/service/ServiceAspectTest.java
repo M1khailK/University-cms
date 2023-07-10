@@ -10,25 +10,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ua.foxminded.university.config.ServiceAspectTestConfig;
+import org.springframework.test.context.ContextConfiguration;
+import ua.foxminded.university.config.aspect.ServiceAspectTestConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.repository.GroupRepository;
-import ua.foxminded.university.repository.LessonRepository;
-import ua.foxminded.university.repository.StudentRepository;
-import ua.foxminded.university.repository.SubjectRepository;
-import ua.foxminded.university.repository.TeacherRepository;
+import ua.foxminded.university.services.StudentService;
+import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.impl.GroupServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {ServiceAspectTestConfig.class})
-@MockBean(TeacherRepository.class)
-@MockBean(LessonRepository.class)
-@MockBean(StudentRepository.class)
-@MockBean(SubjectRepository.class)
+@SpringBootTest()
+@ContextConfiguration(classes = ServiceAspectTestConfig.class)
 public class ServiceAspectTest {
 
     private static final String GROUP_NAME = "Group";
@@ -61,7 +57,7 @@ public class ServiceAspectTest {
 
     @Test
     void serviceAspect_shouldDoLogging_whenGroupServiceGetGroupById() {
-        lenient().when(groupService.getById(GROUP_ID)).thenReturn(Optional.of(new Group(null, GROUP_NAME)));
+        when(groupRepository.findById(GROUP_ID)).thenReturn(Optional.of(new Group(1, GROUP_NAME)));
 
         Logger logger = (Logger) LoggerFactory.getLogger(ServiceAspect.class);
 
@@ -72,8 +68,8 @@ public class ServiceAspectTest {
         groupService.getById(GROUP_ID);
         List<ILoggingEvent> logList = listAppender.list;
 
-        String firstExpected = "Calling: Optional ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer)";
-        String secondExpected = "Optional ua.foxminded.university.services.impl.GroupServiceImpl.getById(Integer) response: Optional[Group(id=null, name=Group)]";
+        String firstExpected = "Calling: Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int)";
+        String secondExpected = "Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int) response: Group(id=1, name=Group)";
         Assertions.assertEquals(firstExpected, logList.get(0).getFormattedMessage());
         Assertions.assertEquals(secondExpected, logList.get(1).getFormattedMessage());
         Assertions.assertEquals(Level.TRACE, logList.get(0).getLevel());

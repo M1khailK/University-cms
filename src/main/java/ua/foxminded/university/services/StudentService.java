@@ -2,5 +2,10 @@ package ua.foxminded.university.services;
 
 import ua.foxminded.university.info.Student;
 
-public interface StudentService extends EntityService<Student>{
+import java.util.List;
+
+public interface StudentService extends EntityService<Student>, UserManagerService {
+
+    String getPasswordById(int id);
+
 }

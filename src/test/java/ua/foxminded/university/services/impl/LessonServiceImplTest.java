@@ -2,14 +2,17 @@ package ua.foxminded.university.services.impl;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
+import ua.foxminded.university.config.service.ServicesTestConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
-import ua.foxminded.university.info.Student;
 import ua.foxminded.university.repository.LessonRepository;
+import ua.foxminded.university.repository.StudentRepository;
+import ua.foxminded.university.repository.TeacherRepository;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -22,9 +25,13 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@MockBean(TeacherRepository.class)
+@MockBean(StudentRepository.class)
+@MockBean(PasswordEncoder.class)
+@ContextConfiguration(classes = ServicesTestConfig.class)
 public class LessonServiceImplTest {
 
     private static final int ID = 1;
@@ -59,26 +66,9 @@ public class LessonServiceImplTest {
     private LessonServiceImpl lessonService;
 
     @Test
-    void lessonService_shouldThrowAnException_whenStudentGroupIsNull() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> lessonService.getAllByStudentAndDateBetween(new Student(null, FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, null), LOCAL_DATE, LOCAL_DATE));
-    }
-
-    @Test
-    void lessonService_shouldReturnLessonsList_whenStudentHasGroup() {
-        Group group = new Group(ID, GROUP_NAME);
-        Student student = new Student(null, FIRST_NAME, LAST_NAME, EXAMPLE_EMAIL, group);
-        Lesson lesson = new Lesson(ID, LESSON_NAME, LOCAL_DATE, START_TIME, END_TIME, null, group, null);
-
-        lenient().when(lessonRepository.findAllByGroupIdAndDateBetween(ID, LOCAL_DATE, LOCAL_DATE)).thenReturn(Collections.singletonList(lesson));
-
-        Assertions.assertEquals(Collections.singletonList(lesson), lessonService.getAllByStudentAndDateBetween(student, LOCAL_DATE, LOCAL_DATE));
-        Mockito.verify(lessonRepository).findAllByGroupIdAndDateBetween(ID, LOCAL_DATE, LOCAL_DATE);
-    }
-
-    @Test
     public void lessonService_shouldFindLessonsByInputDates_whenInputHasLocalDates() {
         LocalDate localDate = LocalDate.of(2020, 10, 10);
-        lenient().when(lessonRepository.findAllByGroupIdAndDateBetween(1, localDate, localDate)).thenReturn(Collections.singletonList(new Lesson(ID, LESSON_NAME, localDate, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));
+        when(lessonRepository.findAllByGroupIdAndDateBetween(1, localDate, localDate)).thenReturn(Collections.singletonList(new Lesson(ID, LESSON_NAME, localDate, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));
 
         List<Lesson> expected = Collections.singletonList(new Lesson(ID, LESSON_NAME, localDate, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null));
         List<Lesson> actual = lessonService.getAllByGroupAndDateBetween(new Group(ID, GROUP_NAME), localDate, localDate);
@@ -88,7 +78,7 @@ public class LessonServiceImplTest {
 
     @Test
     public void lessonService_shouldReturnTomorrowLesson_whenInputTimeIsSixPM() {
-        lenient().when(lessonRepository.findAllByGroupIdAndDateBetween(1, LocalDate.of(YEAR, MONTH, DAY + 1), LocalDate.of(YEAR, MONTH, DAY + 1))).thenReturn(Collections.singletonList(new Lesson(ID, "TOMORROW" + LESSON_NAME, LOCAL_DATE.plusDays(1), START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));
+        when(lessonRepository.findAllByGroupIdAndDateBetween(1, LocalDate.of(YEAR, MONTH, DAY + 1), LocalDate.of(YEAR, MONTH, DAY + 1))).thenReturn(Collections.singletonList(new Lesson(ID, "TOMORROW" + LESSON_NAME, LOCAL_DATE.plusDays(1), START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));
 
         List<Lesson> expected = Collections.singletonList(new Lesson(ID, "TOMORROW" + LESSON_NAME, LOCAL_DATE.plusDays(1), START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null));
 
@@ -107,7 +97,7 @@ public class LessonServiceImplTest {
 
     @Test
     public void lessonService_shouldReturnTodayLesson_whenInputTimeIsNotSixPM() {
-        lenient().when(lessonRepository.findAllByGroupIdAndDateBetween(1, LocalDate.of(YEAR, MONTH, DAY), LocalDate.of(YEAR, MONTH, DAY))).thenReturn(Collections.singletonList(new Lesson(ID, "TODAY" + LESSON_NAME, LOCAL_DATE, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));
+        when(lessonRepository.findAllByGroupIdAndDateBetween(1, LocalDate.of(YEAR, MONTH, DAY), LocalDate.of(YEAR, MONTH, DAY))).thenReturn(Collections.singletonList(new Lesson(ID, "TODAY" + LESSON_NAME, LOCAL_DATE, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null)));
 
         List<Lesson> expected = Collections.singletonList(new Lesson(ID, "TODAY" + LESSON_NAME, LOCAL_DATE, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME), null));
 

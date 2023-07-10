@@ -7,7 +7,6 @@ import ua.foxminded.university.repository.GroupRepository;
 import ua.foxminded.university.services.GroupService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -21,8 +20,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Optional<Group> getById(Integer groupId) {
-        return groupRepository.findById(groupId);
+    public Group getById(int groupId) {
+        return groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group was not found by id"));
     }
 
     @Override
@@ -31,7 +30,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void deleteById(Integer groupId) {
-        groupRepository.deleteById(groupId);
+    public Group getByName(String groupName) {
+        return groupRepository.findByName(groupName).orElseThrow(() -> new IllegalArgumentException("Group was not found by name"));
     }
 }
