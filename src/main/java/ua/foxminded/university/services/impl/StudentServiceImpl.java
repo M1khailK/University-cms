@@ -85,7 +85,8 @@ public class StudentServiceImpl implements StudentService {
         } else {
             throw new InvalidOldPasswordException("The old password is incorrect!");
         }
-        passwordService.clearPasswords(oldPassword,newPassword);
+        Arrays.fill(oldPassword, '\0');
+        Arrays.fill(newPassword, '\0');
     }
 
     @Override

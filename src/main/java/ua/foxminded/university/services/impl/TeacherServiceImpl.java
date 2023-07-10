@@ -18,6 +18,7 @@ import ua.foxminded.university.services.TeacherService;
 
 import java.nio.CharBuffer;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -65,7 +66,8 @@ public class TeacherServiceImpl implements TeacherService {
         } else {
             throw new InvalidOldPasswordException(PASSWORD_IS_INCORRECT);
         }
-        passwordService.clearPasswords(oldPassword, newPassword);
+        Arrays.fill(oldPassword, '\0');
+        Arrays.fill(newPassword, '\0');
     }
 
     @Override
