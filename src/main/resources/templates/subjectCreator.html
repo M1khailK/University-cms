@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Subject Creator Page</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="subjectCreatorForm.css">
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="url">
+        <a href="/">Main Page</a>
+    </div>
+    <div class="form-container subject">
+        <h2>Subject Creation</h2>
+        <form th:action="@{/createSubject}" method="post" name="subjectForm">
+            <label>Name</label> <input type="text" name="name" minlength="3"/>
+            <button type="submit" class="submit">Create Subject</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

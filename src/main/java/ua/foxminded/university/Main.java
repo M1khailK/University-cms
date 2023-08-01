@@ -3,9 +3,6 @@ package ua.foxminded.university;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import ua.foxminded.university.info.Group;
-import ua.foxminded.university.info.Student;
-import ua.foxminded.university.repository.StudentRepository;
 
 
 @SpringBootApplication
