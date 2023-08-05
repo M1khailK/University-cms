@@ -30,7 +30,6 @@ public class Teacher {
     @Column(name = "user_id", length = 50, nullable = false)
     private Integer id;
 
-
     @Column(name = "first_name", table = "users", length = 50, nullable = false)
     private String firstName;
 
