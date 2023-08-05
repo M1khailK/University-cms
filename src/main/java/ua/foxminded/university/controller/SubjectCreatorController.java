@@ -17,12 +17,12 @@ public class SubjectCreatorController {
     private SubjectService subjectService;
 
     @GetMapping("/createUniversitySubject")
-    public String createAccountPage() {
+    public String createSubjectPage() {
         return "subjectCreator";
     }
 
     @PostMapping("/createSubject")
-    public String createUserAccount(@RequestParam String name) {
+    public String createSubject(@RequestParam String name) {
         Subject subject = new Subject(null, name);
         subjectService.save(subject);
         return REDIRECT_CREATE_SUBJECT;
