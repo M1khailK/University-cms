@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Controller
-public class LessonCreatorController {
+public class LessonController {
 
     private static final String REDIRECT_CREATE_LESSON = "redirect:/createUniversityLesson";
 

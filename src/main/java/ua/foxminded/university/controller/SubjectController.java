@@ -9,7 +9,7 @@ import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.services.SubjectService;
 
 @Controller
-public class SubjectCreatorController {
+public class SubjectController {
 
     private static final String REDIRECT_CREATE_SUBJECT = "redirect:/createUniversitySubject";
 

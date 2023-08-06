@@ -29,7 +29,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 @WebMvcTest
 @ContextConfiguration(classes = ControllersTestConfig.class)
-public class LessonCreatorControllerTest {
+public class LessonControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
