@@ -43,13 +43,10 @@ public class SecurityTestConfig {
     public SecurityFilterChain config(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests()
                 .requestMatchers("/login").anonymous()
-                .requestMatchers("/deactivationPage","/deactivateUser",
-                        "/createTeacher","/createAdmin","/createStudent","/createAccount",
-                        "/createUniversitySubject","/createSubject","/createUniversityLesson","/createLesson").hasRole("ADMIN")
-                .requestMatchers("/profile","/settings","/updatePassword","/mySchedule").hasAnyRole( "STUDENT", "TEACHER")
+                .requestMatchers("/profile","/settings","/updatePassword","/mySchedule").hasAnyRole("STUDENT", "TEACHER")
                 .requestMatchers("/getUserSchedule").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                .requestMatchers("/generalSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()
-                .requestMatchers("/**").permitAll()
+                .requestMatchers("/generalSchedule","/groupSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()
+                .requestMatchers("/**").hasRole("ADMIN")
                 .and().formLogin().loginPage("/login").usernameParameter("email").defaultSuccessUrl("/")
                 .and().logout().logoutSuccessUrl("/").and().build();
     }
