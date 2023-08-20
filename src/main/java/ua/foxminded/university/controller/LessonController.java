@@ -1,11 +1,13 @@
 package ua.foxminded.university.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ua.foxminded.university.dto.LessonDTO;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
@@ -38,15 +40,10 @@ public class LessonController {
     }
 
     @PostMapping("/createLesson")
-    public String createLesson(@RequestParam String name, @RequestParam(value = "date", required = false) LocalDate date,
-                               @RequestParam(value = "startTime", required = false) LocalTime startTime,
-                               @RequestParam(value = "endTime", required = false) LocalTime endTime,
-                               @RequestParam(value = "subjectId", required = false) Integer subjectId,
-                               @RequestParam(value = "groupId", required = false) Integer groupId,
-                               @RequestParam(value = "teacherId", required = false) Integer teacherId) {
-        Lesson lesson = new Lesson(null, name, date, startTime, endTime, subjectService.getById(subjectId),
-                groupService.getById(groupId), teacherService.getById(teacherId));
+    public String createLesson(@Valid LessonDTO lessonDTO) {
+        Lesson lesson = new Lesson(null, lessonDTO.getName(), lessonDTO.getDate(), lessonDTO.getStartTime(), lessonDTO.getEndTime(), lessonDTO.getSubject(), lessonDTO.getGroup(), lessonDTO.getTeacher());
         lessonService.save(lesson);
+        lessonService.getAll().forEach(lesson1 -> System.out.println(lesson1));
         return REDIRECT_CREATE_LESSON;
     }
 }

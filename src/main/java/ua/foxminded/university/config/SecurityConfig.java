@@ -29,13 +29,17 @@ public class SecurityConfig {
     public SecurityFilterChain config(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests()
                 .requestMatchers("/login").anonymous()
-                .requestMatchers("/profile","/settings","/updatePassword","/mySchedule").hasAnyRole("STUDENT", "TEACHER")
+                .requestMatchers("/deactivationPage","/deactivateUser",
+                        "/createTeacher","/createAdmin","/createStudent","/createAccount",
+                        "/createUniversitySubject","/createSubject","/createUniversityLesson","/createLesson").hasRole("ADMIN")
+                .requestMatchers("/profile","/settings","/updatePassword","/mySchedule").hasAnyRole( "STUDENT", "TEACHER")
                 .requestMatchers("/getUserSchedule").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                .requestMatchers("/generalSchedule","/groupSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()
-                .requestMatchers("/**").hasRole("ADMIN")
+                .requestMatchers("/generalSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()
+                .requestMatchers("/**").permitAll()
                 .and().formLogin().loginPage("/login").usernameParameter("email").defaultSuccessUrl("/")
                 .and().logout().logoutSuccessUrl("/").and().build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
