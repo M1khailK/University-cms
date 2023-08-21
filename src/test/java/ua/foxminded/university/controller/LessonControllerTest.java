@@ -11,15 +11,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
+import ua.foxminded.university.dto.LessonDTO;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.roleProvider.RoleProvider;
-import ua.foxminded.university.services.GroupService;
-import ua.foxminded.university.services.LessonService;
-import ua.foxminded.university.services.SubjectService;
-import ua.foxminded.university.services.TeacherService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -43,16 +40,19 @@ public class LessonControllerTest {
 
     @Test
     public void lessonCreatorController_shouldCreateLesson_whenInputIsLessonObject() throws Exception {
+        LessonDTO lesson = new LessonDTO();
+        lesson.setName("Test Lesson");
+        lesson.setDate(LocalDate.parse("2023-08-05"));
+        lesson.setStartTime(LocalTime.parse("15:30"));
+        lesson.setEndTime(LocalTime.parse("16:30"));
+        lesson.setSubject(new Subject(1,"subjectName"));
+        lesson.setGroup(new Group(2,"groupName"));
+        lesson.setTeacher(new Teacher(3, "Bob", "Second", "teacherName","password","TEACHER"));
+        
         mockMvc.perform(MockMvcRequestBuilders.post("/createLesson")
                 .with(user("admin").roles("ADMIN"))
                 .with(csrf())
-                .param("name", "Test Lesson")
-                .param("date", "2023-08-05")
-                .param("startTime", "15:30")
-                .param("endTime", "16:30")
-                .param("subjectId", "1")
-                .param("groupId", "2")
-                .param("teacherId", "3"))
+                .flashAttr("lessonDTO",lesson))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createUniversityLesson"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
