@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 public class User {
 
-    @NotBlank(message = "Set correct name")
+    @NotBlank(message = "Name must not be blank")
     private String firstName;
 
-    @NotBlank(message = "Set correct surname")
+    @NotBlank(message = "Surname must not be blank")
     private String lastName;
 
     @Email(message = "Set valid email")

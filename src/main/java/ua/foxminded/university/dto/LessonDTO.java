@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @Getter
 @Setter
 public class LessonDTO {
-    @NotBlank(message = "Set correct name")
+    @NotBlank(message = "Name must not be blank")
     private String name;
     private LocalDate date;
     private LocalTime startTime;

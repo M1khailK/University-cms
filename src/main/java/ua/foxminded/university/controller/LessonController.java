@@ -43,7 +43,6 @@ public class LessonController {
     public String createLesson(@Valid LessonDTO lessonDTO) {
         Lesson lesson = new Lesson(null, lessonDTO.getName(), lessonDTO.getDate(), lessonDTO.getStartTime(), lessonDTO.getEndTime(), lessonDTO.getSubject(), lessonDTO.getGroup(), lessonDTO.getTeacher());
         lessonService.save(lesson);
-        lessonService.getAll().forEach(lesson1 -> System.out.println(lesson1));
         return REDIRECT_CREATE_LESSON;
     }
 }
