@@ -48,7 +48,7 @@ public class LessonControllerTest {
         lesson.setSubject(new Subject(1,"subjectName"));
         lesson.setGroup(new Group(2,"groupName"));
         lesson.setTeacher(new Teacher(3, "Bob", "Second", "teacherName","password","TEACHER"));
-        
+
         mockMvc.perform(MockMvcRequestBuilders.post("/createLesson")
                 .with(user("admin").roles("ADMIN"))
                 .with(csrf())
