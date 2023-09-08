@@ -27,7 +27,7 @@
     <div class="form-container">
         <h3>Group Information</h3>
         <form th:action="@{/editGroupInfo}" method="post">
-            <select name="group" size="2">
+            <select name="group_id" size="2">
                 <th:block th:each="group : ${groups}">
                     <option th:value="${group.id}"
                             th:text="${group.name}"></option>

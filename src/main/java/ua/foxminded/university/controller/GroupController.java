@@ -32,9 +32,9 @@ public class GroupController {
     }
 
     @PostMapping("/editGroupInfo")
-    public String editGroupInfo(Model model,@RequestParam(value = "group", required = false) Group group, @RequestParam(value = "group_name") String groupName) {
+    public String editGroupInfo(Model model,@RequestParam(value = "group_id") int groupId, @RequestParam(value = "group_name") String groupName) {
         model.addAttribute("groups", groupService.getAll());
-        groupService.changeNameById(groupName,group.getId());
+        groupService.changeNameById(groupName,groupId);
         return GROUP_INFO_PAGE;
     }
 }
