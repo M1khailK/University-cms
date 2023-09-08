@@ -26,7 +26,18 @@
     </div>
     <div class="form-container">
         <h3>Group Information</h3>
-
+        <form th:action="@{/editGroupInfo}" method="post">
+            <select name="group" size="2">
+                <th:block th:each="group : ${groups}">
+                    <option th:value="${group.id}"
+                            th:text="${group.name}"></option>
+                </th:block>
+            </select>
+            <input type="hidden" name="group" th:value="${group?.id}" />
+            <label>Edit Group Name:</label>
+            <input type="text" name="group_name" required />
+            <button type="submit" class="submit">Edit Group Name</button>
+        </form>
         <form th:action="@{/getGroupInfo}" method="get" name="groupForm">
             <label>Group</label>
             <select name="group" size="2">
@@ -36,6 +47,7 @@
                 </th:block>
             </select>
             <button type="submit" class="submit" disabled>get info</button>
+
             <div class="student-list">
                 <h3>Students in the selected group:</h3>
                 <table class="table">

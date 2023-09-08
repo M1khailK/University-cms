@@ -33,4 +33,9 @@ public class GroupServiceImpl implements GroupService {
     public Group getByName(String groupName) {
         return groupRepository.findByName(groupName).orElseThrow(() -> new IllegalArgumentException("Group was not found by name"));
     }
+
+    @Override
+    public void changeNameById(String groupName,int groupId) {
+        groupRepository.updateGroupName(groupName,groupId);
+    }
 }
