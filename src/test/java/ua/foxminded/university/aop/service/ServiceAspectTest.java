@@ -18,6 +18,7 @@ import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.impl.GroupServiceImpl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public class ServiceAspectTest {
         logger.addAppender(listAppender);
         listAppender.start();
 
-        groupService.save(new Group(null, GROUP_NAME));
+        groupService.save(new Group(null, GROUP_NAME, Collections.emptyList()));
         List<ILoggingEvent> logList = listAppender.list;
 
         String firstExpected = "Calling: void ua.foxminded.university.services.impl.GroupServiceImpl.save(Group)";
@@ -57,7 +58,7 @@ public class ServiceAspectTest {
 
     @Test
     void serviceAspect_shouldDoLogging_whenGroupServiceGetGroupById() {
-        when(groupRepository.findById(GROUP_ID)).thenReturn(Optional.of(new Group(1, GROUP_NAME)));
+        when(groupRepository.findById(GROUP_ID)).thenReturn(Optional.of(new Group(1, GROUP_NAME,Collections.emptyList())));
 
         Logger logger = (Logger) LoggerFactory.getLogger(ServiceAspect.class);
 
@@ -69,7 +70,7 @@ public class ServiceAspectTest {
         List<ILoggingEvent> logList = listAppender.list;
 
         String firstExpected = "Calling: Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int)";
-        String secondExpected = "Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int) response: Group(id=1, name=Group)";
+        String secondExpected = "Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int) response: Group(id=1, name=Group, students=[])";
         Assertions.assertEquals(firstExpected, logList.get(0).getFormattedMessage());
         Assertions.assertEquals(secondExpected, logList.get(1).getFormattedMessage());
         Assertions.assertEquals(Level.TRACE, logList.get(0).getLevel());

@@ -76,10 +76,6 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findPasswordById(id).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id"));
     }
 
-    @Override
-    public List<Student> getStudentsByGroup(Group group) {
-        return studentRepository.findAllByGroup(group).orElseThrow(() -> new IllegalArgumentException("Students were not found by group"));
-    }
 
     @Override
     public void changePassword(String email, char[] oldPassword, char[] newPassword) {

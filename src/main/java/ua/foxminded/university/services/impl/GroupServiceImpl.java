@@ -3,6 +3,7 @@ package ua.foxminded.university.services.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.info.Group;
+import ua.foxminded.university.info.Student;
 import ua.foxminded.university.repository.GroupRepository;
 import ua.foxminded.university.services.GroupService;
 
@@ -35,7 +36,10 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public void changeNameById(String groupName,int groupId) {
-        groupRepository.updateGroupName(groupName,groupId);
+    public void changeNameById(int groupId, String groupName) {
+        Group group = getById(groupId);
+        group.setName(groupName);
+        save(group);
     }
+
 }

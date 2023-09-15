@@ -31,7 +31,8 @@ public class SecurityConfig {
                 .requestMatchers("/login").anonymous()
                 .requestMatchers("/deactivationPage","/deactivateUser",
                         "/createTeacher","/createAdmin","/createStudent","/createAccount",
-                        "/createUniversitySubject","/createSubject","/createUniversityLesson","/createLesson","/getGroupInfo","/editGroupInfo").hasRole("ADMIN")
+                        "/createUniversitySubject","/createSubject","/createUniversityLesson","/createLesson",
+                        "/getGroupInfo","/getGroupInfoPage","/editGroupInfo").hasRole("ADMIN")
                 .requestMatchers("/profile","/settings","/updatePassword","/mySchedule").hasAnyRole( "STUDENT", "TEACHER")
                 .requestMatchers("/getUserSchedule").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
                 .requestMatchers("/generalSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()

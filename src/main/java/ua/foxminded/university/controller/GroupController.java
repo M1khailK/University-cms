@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Student;
-import ua.foxminded.university.repository.GroupRepository;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.StudentService;
 
@@ -18,23 +17,29 @@ import java.util.List;
 public class GroupController {
 
     private static final String GROUP_INFO_PAGE = "groupInfoPage";
+    private static final String GROUPS = "groups";
     @Autowired
     private GroupService groupService;
-    @Autowired
-    private StudentService studentService;
+
+
+    @GetMapping("/getGroupInfoPage")
+    public String getGroupInfoPage(Model model) {
+        model.addAttribute(GROUPS, groupService.getAll());
+        return GROUP_INFO_PAGE;
+    }
 
     @GetMapping("/getGroupInfo")
-    public String getGroupInfo(Model model, @RequestParam(value = "group", required = false) Group group) {
-        model.addAttribute("groups", groupService.getAll());
-        List<Student> students = studentService.getStudentsByGroup(group);
+    public String getGroupInfo(Model model, @RequestParam(value = "group_id") int groupId) {
+        model.addAttribute(GROUPS, groupService.getAll());
+        List<Student> students = groupService.getById(groupId).getStudents();
         model.addAttribute("students", students);
         return GROUP_INFO_PAGE;
     }
 
     @PostMapping("/editGroupInfo")
-    public String editGroupInfo(Model model,@RequestParam(value = "group_id") int groupId, @RequestParam(value = "group_name") String groupName) {
-        model.addAttribute("groups", groupService.getAll());
-        groupService.changeNameById(groupName,groupId);
+    public String editGroupInfo(Model model, @RequestParam(value = "group_id") int groupId, @RequestParam(value = "group_name") String groupName) {
+        model.addAttribute(GROUPS, groupService.getAll());
+        groupService.changeNameById(groupId, groupName);
         return GROUP_INFO_PAGE;
     }
 }

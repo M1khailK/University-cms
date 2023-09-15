@@ -20,6 +20,7 @@ import ua.foxminded.university.roleProvider.RoleProvider;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collections;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -46,7 +47,7 @@ public class LessonControllerTest {
         lesson.setStartTime(LocalTime.parse("15:30"));
         lesson.setEndTime(LocalTime.parse("16:30"));
         lesson.setSubject(new Subject(1,"subjectName"));
-        lesson.setGroup(new Group(2,"groupName"));
+        lesson.setGroup(new Group(2,"groupName", Collections.emptyList()));
         lesson.setTeacher(new Teacher(3, "Bob", "Second", "teacherName","password","TEACHER"));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/createLesson")

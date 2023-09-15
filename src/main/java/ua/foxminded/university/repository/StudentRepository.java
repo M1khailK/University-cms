@@ -7,13 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Student;
 
-import java.util.List;
 import java.util.Optional;
 public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     Optional<Student> findByEmail(String email);
-
-    Optional<List<Student>> findAllByGroup(Group group);
 
     @Query(value = "SELECT u.password " +
             "FROM students s " +

@@ -9,6 +9,6 @@ public interface StudentService extends EntityService<Student>, UserManagerServi
 
     String getPasswordById(int id);
 
-    List<Student> getStudentsByGroup(Group group);
+
 
 }

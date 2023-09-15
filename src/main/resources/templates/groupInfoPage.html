@@ -9,7 +9,7 @@
     <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
     <script>
     $(document).ready(function() {
-        $('select[name="group"]').change(function() {
+        $('select[name="group_id"]').change(function() {
             if ($(this).val() !== '') {
                 $('button[type="submit"]').prop('disabled', false);
             } else {
@@ -40,7 +40,7 @@
         </form>
         <form th:action="@{/getGroupInfo}" method="get" name="groupForm">
             <label>Group</label>
-            <select name="group" size="2">
+            <select name="group_id" size="2">
                 <th:block th:each="group : ${groups}">
                     <option th:value="${group.id}"
                             th:text="${group.name}"></option>
