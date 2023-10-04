@@ -28,4 +28,11 @@ public class SubjectServiceImpl implements SubjectService {
     public List<Subject> getAll() {
         return subjectRepository.findAll();
     }
+
+    @Override
+    public void changeNameById(int subjectId, String subjectName) {
+        Subject subject = getById(subjectId);
+        subject.setName(subjectName);
+        save(subject);
+    }
 }

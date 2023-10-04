@@ -19,6 +19,18 @@
             <label>Name</label> <input type="text" name="name" minlength="3"/>
             <button type="submit" class="submit">Create Subject</button>
         </form>
+        <form th:action="@{/editSubject}" method="post" name="subjectForm">
+            <select name="subject_id" size="2">
+                <th:block th:each="subject : ${subjects}">
+                    <option th:value="${subject.id}"
+                            th:text="${subject.name}"></option>
+                </th:block>
+            </select>
+            <input type="hidden" name="subject" th:value="${subject?.id}" />
+            <label>Edit Subject Name:</label>
+            <input type="text" name="subject_name" required />
+            <button type="submit" class="submit">Edit Subject Name</button>
+        </form>
     </div>
 </div>
 </body>
