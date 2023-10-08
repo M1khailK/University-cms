@@ -36,7 +36,7 @@ public class LessonControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/createUniversityLesson").with(user("admin").roles("ADMIN")))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("lessonCreator"))
-                .andExpect(MockMvcResultMatchers.model().size(3));
+                .andExpect(MockMvcResultMatchers.model().size(4));
     }
 
     @Test
@@ -59,6 +59,26 @@ public class LessonControllerTest {
                 .andExpect(MockMvcResultMatchers.model().size(0));
     }
 
+    @Test
+    public void lessonController_shouldEditLessonInfo_whenUserIsAdmin() throws Exception {
+        LessonDTO lesson = new LessonDTO();
+        lesson.setName("Test Lesson");
+        lesson.setDate(LocalDate.parse("2023-08-05"));
+        lesson.setStartTime(LocalTime.parse("15:30"));
+        lesson.setEndTime(LocalTime.parse("16:30"));
+        lesson.setSubject(new Subject(1,"subjectName"));
+        lesson.setGroup(new Group(2,"groupName", Collections.emptyList()));
+        lesson.setTeacher(new Teacher(3, "Bob", "Second", "teacherName","password","TEACHER"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/editLesson")
+                .with(user("admin").roles("ADMIN"))
+                .with(csrf()).param("lesson_id","1")
+                .flashAttr("lessonDTO",lesson))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.view().name("redirect:/createUniversityLesson"))
+                .andExpect(MockMvcResultMatchers.model().size(0));
+    }
+
     @ParameterizedTest
     @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     public void lessonCreatorController_shouldNotShowLessonCreatorPage_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
@@ -70,6 +90,12 @@ public class LessonControllerTest {
     @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     public void lessonCreatorController_shouldNotCreateLesson_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/createLesson").with(user))
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+    @ParameterizedTest
+    @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
+    public void lessonCreatorController_shouldNotEditLesson_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/editLesson").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
 }
