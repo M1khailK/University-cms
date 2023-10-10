@@ -18,10 +18,10 @@ import ua.foxminded.university.services.TeacherService;
 public class LessonController {
 
     private static final String REDIRECT_CREATE_LESSON = "redirect:/createUniversityLesson";
-    private static final String LESSONS = "lessons";
-    private static final String SUBJECTS = "subjects";
-    private static final String GROUPS = "groups";
-    private static final String TEACHERS = "teachers";
+    private static final String LESSONS_ATTRIBUTE = "lessons";
+    private static final String SUBJECTS_ATTRIBUTE = "subjects";
+    private static final String GROUPS_ATTRIBUTE = "groups";
+    private static final String TEACHERS_ATTRIBUTE = "teachers";
 
     @Autowired
     private LessonService lessonService;
@@ -34,10 +34,10 @@ public class LessonController {
 
     @GetMapping("/createUniversityLesson")
     public String createLessonPage(Model model) {
-        model.addAttribute(TEACHERS, teacherService.getAll());
-        model.addAttribute(GROUPS, groupService.getAll());
-        model.addAttribute(SUBJECTS, subjectService.getAll());
-        model.addAttribute(LESSONS, lessonService.getAll());
+        model.addAttribute(TEACHERS_ATTRIBUTE, teacherService.getAll());
+        model.addAttribute(GROUPS_ATTRIBUTE, groupService.getAll());
+        model.addAttribute(SUBJECTS_ATTRIBUTE, subjectService.getAll());
+        model.addAttribute(LESSONS_ATTRIBUTE, lessonService.getAll());
         return "lessonCreator";
     }
 

@@ -13,20 +13,20 @@ import ua.foxminded.university.services.SubjectService;
 public class SubjectController {
 
     private static final String REDIRECT_CREATE_SUBJECT = "redirect:/createUniversitySubject";
-    private static final String SUBJECTS = "subjects";
+    private static final String SUBJECTS_ATTRIBUTE = "subjects";
 
     @Autowired
     private SubjectService subjectService;
 
     @GetMapping("/createUniversitySubject")
     public String createSubjectPage(Model model) {
-        model.addAttribute(SUBJECTS, subjectService.getAll());
+        model.addAttribute(SUBJECTS_ATTRIBUTE, subjectService.getAll());
         return "subjectCreator";
     }
 
     @PostMapping("/createSubject")
     public String createSubject(Model model,@RequestParam String name) {
-        model.addAttribute(SUBJECTS, subjectService.getAll());
+        model.addAttribute(SUBJECTS_ATTRIBUTE, subjectService.getAll());
         Subject subject = new Subject(null, name);
         subjectService.save(subject);
         return REDIRECT_CREATE_SUBJECT;
@@ -34,7 +34,7 @@ public class SubjectController {
 
     @PostMapping("/editSubject")
     public String editSubject(Model model, @RequestParam("subject_id") int subjectId, @RequestParam("subject_name") String subjectName) {
-        model.addAttribute(SUBJECTS, subjectService.getAll());
+        model.addAttribute(SUBJECTS_ATTRIBUTE, subjectService.getAll());
         subjectService.changeNameById(subjectId, subjectName);
         return REDIRECT_CREATE_SUBJECT;
     }

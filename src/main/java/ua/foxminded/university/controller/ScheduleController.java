@@ -23,8 +23,8 @@ import java.util.List;
 @Controller
 public class ScheduleController implements CustomExceptionHandler<InvalidDateRangeException> {
 
-    private static final String GROUPS = "groups";
-    private static final String TEACHERS = "teachers";
+    private static final String GROUPS_ATTRIBUTE = "groups";
+    private static final String TEACHERS_ATTRIBUTE = "teachers";
     private static final String GENERAL_SCHEDULE = "generalSchedule";
     private static final String REDIRECT_GENERAL_SCHEDULE = "redirect:/generalSchedule";
     @Autowired
@@ -39,8 +39,8 @@ public class ScheduleController implements CustomExceptionHandler<InvalidDateRan
         List<Group> groups = groupService.getAll();
         List<Teacher> teachers = teacherService.getAll();
 
-        model.addAttribute(GROUPS, groups);
-        model.addAttribute(TEACHERS, teachers);
+        model.addAttribute(GROUPS_ATTRIBUTE, groups);
+        model.addAttribute(TEACHERS_ATTRIBUTE, teachers);
 
         return GENERAL_SCHEDULE;
     }
@@ -58,8 +58,8 @@ public class ScheduleController implements CustomExceptionHandler<InvalidDateRan
         List<Group> groups = groupService.getAll();
         List<Lesson> teacherLessons = lessonService.getAllByTeacherAndDateBetween(teacher, dateFrom, dateTo);
 
-        model.addAttribute(TEACHERS, teachers);
-        model.addAttribute(GROUPS, groups);
+        model.addAttribute(TEACHERS_ATTRIBUTE, teachers);
+        model.addAttribute(GROUPS_ATTRIBUTE, groups);
         model.addAttribute("teacherLessons", teacherLessons);
 
         return GENERAL_SCHEDULE;
@@ -79,8 +79,8 @@ public class ScheduleController implements CustomExceptionHandler<InvalidDateRan
         List<Teacher> teachers = teacherService.getAll();
         List<Lesson> groupLessons = lessonService.getAllByGroupAndDateBetween(group, dateFrom, dateTo);
 
-        model.addAttribute(GROUPS, groups);
-        model.addAttribute(TEACHERS, teachers);
+        model.addAttribute(GROUPS_ATTRIBUTE, groups);
+        model.addAttribute(TEACHERS_ATTRIBUTE, teachers);
         model.addAttribute("groupLessons", groupLessons);
 
         return GENERAL_SCHEDULE;
