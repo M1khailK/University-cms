@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ua.foxminded.university.dto.LessonDTO;
 import ua.foxminded.university.info.Lesson;
+import ua.foxminded.university.mapper.LessonMapper;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.SubjectService;
@@ -31,6 +32,8 @@ public class LessonController {
     private GroupService groupService;
     @Autowired
     private TeacherService teacherService;
+    @Autowired
+    private LessonMapper lessonMapper;
 
     @GetMapping("/createUniversityLesson")
     public String createLessonPage(Model model) {
@@ -43,14 +46,14 @@ public class LessonController {
 
     @PostMapping("/createLesson")
     public String createLesson(@Valid LessonDTO lessonDTO) {
-        Lesson lesson = new Lesson(null, lessonDTO.getName(), lessonDTO.getDate(), lessonDTO.getStartTime(), lessonDTO.getEndTime(), lessonDTO.getSubject(), lessonDTO.getGroup(), lessonDTO.getTeacher());
+        Lesson lesson = lessonMapper.toLesson(lessonDTO);
         lessonService.save(lesson);
         return REDIRECT_CREATE_LESSON;
     }
 
     @PostMapping("/editLesson")
-    public String editLesson(@RequestParam("lesson_id") int lessonId, @Valid LessonDTO lessonDTO) {
-        lessonService.changeLessonInfoById(lessonId, lessonDTO.getName(), lessonDTO.getStartTime(), lessonDTO.getEndTime(), lessonDTO.getDate(), lessonDTO.getTeacher(), lessonDTO.getGroup(), lessonDTO.getSubject());
+    public String editLesson(@Valid LessonDTO lessonDTO) {
+        lessonService.changeLessonInfoByLessonDTO(lessonDTO);
         return REDIRECT_CREATE_LESSON;
     }
 }

@@ -1,5 +1,6 @@
 package ua.foxminded.university.services;
 
+import ua.foxminded.university.dto.LessonDTO;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Subject;
@@ -15,7 +16,6 @@ public interface LessonService extends EntityService<Lesson> {
 
     List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to);
 
-    void changeLessonInfoById(int lessonId, String lessonName,LocalTime startTime,LocalTime endTime,LocalDate date,
-                              Teacher teacher,Group group,Subject subject);
+    void changeLessonInfoByLessonDTO(LessonDTO lessonDTO);
 
 }

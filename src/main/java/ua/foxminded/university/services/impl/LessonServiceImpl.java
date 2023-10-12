@@ -1,7 +1,9 @@
 package ua.foxminded.university.services.impl;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.foxminded.university.dto.LessonDTO;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Subject;
@@ -63,15 +65,15 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public void changeLessonInfoById(int lessonId, String lessonName, LocalTime startTime, LocalTime endTime, LocalDate date, Teacher teacher, Group group, Subject subject) {
-        Lesson lesson = getById(lessonId);
-        lesson.setName(lessonName);
-        lesson.setDate(date);
-        lesson.setStartTime(startTime);
-        lesson.setEndTime(endTime);
-        lesson.setGroup(group);
-        lesson.setSubject(subject);
-        lesson.setTeacher(teacher);
+    public void changeLessonInfoByLessonDTO(LessonDTO lessonDTO) {
+        Lesson lesson = getById(lessonDTO.getId());
+        lesson.setName(lessonDTO.getName());
+        lesson.setDate(lessonDTO.getDate());
+        lesson.setStartTime(lessonDTO.getStartTime());
+        lesson.setEndTime(lessonDTO.getEndTime());
+        lesson.setGroup(lessonDTO.getGroup());
+        lesson.setSubject(lessonDTO.getSubject());
+        lesson.setTeacher(lessonDTO.getTeacher());
         save(lesson);
     }
 

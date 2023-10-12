@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="lessonCreatorForm.css">
     <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
     <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+
 </head>
 <body>
 <div class="main">
@@ -51,7 +52,7 @@
         <h2>Change lesson info</h2>
 
         <form th:action="@{/editLesson}" method="post" name="lessonForm">
-            <select name="lesson_id" size="2">
+            <select name="id" size="4">
                 <th:block th:each="lesson : ${lessons}">
                     <option th:value="${lesson.id}"
                             th:text="${lesson.name}"></option>

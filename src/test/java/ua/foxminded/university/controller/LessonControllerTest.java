@@ -42,6 +42,7 @@ public class LessonControllerTest {
     @Test
     public void lessonCreatorController_shouldCreateLesson_whenInputIsLessonObject() throws Exception {
         LessonDTO lesson = new LessonDTO();
+        lesson.setId(1);
         lesson.setName("Test Lesson");
         lesson.setDate(LocalDate.parse("2023-08-05"));
         lesson.setStartTime(LocalTime.parse("15:30"));
@@ -62,6 +63,7 @@ public class LessonControllerTest {
     @Test
     public void lessonController_shouldEditLessonInfo_whenUserIsAdmin() throws Exception {
         LessonDTO lesson = new LessonDTO();
+        lesson.setId(1);
         lesson.setName("Test Lesson");
         lesson.setDate(LocalDate.parse("2023-08-05"));
         lesson.setStartTime(LocalTime.parse("15:30"));
@@ -72,8 +74,7 @@ public class LessonControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/editLesson")
                 .with(user("admin").roles("ADMIN"))
-                .with(csrf()).param("lesson_id","1")
-                .flashAttr("lessonDTO",lesson))
+                .flashAttr("lessonDTO",lesson).with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createUniversityLesson"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
