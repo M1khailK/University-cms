@@ -63,7 +63,7 @@ public class LessonServiceImpl implements LessonService {
         }
         return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to);
     }
-    
+
     private LocalDate getDefaultDate() {
         LocalDate today = LocalDate.now(clock);
         if (LocalTime.now(clock).isAfter(LocalTime.of(HOUR_TO_DISPLAY_TOMORROW_SCHEDULE, 0, 0, 0))) {
