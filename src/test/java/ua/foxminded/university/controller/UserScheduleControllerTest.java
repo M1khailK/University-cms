@@ -16,6 +16,7 @@ import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest
@@ -45,6 +46,8 @@ public class UserScheduleControllerTest {
                 .param("dateTo", "2023-01-30")).andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(1))
                 .andExpect(MockMvcResultMatchers.view().name("userSchedule"));
+
+        verify(userService).getUserLessons(LocalDate.of(2023,1,1),LocalDate.of(2023,1,30));
     }
 
     @ParameterizedTest

@@ -10,7 +10,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
+import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.roleProvider.RoleProvider;
+import ua.foxminded.university.services.LessonService;
+
+import java.time.LocalDate;
+
+import static org.mockito.Mockito.verify;
 
 @WebMvcTest
 @ContextConfiguration(classes = ControllersTestConfig.class)
@@ -18,6 +24,8 @@ public class ScheduleControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private LessonService lessonService;
 
     @ParameterizedTest
     @MethodSource(RoleProvider.ALL_ROLES)
@@ -38,6 +46,8 @@ public class ScheduleControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(3))
                 .andExpect(MockMvcResultMatchers.view().name("generalSchedule"));
+        verify(lessonService).getAllByGroupAndDateBetween(null, LocalDate.of(2023,1,1),LocalDate.of(2023,1,30));
+
     }
 
     @ParameterizedTest
@@ -50,6 +60,8 @@ public class ScheduleControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(3))
                 .andExpect(MockMvcResultMatchers.view().name("generalSchedule"));
+
+        verify(lessonService).getAllByTeacherAndDateBetween(null, LocalDate.of(2023,1,1),LocalDate.of(2023,1,30));
     }
 
     @ParameterizedTest
@@ -62,6 +74,8 @@ public class ScheduleControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.model().size(2))
                 .andExpect(MockMvcResultMatchers.view().name("errorPage"));
+
+
     }
     @ParameterizedTest
     @MethodSource(RoleProvider.ALL_ROLES)

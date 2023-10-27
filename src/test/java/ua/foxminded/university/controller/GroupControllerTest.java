@@ -17,6 +17,8 @@ import ua.foxminded.university.services.GroupService;
 
 import java.util.Collections;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -24,6 +26,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @WebMvcTest
 @ContextConfiguration(classes = ControllersTestConfig.class)
 public class GroupControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -35,6 +38,7 @@ public class GroupControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("groupInfoPage"))
                 .andExpect(MockMvcResultMatchers.model().size(1));
+
     }
 
     @Test
@@ -45,6 +49,8 @@ public class GroupControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("groupInfoPage"))
                 .andExpect(MockMvcResultMatchers.model().size(2));
+
+        verify(groupService,times(1)).getById(1);
     }
 
     @Test
@@ -56,6 +62,8 @@ public class GroupControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("groupInfoPage"))
                 .andExpect(MockMvcResultMatchers.model().size(1));
+
+        verify(groupService,times(1)).changeNameById(1,"newGroupName");
     }
 
     @ParameterizedTest

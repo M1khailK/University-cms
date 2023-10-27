@@ -3,6 +3,7 @@ package ua.foxminded.university.controller;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.roleProvider.RoleProvider;
+import ua.foxminded.university.services.SubjectService;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -22,6 +24,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 public class SubjectControllerTest {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private SubjectService subjectService;
 
     @Test
     public void subjectCreatorController_shouldShowSubjectCreatorPage_whenUserIsAdmin() throws Exception {
@@ -42,6 +46,8 @@ public class SubjectControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createUniversitySubject"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
+        Mockito.verify(subjectService, Mockito.times(1)).save(subject);
+
     }
 
     @Test
@@ -53,6 +59,8 @@ public class SubjectControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createUniversitySubject"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
+        Mockito.verify(subjectService, Mockito.times(1)).changeNameById(1, "newSubjectName");
+
     }
 
     @ParameterizedTest
@@ -68,6 +76,7 @@ public class SubjectControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/createSubject").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
+
     @ParameterizedTest
     @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     public void subjectCreatorController_shouldNotEditSubject_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {

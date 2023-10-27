@@ -18,6 +18,7 @@ import ua.foxminded.university.roleProvider.RoleProvider;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
@@ -72,6 +73,8 @@ public class ProfileControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/profile"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
+
+        verify(serviceManager.getUserManagerServiceByAuthentication()).changePassword("username", "password".toCharArray(), "newPassword".toCharArray());
     }
 
 

@@ -18,11 +18,14 @@ import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.roleProvider.RoleProvider;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserManagerService;
 import ua.foxminded.university.services.UserService;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -83,6 +86,9 @@ public class AccountCreatorControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createAccount"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
+
+        verify(serviceManager.getServiceByRole("ROLE_STUDENT").get(),times(1))
+                .createUserAccountByRole(user,"STUDENT");
     }
 
     @Test
@@ -103,6 +109,10 @@ public class AccountCreatorControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createAccount"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
+
+        verify(serviceManager.getServiceByRole("ROLE_TEACHER").get(),times(1))
+                .createUserAccountByRole(user,"TEACHER");
+
     }
 
     @Test
@@ -123,6 +133,9 @@ public class AccountCreatorControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createAccount"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
+
+        verify(serviceManager.getServiceByRole("ROLE_ADMIN").get(),times(1))
+                .createUserAccountByRole(user,"ADMIN");
     }
 
     @ParameterizedTest

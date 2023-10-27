@@ -12,7 +12,10 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.roleProvider.RoleProvider;
+import ua.foxminded.university.services.UserService;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 @WebMvcTest
@@ -20,6 +23,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 public class UserDeactivationControllerTest {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private UserService userService;
 
     @Test
     public void userDeactivationController_shouldShowDeactivationPage_whenUserIsAdmin() throws Exception {
@@ -36,6 +41,8 @@ public class UserDeactivationControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/deactivationPage"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
+
+        verify(userService,times(1)).disableUserById(1);
     }
 
     @ParameterizedTest
