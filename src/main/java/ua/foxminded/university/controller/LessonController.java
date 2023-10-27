@@ -52,7 +52,8 @@ public class LessonController {
 
     @PostMapping("/editLesson")
     public String editLesson(@Valid LessonDTO lessonDTO) {
-        lessonService.changeLessonInfoByLessonDTO(lessonDTO);
+        Lesson lesson = lessonMapper.toLesson(lessonDTO);
+        lessonService.save(lesson);
         return REDIRECT_CREATE_LESSON;
     }
 }

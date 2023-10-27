@@ -63,20 +63,7 @@ public class LessonServiceImpl implements LessonService {
         }
         return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to);
     }
-
-    @Override
-    public void changeLessonInfoByLessonDTO(LessonDTO lessonDTO) {
-        Lesson lesson = getById(lessonDTO.getId());
-        lesson.setName(lessonDTO.getName());
-        lesson.setDate(lessonDTO.getDate());
-        lesson.setStartTime(lessonDTO.getStartTime());
-        lesson.setEndTime(lessonDTO.getEndTime());
-        lesson.setGroup(lessonDTO.getGroup());
-        lesson.setSubject(lessonDTO.getSubject());
-        lesson.setTeacher(lessonDTO.getTeacher());
-        save(lesson);
-    }
-
+    
     private LocalDate getDefaultDate() {
         LocalDate today = LocalDate.now(clock);
         if (LocalTime.now(clock).isAfter(LocalTime.of(HOUR_TO_DISPLAY_TOMORROW_SCHEDULE, 0, 0, 0))) {

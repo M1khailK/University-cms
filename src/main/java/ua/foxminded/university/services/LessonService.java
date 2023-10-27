@@ -16,6 +16,4 @@ public interface LessonService extends EntityService<Lesson> {
 
     List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to);
 
-    void changeLessonInfoByLessonDTO(LessonDTO lessonDTO);
-
 }
