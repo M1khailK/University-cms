@@ -14,6 +14,7 @@ import java.time.LocalTime;
 @Getter
 @Setter
 public class LessonDTO {
+    @NonNull
     private Integer id;
     @NotBlank(message = "Name must not be blank")
     private String name;

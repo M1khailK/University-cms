@@ -45,8 +45,10 @@ public class LessonController {
 
     @PostMapping("/createLesson")
     public String createLesson(@Valid LessonDTO lessonDTO) {
-        Lesson lesson = lessonMapper.toLesson(lessonDTO);
-        lessonService.save(lesson);
+        Lesson lesson = lessonMapper
+                .toLesson(lessonDTO);
+        lessonService
+                .save(lesson);
         return REDIRECT_CREATE_LESSON;
     }
 

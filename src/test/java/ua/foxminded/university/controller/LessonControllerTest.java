@@ -1,12 +1,12 @@
 package ua.foxminded.university.controller;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.university.config.controller.ControllersTestConfig;
 import ua.foxminded.university.dto.LessonDTO;
 import ua.foxminded.university.info.Group;
-import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.mapper.LessonMapper;
@@ -55,14 +54,14 @@ public class LessonControllerTest {
         lessonDTO.setDate(LocalDate.parse("2023-08-05"));
         lessonDTO.setStartTime(LocalTime.parse("15:30"));
         lessonDTO.setEndTime(LocalTime.parse("16:30"));
-        lessonDTO.setSubject(new Subject(1,"subjectName"));
-        lessonDTO.setGroup(new Group(2,"groupName", Collections.emptyList()));
-        lessonDTO.setTeacher(new Teacher(3, "Bob", "Second", "teacherName","password","TEACHER"));
+        lessonDTO.setSubject(new Subject(1, "subjectName"));
+        lessonDTO.setGroup(new Group(2, "groupName", Collections.emptyList()));
+        lessonDTO.setTeacher(new Teacher(3, "Bob", "Second", "teacherName", "password", "TEACHER"));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/createLesson")
                 .with(user("admin").roles("ADMIN"))
                 .with(csrf())
-                .flashAttr("lessonDTO",lessonDTO))
+                .flashAttr("lessonDTO", lessonDTO))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createUniversityLesson"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
@@ -80,13 +79,13 @@ public class LessonControllerTest {
         lessonDTO.setDate(LocalDate.parse("2023-08-05"));
         lessonDTO.setStartTime(LocalTime.parse("15:30"));
         lessonDTO.setEndTime(LocalTime.parse("16:30"));
-        lessonDTO.setSubject(new Subject(1,"subjectName"));
-        lessonDTO.setGroup(new Group(2,"groupName", Collections.emptyList()));
-        lessonDTO.setTeacher(new Teacher(3, "Bob", "Second", "teacherName","password","TEACHER"));
+        lessonDTO.setSubject(new Subject(1, "subjectName"));
+        lessonDTO.setGroup(new Group(2, "groupName", Collections.emptyList()));
+        lessonDTO.setTeacher(new Teacher(3, "Bob", "Second", "teacherName", "password", "TEACHER"));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/editLesson")
                 .with(user("admin").roles("ADMIN"))
-                .flashAttr("lessonDTO",lessonDTO).with(csrf()))
+                .flashAttr("lessonDTO", lessonDTO).with(csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.view().name("redirect:/createUniversityLesson"))
                 .andExpect(MockMvcResultMatchers.model().size(0));
@@ -110,6 +109,7 @@ public class LessonControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/createLesson").with(user))
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
+
     @ParameterizedTest
     @MethodSource(RoleProvider.STUDENT_AND_TEACHER_ROLES)
     public void lessonCreatorController_shouldNotEditLesson_whenUserIsNotAdmin(RequestPostProcessor user) throws Exception {
