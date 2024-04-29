@@ -50,3 +50,11 @@ CREATE TABLE user_role (
   role VARCHAR(15) NOT NULL,
   PRIMARY KEY (user_id, role)
 );
+CREATE TABLE grades (
+    grade_id SERIAL PRIMARY KEY,
+    student_id INT NOT NULL,
+    lesson_id INT NOT NULL,
+    grade_value INT NOT NULL CHECK (grade_value >= 1 AND grade_value <= 5),
+    FOREIGN KEY (student_id) REFERENCES students(user_id),
+    FOREIGN KEY (lesson_id) REFERENCES lessons(lesson_id)
+);

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Grades Management</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="gradesViewForm.css">
+    <script src="https://kit.fontawesome.com/8d224a8437.js" crossorigin="anonymous"></script>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Grade Management</h1>
+    <div class="row">
+        <div class="col-12 col-md-8">
+            <h2>Current Grades</h2>
+            <ul class="list-group mb-4">
+                <li class="list-group-item" th:each="grade : ${grades}">
+                    <span th:text="'Student: ' + ${grade.student.name} + ', Lesson: ' + ${grade.lesson.name} + ', Grade: ' + ${grade.value}"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-4">
+            <h2>Add New Grade</h2>
+            <form action="/addGrade" method="post" class="mb-3">
+                <div class="mb-3">
+                    <label for="studentId" class="form-label">Student ID</label>
+                    <input type="number" class="form-control" id="studentId" name="studentId" placeholder="Student ID" required>
+                </div>
+                <div class="mb-3">
+                    <label for="lessonId" class="form-label">Lesson ID</label>
+                    <input type="number" class="form-control" id="lessonId" name="lessonId" placeholder="Lesson ID" required>
+                </div>
+                <div class="mb-3">
+                    <label for="gradeValue" class="form-label">Grade Value</label>
+                    <input type="number" class="form-control" id="gradeValue" name="gradeValue" placeholder="Grade Value" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Grade</button>
+            </form>
+            <h2>Delete Grade</h2>
+            <form action="/deleteGrade" method="get">
+                <div class="mb-3">
+                    <label for="gradeId" class="form-label">Grade ID to Delete</label>
+                    <input type="number" class="form-control" id="gradeId" name="gradeId" placeholder="Grade ID to Delete" required>
+                </div>
+                <button type="submit" class="btn btn-danger">Delete Grade</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

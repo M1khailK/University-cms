@@ -34,7 +34,7 @@ public class SecurityConfig {
                         "/createUniversitySubject","/createSubject","/editSubject","/createUniversityLesson","/createLesson","/editLesson",
                         "/getGroupInfo","/getGroupInfoPage","/editGroupInfo").hasRole("ADMIN")
                 .requestMatchers("/profile","/settings","/updatePassword","/mySchedule").hasAnyRole( "STUDENT", "TEACHER")
-                .requestMatchers("/getUserSchedule").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                .requestMatchers("/getUserSchedule","/grades","/addGrade","/deleteGrade").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
                 .requestMatchers("/generalSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()
                 .requestMatchers("/**").permitAll()
                 .and().formLogin().loginPage("/login").usernameParameter("email").defaultSuccessUrl("/")
