@@ -27,14 +27,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain config(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.authorizeHttpRequests()
+        return httpSecurity.csrf().disable().authorizeHttpRequests()
                 .requestMatchers("/login").anonymous()
-                .requestMatchers("/deactivationPage","/deactivateUser",
-                        "/createTeacher","/createAdmin","/createStudent","/createAccount",
-                        "/createUniversitySubject","/createSubject","/editSubject","/createUniversityLesson","/createLesson","/editLesson",
-                        "/getGroupInfo","/getGroupInfoPage","/editGroupInfo").hasRole("ADMIN")
-                .requestMatchers("/profile","/settings","/updatePassword","/mySchedule").hasAnyRole( "STUDENT", "TEACHER")
-                .requestMatchers("/getUserSchedule","/grades","/addGrade","/deleteGrade").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                .requestMatchers("/addGrade", "/deleteGrade").hasRole("TEACHER")
+                .requestMatchers("/deactivationPage", "/deactivateUser",
+                        "/createTeacher", "/createAdmin", "/createStudent", "/createAccount",
+                        "/createUniversitySubject", "/createSubject", "/editSubject", "/createUniversityLesson", "/createLesson", "/editLesson",
+                        "/getGroupInfo", "/getGroupInfoPage", "/editGroupInfo").hasRole("ADMIN")
+                .requestMatchers("/profile", "/settings", "/updatePassword", "/mySchedule").hasAnyRole("STUDENT", "TEACHER")
+                .requestMatchers("/getUserSchedule", "/grades").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
                 .requestMatchers("/generalSchedule", "/teacherSchedule", "/studentSchedule", "/").permitAll()
                 .requestMatchers("/**").permitAll()
                 .and().formLogin().loginPage("/login").usernameParameter("email").defaultSuccessUrl("/")

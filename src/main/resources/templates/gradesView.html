@@ -17,7 +17,7 @@
             <h2>Current Grades</h2>
             <ul class="list-group mb-4">
                 <li class="list-group-item" th:each="grade : ${grades}">
-                    <span th:text="'Student: ' + ${grade.student.name} + ', Lesson: ' + ${grade.lesson.name} + ', Grade: ' + ${grade.value}"></span>
+                    <span th:text="'Student: ' + ${grade.student} + ', Lesson: ' + ${grade.lesson} + ', Grade: ' + ${grade.value}"></span>
                 </li>
             </ul>
         </div>

@@ -13,15 +13,14 @@ import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.UserService;
-import ua.foxminded.university.services.impl.GradeService;
+import ua.foxminded.university.services.impl.GradeServiceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class GradeController {
     @Autowired
-    private GradeService gradeService;
+    private GradeServiceImpl gradeService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -34,10 +33,10 @@ public class GradeController {
     public String showGrades(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if ("ROLE_TEACHER".equals(auth.getAuthorities().toString())) {
+        if ("[ROLE_TEACHER]".equals(auth.getAuthorities().toString())) {
             List<Grade> allGrades = gradeService.getAllGrades();
             model.addAttribute("grades", allGrades);
-        } else if ("ROLE_STUDENT".equals(auth.getAuthorities().toString())) {
+        } else if ("[ROLE_STUDENT]".equals(auth.getAuthorities().toString())) {
             List<Grade> studentGrades = gradeService.getGradesByEmail(auth.getName());
             model.addAttribute("grades", studentGrades);
         }
