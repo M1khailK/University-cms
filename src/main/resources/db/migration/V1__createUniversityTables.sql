@@ -58,3 +58,12 @@ CREATE TABLE grades (
     FOREIGN KEY (student_id) REFERENCES students(user_id),
     FOREIGN KEY (lesson_id) REFERENCES lessons(lesson_id)
 );
+CREATE TABLE attendance_records (
+    record_id SERIAL PRIMARY KEY,
+    student_id INT NOT NULL,
+    lesson_id INT NOT NULL,
+    attendance_date DATE NOT NULL,
+    attendance_time TIME NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES students(user_id),
+    FOREIGN KEY (lesson_id) REFERENCES lessons(lesson_id)
+);
