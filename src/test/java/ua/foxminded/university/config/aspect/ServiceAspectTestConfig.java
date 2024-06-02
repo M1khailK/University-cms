@@ -8,11 +8,15 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import ua.foxminded.university.generator.PasswordGenerator;
+import ua.foxminded.university.repository.AttendanceRepository;
+import ua.foxminded.university.repository.GradeRepository;
 import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.repository.SubjectRepository;
 import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.repository.UserRepository;
+import ua.foxminded.university.services.AttendanceService;
+import ua.foxminded.university.services.GradeService;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
 import ua.foxminded.university.services.impl.UserServiceImpl;
@@ -34,6 +38,10 @@ public class ServiceAspectTestConfig {
     @MockBean
     public UserRepository userRepository;
     @MockBean
+    public GradeRepository gradeRepository;
+    @MockBean
+    public AttendanceRepository attendanceRepository;
+    @MockBean
     public Clock clock;
     @MockBean
     public PasswordEncoder passwordEncoder;
@@ -49,4 +57,9 @@ public class ServiceAspectTestConfig {
     public StudentService studentService;
     @MockBean
     public UserServiceImpl userService;
+    @MockBean
+    public GradeService gradeService;
+    @MockBean
+    public AttendanceService attendanceService;
+
 }

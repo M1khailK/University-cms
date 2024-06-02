@@ -46,7 +46,9 @@ public class ScheduleController implements CustomExceptionHandler<InvalidDateRan
     }
 
     @GetMapping("/teacherSchedule")
-    public String showTeacherSchedule(Model model, @RequestParam(value = "teacherId", required = false) Integer teacherId, @RequestParam(value = "dateFrom", required = false) LocalDate dateFrom, @RequestParam(value = "dateTo", required = false) LocalDate dateTo) {
+    public String showTeacherSchedule(Model model, @RequestParam(value = "teacherId", required = false) Integer teacherId,
+                                      @RequestParam(value = "dateFrom", required = false) LocalDate dateFrom,
+                                      @RequestParam(value = "dateTo", required = false) LocalDate dateTo) {
         if (teacherId == null) {
             return REDIRECT_GENERAL_SCHEDULE;
         } else if (dateFrom == null && dateTo != null) {
@@ -66,7 +68,9 @@ public class ScheduleController implements CustomExceptionHandler<InvalidDateRan
     }
 
     @GetMapping("/groupSchedule")
-    public String showGroupSchedule(Model model, @RequestParam(value = "groupId", required = false) Integer groupId, @RequestParam(value = "dateFrom", required = false) LocalDate dateFrom, @RequestParam(value = "dateTo", required = false) LocalDate dateTo) {
+    public String showGroupSchedule(Model model, @RequestParam(value = "groupId", required = false) Integer groupId,
+                                    @RequestParam(value = "dateFrom", required = false) LocalDate dateFrom,
+                                    @RequestParam(value = "dateTo", required = false) LocalDate dateTo) {
         if (groupId == null) {
             return REDIRECT_GENERAL_SCHEDULE;
         } else if (dateFrom == null && dateTo != null) {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ua.foxminded.university.info.Grade;
+import ua.foxminded.university.services.GradeService;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
@@ -20,7 +21,7 @@ import java.util.List;
 @Controller
 public class GradeController {
     @Autowired
-    private GradeServiceImpl gradeService;
+    private GradeService gradeService;
     @Autowired
     private UserService userService;
     @Autowired
