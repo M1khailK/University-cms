@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Grade Analytics</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQRLNfWqZOBMRsbLLDS4Adb5oHhsOUy2Ww5GFqBFO4hvHSyOJYLTs2xj5" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #gradeCountChart, #gradeDistributionChart {
+            width: 500px !important;
+            height: 500px !important;
+        }
+
+        #averageGradeChart, #averageGradeByStudentChart {
+            width: 100% !important;
+            height: 200px !important;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <a href="/grades" class="btn btn-secondary btn-back">Back to Grades</a>
+
+    <h1 class="mb-4">Grade Analytics</h1>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2>Average Grades by Lesson</h2>
+            <canvas id="averageGradeChart" style="width: 77px; height: 77px; display: block; box-sizing: border-box;"></canvas>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-6">
+            <h2>Grade Counts by Lesson</h2>
+            <canvas id="gradeCountChart" style="width: 77px; height: 77px; display: block; box-sizing: border-box;"></canvas>
+        </div>
+        <div class="col-6">
+            <h2>Grade Distribution</h2>
+            <canvas id="gradeDistributionChart" style="width: 77px; height: 77px; display: block; box-sizing: border-box;"></canvas>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2>Average Grades by Student</h2>
+            <canvas id="averageGradeByStudentChart" style="width: 77px; height: 77px; display: block; box-sizing: border-box;"></canvas>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var lessonNames = /*[[${lessonNames}]]*/ '[]';
+    var averageGrades = /*[[${averageGrades}]]*/ '[]';
+    var gradeCounts = /*[[${gradeCounts}]]*/ '[]';
+    var studentNames = /*[[${studentNames}]]*/ '[]';
+    var averageGradesByStudent = /*[[${averageGradesByStudent}]]*/ '[]';
+    var gradeDistribution = /*[[${gradeDistribution}]]*/ '[]';
+    /*]]>*/
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Преобразование данных в JSON-формат
+        lessonNames = JSON.parse(lessonNames);
+        averageGrades = JSON.parse(averageGrades);
+        gradeCounts = JSON.parse(gradeCounts);
+        studentNames = JSON.parse(studentNames);
+        averageGradesByStudent = JSON.parse(averageGradesByStudent);
+        gradeDistribution = JSON.parse(gradeDistribution);
+
+        // Проверка, что данные корректно парсятся
+        console.log('Parsed Lesson Names:', lessonNames);
+        console.log('Parsed Average Grades:', averageGrades);
+        console.log('Parsed Grade Counts:', gradeCounts);
+        console.log('Parsed Student Names:', studentNames);
+        console.log('Parsed Average Grades By Student:', averageGradesByStudent);
+        console.log('Parsed Grade Distribution:', gradeDistribution);
+
+        // Массивы цветов для графиков
+        const colors = [
+            'rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'
+        ];
+        const borderColors = [
+            'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
+        ];
+
+        // График "Average Grades by Lesson"
+        new Chart(document.getElementById('averageGradeChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: lessonNames,
+                datasets: [{
+                    label: 'Average Grade',
+                    data: averageGrades,
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Average Grade'
+                        }
+                    }
+                }
+            }
+        });
+
+        // График "Grade Counts by Lesson"
+        new Chart(document.getElementById('gradeCountChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: lessonNames,
+                datasets: [{
+                    label: 'Grade Count',
+                    data: gradeCounts,
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        // График "Average Grades by Student"
+        new Chart(document.getElementById('averageGradeByStudentChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: studentNames,
+                datasets: [{
+                    label: 'Average Grade',
+                    data: averageGradesByStudent,
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Average Grade'
+                        }
+                    }
+                }
+            }
+        });
+
+        // График "Grade Distribution"
+        new Chart(document.getElementById('gradeDistributionChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: ['1', '2', '3', '4', '5'],
+                datasets: [{
+                    label: 'Grade Distribution',
+                    data: gradeDistribution,
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            }
+        });
+    });
+</script>
+</body>
+</html>

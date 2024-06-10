@@ -3,6 +3,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins',sans-serif;
+
 }
 .header{
     width: 100%;
@@ -62,3 +63,13 @@ top: 30px;
     }
 }
 
+.background-image {
+  background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url(backgroundImages/homepageBanner.png);
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    width: calc(100% - 250px); /* Adjusting the width to account for the sidebar */
+    position: absolute;
+    top: 0;
+    left: 250px; /* Positioning it to the right of the sidebar */
+}
