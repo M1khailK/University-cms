@@ -104,8 +104,8 @@ public class LessonServiceImplTest {
         LocalTime localTime = LocalTime.of(17, 59, 59);
         LocalDate localDate = LocalDate.of(YEAR, MONTH, DAY);
 
-        Instant fixedInstant = localTime.atDate(localDate).toInstant(OffsetDateTime.now().getOffset());
-        Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.systemDefault());
+        Instant fixedInstant = localTime.atDate(localDate).toInstant(ZoneOffset.UTC);
+        Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.of("UTC"));
 
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
