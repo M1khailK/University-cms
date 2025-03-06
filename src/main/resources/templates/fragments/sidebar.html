@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Sidebar Menu</title>
+</head>
+<body>
+<div class="header">
+    <div id="sidebar-menu" class="sidebar" data-th-fragment="sidebar-menu">
+        <ul class="sidebar-links">
+            <li sec:authorize="isAnonymous()"><a href="/login"><i class="fa-solid fa-right-to-bracket"></i><p>Sign In</p></a></li>
+            <li sec:authorize="isAuthenticated()"><a href="javascript: document.logoutForm.submit()"> <i class="fa-solid fa-right-from-bracket"></i>
+                <p>Sign Out</p></a>
+                <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                    <input hidden type="submit" value="Sign Out" />
+                </form>
+            </li>
+
+            <li><a href="/generalSchedule"><i class="fa-regular fa-calendar-days"></i><p>General Schedule</p></a></li>
+            <li><a href="/"><i class="fa-solid fa-house"></i><p>Main Page</p></a></li>
+            <li sec:authorize="hasAnyRole('TEACHER','STUDENT')"><a href="/profile"><i class="fa-solid fa-user"></i><p>My profile</p></a></li>
+            <li sec:authorize="hasAnyRole('TEACHER','STUDENT')"><a href="/mySchedule"><i class="fa-sharp fa-solid fa-calendar"></i><p>My Schedule</p></a></li>
+            <li sec:authorize="hasRole('TEACHER')"><a href="/grades"><i class="fa-solid fa-school"></i><p>Grades</p></a></li>
+            <li sec:authorize="hasRole('TEACHER')"><a href="/attendance/analytics"><i class="fa-solid fa-school"></i><p>Attendance</p></a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a href="/deactivationPage"><i class="fa-sharp fa-regular fa-circle-xmark"></i><p>Deactivate User</p></a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a href="/createAccount"><i class="fa-brands fa-creative-commons-by"></i><p>Create User</p></a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a href="/createUniversitySubject"><i class="fa-brands fa-creative-commons-by"></i><p>Create Subject</p></a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a href="/createUniversityLesson"><i class="fa-brands fa-creative-commons-by"></i><p>Create Lesson</p></a></li>
+            <li sec:authorize="hasRole('ADMIN')"><a href="/getGroupInfoPage"><i class="fa-brands fa-creative-commons-by"></i><p>Group Info</p></a></li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

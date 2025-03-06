@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson Creator Page</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="lessonCreatorForm.css">
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="main">
+    <div class="url">
+        <a href="/">Main Page</a>
+    </div>
+    <div class="form-container">
+        <h2>Lesson Creation</h2>
+
+        <form th:action="@{/createLesson}" method="post" name="lessonForm">
+            <label>Name</label> <input type="text" name="name" minlength="3"/>
+            <label>Date</label> <input type="date" name="date"/>
+            <label>Start Time</label> <input type="time" name="startTime"/>
+            <label>End Time</label> <input type="time" name="endTime"/>
+
+            <label>Subject</label>
+            <select name="subject">
+                <th:block th:each="subject : ${subjects}">
+                    <option th:value="${subject.id}"
+                            th:text="${subject.name}"></option>
+                </th:block>
+            </select>
+
+            <label>Group</label>
+            <select name="group">
+                <th:block th:each="group : ${groups}">
+                    <option th:value="${group.id}"
+                            th:text="${group.name}"></option>
+                </th:block>
+            </select>
+
+            <label>Teacher</label>
+            <select name="teacher">
+                <th:block th:each="teacher : ${teachers}">
+                    <option th:value="${teacher.id}"
+                            th:text="${'Teacher: ' + teacher.firstName + ' ' + teacher.lastName + ' ' + teacher.email}"></option>
+                </th:block>
+            </select>
+
+            <button type="submit" class="submit">Create Lesson</button>
+        </form>
+        <h2>Change lesson info</h2>
+
+        <form th:action="@{/editLesson}" method="post" name="lessonForm">
+            <select name="id" size="4">
+                <th:block th:each="lesson : ${lessons}">
+                    <option th:value="${lesson.id}"
+                            th:text="${lesson.name}"></option>
+                </th:block>
+            </select>
+            <label>Name</label> <input type="text" name="name" minlength="3"/>
+            <label>Date</label> <input type="date" name="date"/>
+            <label>Start Time</label> <input type="time" name="startTime"/>
+            <label>End Time</label> <input type="time" name="endTime"/>
+
+            <label>Subject</label>
+            <select name="subject">
+                <th:block th:each="subject : ${subjects}">
+                    <option th:value="${subject.id}"
+                            th:text="${subject.name}"></option>
+                </th:block>
+            </select>
+
+            <label>Group</label>
+            <select name="group">
+                <th:block th:each="group : ${groups}">
+                    <option th:value="${group.id}"
+                            th:text="${group.name}"></option>
+                </th:block>
+            </select>
+
+            <label>Teacher</label>
+            <select name="teacher">
+                <th:block th:each="teacher : ${teachers}">
+                    <option th:value="${teacher.id}"
+                            th:text="${'Teacher: ' + teacher.firstName + ' ' + teacher.lastName + ' ' + teacher.email}"></option>
+                </th:block>
+            </select>
+
+            <button type="submit" class="submit">Edit Lesson</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

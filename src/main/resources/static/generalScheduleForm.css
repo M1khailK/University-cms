@@ -1,0 +1,57 @@
+.hero{
+  height: 100%;
+  width: 100%;
+  background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url(backgroundImages/schedule.jpg);
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+}
+
+.groups-form-box{
+  background: #fff;
+  margin: -620px 900px;
+  padding: 0px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 440px;
+  height: 500px;
+  overflow-y: auto;
+}
+.teachers-form-box{
+  background: #fff;
+  margin: 120px 375px;
+  padding: 0px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 440px;
+  height: 500px;
+  overflow-y: auto;
+}
+.teacher-input-field-date-from,
+.group-input-field-date-from {
+  position: absolute;
+  margin: 35px 15px;
+  padding-top: 10px;
+  transform: translate(-170px, 30px);
+}
+
+.teacher-input-field-date-to,
+ .group-input-field-date-to{
+  position: absolute;
+  margin: -35px 190px;
+  padding-top: 10px;
+
+  transform: translate(-170px, 100px);
+}
+.teacher-lessons-container,
+ .group-lessons-container{
+  position: absolute;
+  margin: 80px 0px;
+  max-height: 350px;
+  width:400px;
+  overflow-y: auto;
+}
+.teacher-lessons-table,
+ .group-lessons-table{
+  width: 350px;
+}

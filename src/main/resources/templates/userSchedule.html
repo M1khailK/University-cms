@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>User Schedule Page</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="userScheduleForm.css">
+    <link rel="stylesheet" type="text/css" href="sidebar.css">
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/8d224a8437.js" crossorigin="anonymous"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="user-form-box">
+        <form th:action="@{/getUserSchedule}" method="get">
+            <input type="date" name="dateFrom" class="user-input-field-date-from" placeholder="Write date from">
+            <input type="date" name="dateTo" class="user-input-field-date-to" placeholder="Write date to">
+            <button type="submit" class="submit-btn">Show Schedule</button>
+        </form>
+        <div class="user-lessons-container">
+            <table class="user-lessons-table">
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Subject</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="lesson : ${userLessons}">
+                    <tr>
+                        <td th:text="${lesson.date}"></td>
+                        <td th:text="${lesson.startTime}"></td>
+                        <td th:text="${lesson.endTime}"></td>
+                        <td th:text="${lesson.subject.name}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div data-th-replace="~{fragments/sidebar :: sidebar-menu}"></div>
+</div>
+</body>
+</html>

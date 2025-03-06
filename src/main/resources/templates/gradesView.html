@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Grades Management</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="gradesViewForm.css">
+    <script src="https://kit.fontawesome.com/8d224a8437.js" crossorigin="anonymous"></script>
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="url">
+        <a href="/">Main Page</a>
+    </div>
+    <h1 class="mb-4">Grade Management</h1>
+    <div class="row">
+        <div class="col-12 col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Current Grades</h2>
+                <a href="/grades/analytics" class="btn btn-info">View Analytics</a>
+            </div>
+            <ul class="list-group mb-4">
+                <li class="list-group-item" th:each="grade : ${grades}">
+                    <span th:text="'Student: ' + ${grade.student.firstName} + ' ' +  ${grade.student.lastName} + ', Lesson: ' + ${grade.lesson.name} + ', Date: ' + ${grade.lesson.date} + ', Start Time: ' + ${grade.lesson.startTime} + ', End Time: ' + ${grade.lesson.endTime} + ', Grade: ' + ${grade.value}"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-4">
+            <form action="/grades/filterByLesson" method="get">
+                <div class="mb-3">
+                    <label for="lessonId" class="form-label">Filter by Lesson ID</label>
+                    <input type="number" class="form-control" id="lessonId1" name="lessonId" placeholder="Lesson ID" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+            <form action="/grades/filterByDate" method="get">
+                <div class="mb-3">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate" required>
+                </div>
+                <div class="mb-3">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+
+            <form action="/grades/sortByGrade" method="get">
+                <div class="mb-3">
+                    <label for="order" class="form-label">Sort by Grade</label>
+                    <select class="form-select" id="order" name="order" required>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Sort</button>
+            </form>
+
+            <h2>Add New Grade</h2>
+            <form action="/addGrade" method="post" class="mb-3">
+                <div class="mb-3">
+                    <label for="studentId" class="form-label">Student ID</label>
+                    <input type="number" class="form-control" id="studentId" name="studentId" placeholder="Student ID" required>
+                </div>
+                <div class="mb-3">
+                    <label for="lessonId" class="form-label">Lesson ID</label>
+                    <input type="number" class="form-control" id="lessonId" name="lessonId" placeholder="Lesson ID" required>
+                </div>
+                <div class="mb-3">
+                    <label for="gradeValue" class="form-label">Grade Value</label>
+                    <input type="number" class="form-control" id="gradeValue" name="gradeValue" placeholder="Grade Value" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Grade</button>
+            </form>
+            <h2>Delete Grade</h2>
+            <form action="/deleteGrade" method="get">
+                <div class="mb-3">
+                    <label for="gradeId" class="form-label">Grade ID to Delete</label>
+                    <input type="number" class="form-control" id="gradeId" name="gradeId" placeholder="Grade ID to Delete" required>
+                </div>
+                <button type="submit" class="btn btn-danger">Delete Grade</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

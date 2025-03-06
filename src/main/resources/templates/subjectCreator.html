@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Subject Creator Page</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="subjectCreatorForm.css">
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="url">
+        <a href="/">Main Page</a>
+    </div>
+    <div class="form-container subject">
+        <h2>Subject Creation</h2>
+        <form th:action="@{/createSubject}" method="post" name="subjectForm">
+            <label>Name</label> <input type="text" name="name" minlength="3"/>
+            <button type="submit" class="submit">Create Subject</button>
+        </form>
+        <form th:action="@{/editSubject}" method="post" name="subjectForm">
+            <select name="subject_id" size="2">
+                <th:block th:each="subject : ${subjects}">
+                    <option th:value="${subject.id}"
+                            th:text="${subject.name}"></option>
+                </th:block>
+            </select>
+            <input type="hidden" name="subject" th:value="${subject?.id}" />
+            <label>Edit Subject Name:</label>
+            <input type="text" name="subject_name" required />
+            <button type="submit" class="submit">Edit Subject Name</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

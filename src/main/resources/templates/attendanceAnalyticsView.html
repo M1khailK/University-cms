@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Analytics</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQRLNfWqZOBMRsbLLDS4Adb5oHhsOUy2Ww5GFqBFO4hvHSyOJYLTs2xj5" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #343a40;
+            text-align: center;
+        }
+        h2 {
+            color: #495057;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #e9ecef;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            border-radius: 0.25rem;
+            color: #495057;
+        }
+        li:hover {
+            background-color: #dee2e6;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="url">
+        <a href="/">Main Page</a>
+    </div>
+    <h1 class="mb-4">Attendance Analytics</h1>
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h2>Present Students</h2>
+            <ul>
+                <li th:each="entry : ${attendanceData}" th:text="${entry}">Student Name</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h2>Absent Students</h2>
+            <ul>
+                <li th:each="entry : ${absenceData}" th:text="${entry}">Student Name</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRp6YBO9eEjX9PbR0qR9zZtklpKPI5iKnf27rPG6R" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq85sg1K9/a/C/MHQKltPR5F07zFNcfpZ3L7/xZXW+z7PNy+sl" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins',sans-serif;
+
+}
+.header{
+    width: 100%;
+    height: 100%;
+}
+.sidebar{
+width: 250px;
+height: 100%;
+background: #71695a;
+position: fixed;
+top: 0;
+left: 0;
+padding: 20px 3px;
+opacity: 0.9;
+}
+.sidebar-links{
+list-style: none;
+position: relative;
+top: 30px;
+}
+.sidebar-links li a{
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 10px;
+    display: flex;
+    white-space: nowrap;
+}
+.sidebar-links li a i {
+    margin-top: 4px;
+    margin-right: 5px;
+}
+.active{
+    background: #fff;
+    width: 100%;
+    height: 44px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    border-radius: 6px;
+    box-shadow: 0 5px 10px rgba(255, 255, 255, 0.4);
+    display: none;
+}
+
+@media only screen and (max-width: 1000px) {
+    .sidebar{
+        width: 110px;
+    }
+    .sidebar-links li a p{
+        display: none;
+    }
+    .sidebar-links li a i{
+        margin-right: 0;
+    }
+    .sidebar-links li a{
+        justify-self: center;
+    }
+}
+
+.background-image {
+  background-image: linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url(backgroundImages/homepageBanner.png);
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    width: calc(100% - 250px); /* Adjusting the width to account for the sidebar */
+    position: absolute;
+    top: 0;
+    left: 250px; /* Positioning it to the right of the sidebar */
+}

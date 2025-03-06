@@ -1,0 +1,48 @@
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Settings Page</title>
+    <style type="text/css" id="operaUserStyle"></style>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="profileForm.css">
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+<body>
+<div class="sidenav">
+    <div class="sidenav-url">
+        <div class="url">
+            <a href="/profile">Profile</a>
+            <hr align="center">
+        </div>
+        <div class="url">
+            <a href="/settings" class="active">Settings</a>
+            <hr align="center">
+        </div>
+        <div class="url">
+            <a href="/">Main Page</a>
+        </div>
+    </div>
+</div>
+<div class="main">
+    <h2>IDENTITY</h2>
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/updatePassword}" method="post">
+                <table class="usr-pass">
+                    <tbody th:object="${user}">
+                    <div class="mb-3">
+                        <label>Old password</label> <input type="text" name="oldPass" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label>New password</label> <input type="text" name="newPass" class="form-control">
+                    </div>
+                    </tbody>
+                </table>
+                <button type="submit" class="submit-btn">CHANGE PASSWORD</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

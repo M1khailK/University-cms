@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="">
+<head>
+    <meta charset="UTF-8">
+    <title>Group Info Page</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="groupInfoForm.css">
+    <script src="/webjars/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('select[name="group_id"]').change(function() {
+            if ($(this).val() !== '') {
+                $('button[type="submit"]').prop('disabled', false);
+            } else {
+                $('button[type="submit"]').prop('disabled', true);
+            }
+        });
+    });
+</script>
+</head>
+<body>
+<div class="main">
+    <div class="url">
+        <a href="/">Main Page</a>
+    </div>
+    <div class="form-container">
+        <h3>Group Information</h3>
+        <form th:action="@{/editGroupInfo}" method="post">
+            <select name="group_id" size="2">
+                <th:block th:each="group : ${groups}">
+                    <option th:value="${group.id}"
+                            th:text="${group.name}"></option>
+                </th:block>
+            </select>
+            <input type="hidden" name="group" th:value="${group?.id}" />
+            <label>Edit Group Name:</label>
+            <input type="text" name="group_name" required />
+            <button type="submit" class="submit">Edit Group Name</button>
+        </form>
+        <form th:action="@{/getGroupInfo}" method="get" name="groupForm">
+            <label>Group</label>
+            <select name="group_id" size="2">
+                <th:block th:each="group : ${groups}">
+                    <option th:value="${group.id}"
+                            th:text="${group.name}"></option>
+                </th:block>
+            </select>
+            <button type="submit" class="submit" disabled>get info</button>
+
+            <div class="student-list">
+                <h3>Students in the selected group:</h3>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="student : ${students}">
+                        <td th:text="${student.id}"></td>
+                        <td th:text="${student.firstName}"></td>
+                        <td th:text="${student.lastName}"></td>
+                        <td th:text="${student.email}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
