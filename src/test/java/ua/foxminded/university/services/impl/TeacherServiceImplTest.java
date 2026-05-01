@@ -3,7 +3,6 @@ package ua.foxminded.university.services.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,9 +21,8 @@ import java.time.Clock;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +38,7 @@ public class TeacherServiceImplTest {
 
     private static final char[] NEW_PASS = new char[]{'n', 'e', 'w', 'P', 'a', 's', 's', 'w', 'o', 'r', 'd'};
     private static final int ID = 1;
-    private static final Teacher teacher = new Teacher(ID, "Bob", "First", EMAIL,"password","TEACHER");
+    private static final Teacher teacher = new Teacher(ID, "Bob", "First", EMAIL, "password", "TEACHER");
 
 
     @Autowired
@@ -58,19 +56,23 @@ public class TeacherServiceImplTest {
 
     @Test
     public void teacherService_shouldChangePassword_whenInputHasOldPasswordNewPasswordAndEmail() {
-        when(passwordEncoder.matches(CharBuffer.wrap(PASSWORD), teacherRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by teacher's id")))).thenReturn(true);
-        when(passwordEncoder.encode(CharBuffer.wrap(NEW_PASS))).thenReturn(Arrays.toString(NEW_PASS));
-        doNothing().when(teacherRepository).changePasswordById(Arrays.toString(NEW_PASS), teacher.getId());
+        char[] oldPassword = "oldPassword".toCharArray();
+        char[] newPassword = "newPassword".toCharArray();
 
-        ArgumentCaptor<char[]> newPasswordCaptor = ArgumentCaptor.forClass(char[].class);
+        Teacher teacher = new Teacher(ID, "Alex", "First", EMAIL, "encodedOldPassword", "TEACHER");
 
-        teacherService.changePassword(EMAIL, PASSWORD, NEW_PASS);
+        when(teacherRepository.findByEmail(EMAIL)).thenReturn(Optional.of(teacher));
+        when(teacherRepository.findPasswordById(ID)).thenReturn(Optional.of("encodedOldPassword"));
+        when(passwordEncoder.matches(any(CharSequence.class), eq("encodedOldPassword"))).thenReturn(true);
+        when(passwordEncoder.encode(any(CharSequence.class))).thenReturn("encodedNewPassword");
+
+        teacherService.changePassword(EMAIL, oldPassword, newPassword);
 
         verify(teacherRepository).findByEmail(EMAIL);
-        verify(teacherRepository, times(2)).findPasswordById(ID);
-        verify(passwordEncoder).matches(CharBuffer.wrap(PASSWORD), teacherRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by teacher's id")));
-        verify(teacherRepository).changePasswordById(Arrays.toString(newPasswordCaptor.capture()),eq(teacher.getId()));
-
+        verify(teacherRepository).findPasswordById(ID);
+        verify(passwordEncoder).matches(any(CharSequence.class), eq("encodedOldPassword"));
+        verify(passwordEncoder).encode(any(CharSequence.class));
+        verify(teacherRepository).changePasswordById("encodedNewPassword", ID);
     }
 
     @Test

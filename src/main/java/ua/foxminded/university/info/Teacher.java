@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,12 +21,12 @@ import org.hibernate.annotations.Where;
 @Data
 @SecondaryTable(name = "users", pkJoinColumns = @PrimaryKeyJoinColumn(name = "user_id"))
 @SecondaryTable(name = "user_role", pkJoinColumns = @PrimaryKeyJoinColumn(name = "user_id"))
-@Where(clause = "t1_2.isEnabled = true")
+@SQLRestriction("user_id in (select u.user_id from users u where u.isEnabled = true)")
 public class Teacher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_generator")
-    @SequenceGenerator(name = "user_generator", sequenceName = "user_seq",allocationSize = 1)
+    @SequenceGenerator(name = "user_generator", sequenceName = "user_seq", allocationSize = 1)
     @Column(name = "user_id", length = 50, nullable = false)
     private Integer id;
 
@@ -38,8 +38,10 @@ public class Teacher {
 
     @Column(name = "email", table = "users", length = 50, nullable = false)
     private String email;
-    @Column(name = "password",table = "users",nullable = false)
+
+    @Column(name = "password", table = "users", nullable = false)
     private String password;
+
     @Column(name = "role", table = "user_role", length = 15, nullable = false)
     private String role;
 }

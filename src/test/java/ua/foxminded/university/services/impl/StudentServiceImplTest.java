@@ -3,7 +3,6 @@ package ua.foxminded.university.services.impl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,14 +16,12 @@ import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.StudentService;
 
-import java.nio.CharBuffer;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -41,7 +38,7 @@ public class StudentServiceImplTest {
     private static final char[] NEW_PASS = "newPassword".toCharArray();
 
     private static final int ID = 1;
-    private static final Student student = new Student(ID, "Alex", "First", EMAIL, null, "password","STUDENT");
+    private static final Student student = new Student(ID, "Alex", "First", EMAIL, null, "password", "STUDENT");
 
     @Autowired
     private StudentService studentService;
@@ -58,21 +55,27 @@ public class StudentServiceImplTest {
 
     @Test
     public void studentService_shouldChangePassword_whenInputHasOldPasswordNewPasswordAndEmail() {
-        Student student = new Student(ID, "Alex", "First", EMAIL, null, "password","STUDENT");
+        char[] oldPassword = "oldPassword".toCharArray();
+        char[] newPassword = "newPassword".toCharArray();
 
-        when(passwordEncoder.matches(CharBuffer.wrap(PASSWORD), studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")))).thenReturn(true);
-        when(passwordEncoder.encode(CharBuffer.wrap(NEW_PASS))).thenReturn(Arrays.toString(NEW_PASS));
-        doNothing().when(studentRepository).changePasswordById(Arrays.toString(NEW_PASS), student.getId());
+        Student student = new Student(ID, "Alex", "First", EMAIL, null, "encodedOldPassword", "STUDENT");
 
-        ArgumentCaptor<char[]> newPasswordCaptor = ArgumentCaptor.forClass(char[].class);
+        when(studentRepository.findByEmail(EMAIL)).thenReturn(Optional.of(student));
+        when(studentRepository.findPasswordById(ID)).thenReturn(Optional.of("encodedOldPassword"));
 
-        studentService.changePassword(EMAIL, PASSWORD, NEW_PASS);
+        when(passwordEncoder.matches(any(CharSequence.class), eq("encodedOldPassword")))
+                .thenReturn(true);
+
+        when(passwordEncoder.encode(any(CharSequence.class)))
+                .thenReturn("encodedNewPassword");
+
+        studentService.changePassword(EMAIL, oldPassword, newPassword);
 
         verify(studentRepository).findByEmail(EMAIL);
-        verify(studentRepository, times(2)).findPasswordById(ID);
-        verify(passwordEncoder).matches(CharBuffer.wrap(PASSWORD), studentRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by student's id")));
-        verify(studentRepository).changePasswordById(Arrays.toString(newPasswordCaptor.capture()), eq(student.getId()));
-
+        verify(studentRepository).findPasswordById(ID);
+        verify(passwordEncoder).matches(any(CharSequence.class), eq("encodedOldPassword"));
+        verify(passwordEncoder).encode(any(CharSequence.class));
+        verify(studentRepository).changePasswordById("encodedNewPassword", ID);
     }
 
     @Test
