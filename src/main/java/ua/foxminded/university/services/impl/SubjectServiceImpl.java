@@ -1,7 +1,8 @@
 package ua.foxminded.university.services.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.repository.SubjectRepository;
 import ua.foxminded.university.services.SubjectService;
@@ -9,10 +10,10 @@ import ua.foxminded.university.services.SubjectService;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class SubjectServiceImpl implements SubjectService {
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+    private final SubjectRepository subjectRepository;
 
     @Override
     public void save(Subject subject) {
@@ -21,7 +22,8 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject getById(int subjectId) {
-        return subjectRepository.findById(subjectId).orElseThrow(() -> new IllegalArgumentException("Subject was not found by id"));
+        return subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new SubjectNotFoundException(subjectId));
     }
 
     @Override
