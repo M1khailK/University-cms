@@ -13,6 +13,7 @@ import ua.foxminded.university.api.subject.mapper.SubjectMapperImpl;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.services.SubjectService;
+import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
@@ -21,6 +22,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.any;
 
 @WebMvcTest(controllers = SubjectRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -75,4 +81,45 @@ class SubjectRestControllerTest {
                 .andExpect(jsonPath("$.title").value("Subject not found"))
                 .andExpect(jsonPath("$.detail").value("Subject was not found by id: 999"));
     }
+
+    @Test
+    void shouldCreateSubject() throws Exception {
+        Subject createdSubject = new Subject(10, "Biology");
+
+        when(subjectService.create(any(Subject.class))).thenReturn(createdSubject);
+
+        mockMvc.perform(post("/api/v1/subjects")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "name": "Biology"
+                            }
+                            """))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/api/v1/subjects/10"))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(10))
+                .andExpect(jsonPath("$.name").value("Biology"));
+
+        ArgumentCaptor<Subject> subjectCaptor = ArgumentCaptor.forClass(Subject.class);
+        verify(subjectService).create(subjectCaptor.capture());
+
+        Subject subjectToCreate = subjectCaptor.getValue();
+
+        assertThat(subjectToCreate.getId()).isNull();
+        assertThat(subjectToCreate.getName()).isEqualTo("Biology");
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenSubjectNameIsBlank() throws Exception {
+        mockMvc.perform(post("/api/v1/subjects")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "name": " "
+                            }
+                            """))
+                .andExpect(status().isBadRequest());
+    }
+
 }
