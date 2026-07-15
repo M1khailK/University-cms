@@ -6,5 +6,7 @@ public interface SubjectService extends EntityService<Subject> {
 
     Subject create(Subject subject);
 
+    Subject updateName(int subjectId, String subjectName);
+
     void changeNameById(int subjectId, String subjectName);
 }

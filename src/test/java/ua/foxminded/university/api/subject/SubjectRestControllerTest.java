@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(controllers = SubjectRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -120,6 +121,55 @@ class SubjectRestControllerTest {
                             }
                             """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldUpdateSubject() throws Exception {
+        Subject updatedSubject = new Subject(1, "Advanced Mathematics");
+
+        when(subjectService.updateName(1, "Advanced Mathematics")).thenReturn(updatedSubject);
+
+        mockMvc.perform(put("/api/v1/subjects/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "name": "Advanced Mathematics"
+                            }
+                            """))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("Advanced Mathematics"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenUpdatedSubjectNameIsBlank() throws Exception {
+        mockMvc.perform(put("/api/v1/subjects/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "name": " "
+                            }
+                            """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingMissingSubject() throws Exception {
+        when(subjectService.updateName(999, "Advanced Mathematics"))
+                .thenThrow(new SubjectNotFoundException(999));
+
+        mockMvc.perform(put("/api/v1/subjects/{id}", 999)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "name": "Advanced Mathematics"
+                            }
+                            """))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Subject not found"))
+                .andExpect(jsonPath("$.detail").value("Subject was not found by id: 999"));
     }
 
 }

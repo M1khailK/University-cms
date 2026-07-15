@@ -21,6 +21,13 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public Subject updateName(int subjectId, String subjectName) {
+        Subject subject = getById(subjectId);
+        subject.setName(subjectName);
+        return subjectRepository.save(subject);
+    }
+
+    @Override
     public void save(Subject subject) {
         subjectRepository.save(subject);
     }
@@ -38,8 +45,6 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public void changeNameById(int subjectId, String subjectName) {
-        Subject subject = getById(subjectId);
-        subject.setName(subjectName);
-        save(subject);
+        updateName(subjectId, subjectName);
     }
 }

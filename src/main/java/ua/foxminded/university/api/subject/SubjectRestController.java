@@ -15,6 +15,8 @@ import ua.foxminded.university.api.subject.dto.SubjectResponse;
 import ua.foxminded.university.api.subject.mapper.SubjectMapper;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.services.SubjectService;
+import org.springframework.web.bind.annotation.PutMapping;
+import ua.foxminded.university.api.subject.dto.SubjectUpdateRequest;
 
 import java.net.URI;
 import java.util.List;
@@ -53,5 +55,14 @@ public class SubjectRestController {
     @GetMapping("/{id}")
     public SubjectResponse getSubjectById(@PathVariable int id) {
         return subjectMapper.toResponse(subjectService.getById(id));
+    }
+
+    @PutMapping("/{id}")
+    public SubjectResponse updateSubject(
+            @PathVariable int id,
+            @Valid @RequestBody SubjectUpdateRequest request
+    ) {
+        Subject updatedSubject = subjectService.updateName(id, request.name());
+        return subjectMapper.toResponse(updatedSubject);
     }
 }
