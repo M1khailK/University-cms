@@ -17,6 +17,7 @@ import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.services.SubjectService;
 import org.springframework.web.bind.annotation.PutMapping;
 import ua.foxminded.university.api.subject.dto.SubjectUpdateRequest;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.net.URI;
 import java.util.List;
@@ -64,5 +65,11 @@ public class SubjectRestController {
     ) {
         Subject updatedSubject = subjectService.updateName(id, request.name());
         return subjectMapper.toResponse(updatedSubject);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSubject(@PathVariable int id) {
+        subjectService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

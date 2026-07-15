@@ -8,5 +8,7 @@ public interface SubjectService extends EntityService<Subject> {
 
     Subject updateName(int subjectId, String subjectName);
 
+    void deleteById(int subjectId);
+
     void changeNameById(int subjectId, String subjectName);
 }

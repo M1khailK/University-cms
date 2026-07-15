@@ -1,6 +1,7 @@
 package ua.foxminded.university.api.subject;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -13,21 +14,23 @@ import ua.foxminded.university.api.subject.mapper.SubjectMapperImpl;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.services.SubjectService;
-import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.mockito.Mockito.verify;
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @WebMvcTest(controllers = SubjectRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -92,10 +95,10 @@ class SubjectRestControllerTest {
         mockMvc.perform(post("/api/v1/subjects")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                              "name": "Biology"
-                            }
-                            """))
+                                {
+                                  "name": "Biology"
+                                }
+                                """))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "http://localhost/api/v1/subjects/10"))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -116,10 +119,10 @@ class SubjectRestControllerTest {
         mockMvc.perform(post("/api/v1/subjects")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                              "name": " "
-                            }
-                            """))
+                                {
+                                  "name": " "
+                                }
+                                """))
                 .andExpect(status().isBadRequest());
     }
 
@@ -132,10 +135,10 @@ class SubjectRestControllerTest {
         mockMvc.perform(put("/api/v1/subjects/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                              "name": "Advanced Mathematics"
-                            }
-                            """))
+                                {
+                                  "name": "Advanced Mathematics"
+                                }
+                                """))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
@@ -147,10 +150,10 @@ class SubjectRestControllerTest {
         mockMvc.perform(put("/api/v1/subjects/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                              "name": " "
-                            }
-                            """))
+                                {
+                                  "name": " "
+                                }
+                                """))
                 .andExpect(status().isBadRequest());
     }
 
@@ -162,10 +165,33 @@ class SubjectRestControllerTest {
         mockMvc.perform(put("/api/v1/subjects/{id}", 999)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                              "name": "Advanced Mathematics"
-                            }
-                            """))
+                                {
+                                  "name": "Advanced Mathematics"
+                                }
+                                """))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Subject not found"))
+                .andExpect(jsonPath("$.detail").value("Subject was not found by id: 999"));
+    }
+
+    @Test
+    void shouldDeleteSubject() throws Exception {
+        doNothing().when(subjectService).deleteById(1);
+
+        mockMvc.perform(delete("/api/v1/subjects/{id}", 1))
+                .andExpect(status().isNoContent());
+
+        verify(subjectService).deleteById(1);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingMissingSubject() throws Exception {
+        doThrow(new SubjectNotFoundException(999))
+                .when(subjectService)
+                .deleteById(999);
+
+        mockMvc.perform(delete("/api/v1/subjects/{id}", 999))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.title").value("Subject not found"))
