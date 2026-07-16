@@ -44,11 +44,6 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public void changeNameById(int subjectId, String subjectName) {
-        updateName(subjectId, subjectName);
-    }
-
-    @Override
     public void deleteById(int subjectId) {
         Subject subject = getById(subjectId);
         subjectRepository.delete(subject);
