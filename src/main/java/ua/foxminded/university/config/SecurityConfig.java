@@ -2,6 +2,7 @@ package ua.foxminded.university.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -44,6 +45,17 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login").anonymous()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/subjects")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/subjects/{id}")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/subjects/{id}")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/subjects", "/api/v1/subjects/{id}")
+                        .permitAll()
 
                         .requestMatchers("/addGrade", "/deleteGrade")
                         .hasRole("TEACHER")
@@ -55,9 +67,6 @@ public class SecurityConfig {
                                 "/createAdmin",
                                 "/createStudent",
                                 "/createAccount",
-                                "/createUniversitySubject",
-                                "/createSubject",
-                                "/editSubject",
                                 "/createUniversityLesson",
                                 "/createLesson",
                                 "/editLesson",
