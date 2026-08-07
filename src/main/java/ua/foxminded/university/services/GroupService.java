@@ -8,4 +8,6 @@ public interface GroupService extends EntityService<Group> {
     void changeNameById(int groupId, String groupName);
 
     Group create(Group group);
+
+    Group updateName(int groupId, String groupName);
 }

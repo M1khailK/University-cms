@@ -26,6 +26,13 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public Group updateName(int groupId, String groupName) {
+        Group group = getById(groupId);
+        group.setName(groupName);
+        return groupRepository.save(group);
+    }
+
+    @Override
     public Group getById(int groupId) {
         return groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
@@ -44,9 +51,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void changeNameById(int groupId, String groupName) {
-        Group group = getById(groupId);
-        group.setName(groupName);
-        save(group);
+        updateName(groupId, groupName);
     }
 
 

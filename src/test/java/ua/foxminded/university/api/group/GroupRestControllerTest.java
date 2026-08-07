@@ -1,6 +1,7 @@
 package ua.foxminded.university.api.group;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,15 +18,15 @@ import ua.foxminded.university.services.GroupService;
 import java.util.Collections;
 import java.util.List;
 
-import org.mockito.ArgumentCaptor;
-import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -92,10 +93,10 @@ class GroupRestControllerTest {
         mockMvc.perform(post("/api/v1/groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                              "name": "AA-03"
-                            }
-                            """))
+                                {
+                                  "name": "AA-03"
+                                }
+                                """))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/groups/10"))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -117,10 +118,59 @@ class GroupRestControllerTest {
         mockMvc.perform(post("/api/v1/groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                              "name": " "
-                            }
-                            """))
+                                {
+                                  "name": " "
+                                }
+                                """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldUpdateGroup() throws Exception {
+        Group updatedGroup = new Group(1, "AA-99", Collections.emptyList());
+
+        when(groupService.updateName(1, "AA-99")).thenReturn(updatedGroup);
+
+        mockMvc.perform(put("/api/v1/groups/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": "AA-99"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("AA-99"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenUpdatedGroupNameIsBlank() throws Exception {
+        mockMvc.perform(put("/api/v1/groups/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": " "
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingMissingGroup() throws Exception {
+        when(groupService.updateName(999, "AA-99"))
+                .thenThrow(new GroupNotFoundException(999));
+
+        mockMvc.perform(put("/api/v1/groups/{id}", 999)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": "AA-99"
+                                }
+                                """))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Group not found"))
+                .andExpect(jsonPath("$.detail").value("Group was not found by id: 999"));
     }
 }
