@@ -21,6 +21,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public Group create(Group group) {
+        return groupRepository.save(group);
+    }
+
+    @Override
     public Group getById(int groupId) {
         return groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
@@ -43,4 +48,6 @@ public class GroupServiceImpl implements GroupService {
         group.setName(groupName);
         save(group);
     }
+
+
 }

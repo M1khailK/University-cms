@@ -17,7 +17,13 @@ import ua.foxminded.university.services.GroupService;
 import java.util.Collections;
 import java.util.List;
 
+import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -75,5 +81,46 @@ class GroupRestControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.title").value("Group not found"))
                 .andExpect(jsonPath("$.detail").value("Group was not found by id: 999"));
+    }
+
+    @Test
+    void shouldCreateGroup() throws Exception {
+        Group createdGroup = new Group(10, "AA-03", Collections.emptyList());
+
+        when(groupService.create(any(Group.class))).thenReturn(createdGroup);
+
+        mockMvc.perform(post("/api/v1/groups")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "name": "AA-03"
+                            }
+                            """))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/v1/groups/10"))
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(10))
+                .andExpect(jsonPath("$.name").value("AA-03"));
+
+        ArgumentCaptor<Group> groupCaptor = ArgumentCaptor.forClass(Group.class);
+        verify(groupService).create(groupCaptor.capture());
+
+        Group groupToCreate = groupCaptor.getValue();
+
+        assertThat(groupToCreate.getId()).isNull();
+        assertThat(groupToCreate.getName()).isEqualTo("AA-03");
+        assertThat(groupToCreate.getStudents()).isNull();
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenGroupNameIsBlank() throws Exception {
+        mockMvc.perform(post("/api/v1/groups")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "name": " "
+                            }
+                            """))
+                .andExpect(status().isBadRequest());
     }
 }
