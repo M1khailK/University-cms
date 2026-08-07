@@ -1,19 +1,19 @@
 package ua.foxminded.university.services.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.foxminded.university.customexceptions.GroupNotFoundException;
 import ua.foxminded.university.info.Group;
-import ua.foxminded.university.info.Student;
 import ua.foxminded.university.repository.GroupRepository;
 import ua.foxminded.university.services.GroupService;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class GroupServiceImpl implements GroupService {
 
-    @Autowired
-    private GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
 
     @Override
     public void save(Group group) {
@@ -22,7 +22,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group getById(int groupId) {
-        return groupRepository.findById(groupId).orElseThrow(() -> new IllegalArgumentException("Group was not found by id"));
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
     }
 
     @Override
@@ -32,7 +33,8 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group getByName(String groupName) {
-        return groupRepository.findByName(groupName).orElseThrow(() -> new IllegalArgumentException("Group was not found by name"));
+        return groupRepository.findByName(groupName)
+                .orElseThrow(() -> new GroupNotFoundException(groupName));
     }
 
     @Override
@@ -41,5 +43,4 @@ public class GroupServiceImpl implements GroupService {
         group.setName(groupName);
         save(group);
     }
-
 }
