@@ -86,10 +86,7 @@ public class SecurityConfig {
                                 "/createAccount",
                                 "/createUniversityLesson",
                                 "/createLesson",
-                                "/editLesson",
-                                "/getGroupInfo",
-                                "/getGroupInfoPage",
-                                "/editGroupInfo"
+                                "/editLesson"
                         )
                         .hasRole("ADMIN")
 
