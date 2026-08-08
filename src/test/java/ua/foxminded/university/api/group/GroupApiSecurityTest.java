@@ -136,12 +136,20 @@ class GroupApiSecurityTest {
     }
 
     @Test
-    void shouldAllowPublicReadGroupStudents() throws Exception {
+    void shouldAllowAdminToReadGroupStudents() throws Exception {
         Group group = new Group(1, "AA-01", Collections.emptyList());
 
         when(groupService.getById(1)).thenReturn(group);
 
-        mockMvc.perform(get("/api/v1/groups/{id}/students", 1))
+        mockMvc.perform(get("/api/v1/groups/{id}/students", 1)
+                        .with(user("admin").roles("ADMIN")))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldForbidStudentToReadGroupStudents() throws Exception {
+        mockMvc.perform(get("/api/v1/groups/{id}/students", 1)
+                        .with(user("student").roles("STUDENT")))
+                .andExpect(status().isForbidden());
     }
 }
