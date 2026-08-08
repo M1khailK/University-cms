@@ -44,7 +44,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").anonymous()
                         .requestMatchers(HttpMethod.POST, "/api/v1/subjects")
                         .hasRole("ADMIN")
 
@@ -69,11 +68,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/groups/{id}")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/groups", "/api/v1/groups/{id}")
+                        .permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/lessons", "/api/v1/lessons/{id}")
+                        .hasRole("ADMIN")
+
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/v1/groups",
-                                "/api/v1/groups/{id}",
-                                "/api/v1/groups/{id}/students"
+                                "/api/v1/groups/{id}"
                         )
                         .permitAll()
 
