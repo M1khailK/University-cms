@@ -14,7 +14,10 @@ import ua.foxminded.university.api.group.mapper.GroupMapperImpl;
 import ua.foxminded.university.customexceptions.GroupNotFoundException;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.services.GroupService;
-
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import java.util.Collections;
 import java.util.List;
 
@@ -168,6 +171,27 @@ class GroupRestControllerTest {
                                   "name": "AA-99"
                                 }
                                 """))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Group not found"))
+                .andExpect(jsonPath("$.detail").value("Group was not found by id: 999"));
+    }
+    @Test
+    void shouldDeleteGroup() throws Exception {
+        doNothing().when(groupService).deleteById(1);
+
+        mockMvc.perform(delete("/api/v1/groups/{id}", 1))
+                .andExpect(status().isNoContent());
+
+        verify(groupService).deleteById(1);
+    }
+    @Test
+    void shouldReturnNotFoundWhenDeletingMissingGroup() throws Exception {
+        doThrow(new GroupNotFoundException(999))
+                .when(groupService)
+                .deleteById(999);
+
+        mockMvc.perform(delete("/api/v1/groups/{id}", 999))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.title").value("Group not found"))

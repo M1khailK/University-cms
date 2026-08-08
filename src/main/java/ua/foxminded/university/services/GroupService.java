@@ -10,4 +10,6 @@ public interface GroupService extends EntityService<Group> {
     Group create(Group group);
 
     Group updateName(int groupId, String groupName);
+
+    void deleteById(int groupId);
 }

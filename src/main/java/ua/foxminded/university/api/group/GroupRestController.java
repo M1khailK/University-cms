@@ -16,6 +16,7 @@ import ua.foxminded.university.api.group.dto.GroupUpdateRequest;
 import ua.foxminded.university.api.group.mapper.GroupMapper;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.services.GroupService;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.net.URI;
 import java.util.List;
@@ -50,5 +51,11 @@ public class GroupRestController {
     @PutMapping("/{id}")
     public GroupResponse updateGroup(@PathVariable int id, @Valid @RequestBody GroupUpdateRequest request) {
         return groupMapper.toResponse(groupService.updateName(id, request.name()));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGroup(@PathVariable int id) {
+        groupService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
