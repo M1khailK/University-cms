@@ -57,6 +57,26 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/subjects", "/api/v1/subjects/{id}")
                         .permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/groups/{id}/students")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/groups")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/groups/{id}")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/groups/{id}")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/groups",
+                                "/api/v1/groups/{id}",
+                                "/api/v1/groups/{id}/students"
+                        )
+                        .permitAll()
+
                         .requestMatchers("/addGrade", "/deleteGrade")
                         .hasRole("TEACHER")
 
@@ -69,10 +89,7 @@ public class SecurityConfig {
                                 "/createAccount",
                                 "/createUniversityLesson",
                                 "/createLesson",
-                                "/editLesson",
-                                "/getGroupInfo",
-                                "/getGroupInfoPage",
-                                "/editGroupInfo"
+                                "/editLesson"
                         )
                         .hasRole("ADMIN")
 
