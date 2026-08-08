@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import ua.foxminded.university.info.Student;
 
 @WebMvcTest(controllers = GroupRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -86,6 +87,63 @@ class GroupRestControllerTest {
                 .andExpect(jsonPath("$.title").value("Group not found"))
                 .andExpect(jsonPath("$.detail").value("Group was not found by id: 999"));
     }
+
+    @Test
+    void shouldReturnStudentsByGroupId() throws Exception {
+        Group group = new Group(1, "AA-01", Collections.emptyList());
+
+        Student firstStudent = new Student(
+                1,
+                "John",
+                "Doe",
+                "john.doe@example.com",
+                group,
+                "secret-password",
+                "STUDENT"
+        );
+
+        Student secondStudent = new Student(
+                2,
+                "Jane",
+                "Smith",
+                "jane.smith@example.com",
+                group,
+                "another-secret-password",
+                "STUDENT"
+        );
+
+        group.setStudents(List.of(firstStudent, secondStudent));
+
+        when(groupService.getById(1)).thenReturn(group);
+
+        mockMvc.perform(get("/api/v1/groups/{id}/students", 1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].firstName").value("John"))
+                .andExpect(jsonPath("$[0].lastName").value("Doe"))
+                .andExpect(jsonPath("$[0].email").value("john.doe@example.com"))
+                .andExpect(jsonPath("$[0].password").doesNotExist())
+                .andExpect(jsonPath("$[0].role").doesNotExist())
+                .andExpect(jsonPath("$[1].id").value(2))
+                .andExpect(jsonPath("$[1].firstName").value("Jane"))
+                .andExpect(jsonPath("$[1].lastName").value("Smith"))
+                .andExpect(jsonPath("$[1].email").value("jane.smith@example.com"))
+                .andExpect(jsonPath("$[1].password").doesNotExist())
+                .andExpect(jsonPath("$[1].role").doesNotExist());
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenGettingStudentsForMissingGroup() throws Exception {
+        when(groupService.getById(999)).thenThrow(new GroupNotFoundException(999));
+
+        mockMvc.perform(get("/api/v1/groups/{id}/students", 999))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Group not found"))
+                .andExpect(jsonPath("$.detail").value("Group was not found by id: 999"));
+    }
+
 
     @Test
     void shouldCreateGroup() throws Exception {

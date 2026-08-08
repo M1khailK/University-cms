@@ -134,4 +134,14 @@ class GroupApiSecurityTest {
                         .with(user("student").roles("STUDENT")))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void shouldAllowPublicReadGroupStudents() throws Exception {
+        Group group = new Group(1, "AA-01", Collections.emptyList());
+
+        when(groupService.getById(1)).thenReturn(group);
+
+        mockMvc.perform(get("/api/v1/groups/{id}/students", 1))
+                .andExpect(status().isOk());
+    }
 }

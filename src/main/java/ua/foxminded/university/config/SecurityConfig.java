@@ -66,7 +66,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/groups/{id}")
                         .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.GET, "/api/v1/groups", "/api/v1/groups/{id}")
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/groups",
+                                "/api/v1/groups/{id}",
+                                "/api/v1/groups/{id}/students"
+                        )
                         .permitAll()
 
                         .requestMatchers("/addGrade", "/deleteGrade")
