@@ -55,10 +55,4 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new GroupNotFoundException(groupName));
     }
 
-    @Override
-    public void changeNameById(int groupId, String groupName) {
-        updateName(groupId, groupName);
-    }
-
-
 }
