@@ -19,4 +19,6 @@ public interface LessonService extends EntityService<Lesson> {
     Lesson create(Lesson lesson);
 
     Lesson update(int lessonId, Lesson lesson);
+
+    void deleteById(int lessonId);
 }

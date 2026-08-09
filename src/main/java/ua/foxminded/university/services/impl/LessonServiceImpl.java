@@ -88,4 +88,10 @@ public class LessonServiceImpl implements LessonService {
         }
         return today;
     }
+
+    @Override
+    public void deleteById(int lessonId) {
+        Lesson lesson = getById(lessonId);
+        lessonRepository.delete(lesson);
+    }
 }

@@ -26,8 +26,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -324,5 +327,27 @@ class LessonRestControllerTest {
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldDeleteLesson() throws Exception {
+        doNothing().when(lessonService).deleteById(1);
+
+        mockMvc.perform(delete("/api/v1/lessons/{id}", 1))
+                .andExpect(status().isNoContent());
+
+        verify(lessonService).deleteById(1);
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenDeletingMissingLesson() throws Exception {
+        doThrow(new LessonNotFoundException(999))
+                .when(lessonService).deleteById(999);
+
+        mockMvc.perform(delete("/api/v1/lessons/{id}", 999))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Lesson not found"))
+                .andExpect(jsonPath("$.detail").value("Lesson was not found by id: 999"));
     }
 }

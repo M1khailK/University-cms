@@ -28,6 +28,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -224,6 +225,20 @@ class LessonApiSecurityTest {
                                   "teacherId": 30
                                 }
                                 """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldAllowAdminToDeleteLesson() throws Exception {
+        mockMvc.perform(delete("/api/v1/lessons/{id}", 1)
+                        .with(user("admin").roles("ADMIN")))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldForbidStudentToDeleteLesson() throws Exception {
+        mockMvc.perform(delete("/api/v1/lessons/{id}", 1)
+                        .with(user("student").roles("STUDENT")))
                 .andExpect(status().isForbidden());
     }
 }
