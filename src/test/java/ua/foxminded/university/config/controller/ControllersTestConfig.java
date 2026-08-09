@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ua.foxminded.university.config.security.SecurityTestConfig;
 import ua.foxminded.university.manager.ServiceManager;
-import ua.foxminded.university.mapper.LessonMapper;
 import ua.foxminded.university.services.AttendanceService;
 import ua.foxminded.university.services.GradeService;
 import ua.foxminded.university.services.GroupService;
@@ -41,8 +40,6 @@ public class ControllersTestConfig {
     public TeacherService teacherService;
     @MockBean
     public UserService userService;
-    @MockBean
-    public LessonMapper lessonMapper;
     @MockBean
     public GradeService gradeService;
     @MockBean
