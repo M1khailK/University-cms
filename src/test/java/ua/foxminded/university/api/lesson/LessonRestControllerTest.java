@@ -15,16 +15,23 @@ import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
+import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
+import ua.foxminded.university.services.SubjectService;
+import ua.foxminded.university.services.TeacherService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,6 +45,15 @@ class LessonRestControllerTest {
 
     @MockitoBean
     private LessonService lessonService;
+
+    @MockitoBean
+    private SubjectService subjectService;
+
+    @MockitoBean
+    private GroupService groupService;
+
+    @MockitoBean
+    private TeacherService teacherService;
 
     @Test
     void shouldReturnAllLessons() throws Exception {
@@ -123,4 +139,88 @@ class LessonRestControllerTest {
                 teacher
         );
     }
+
+    @Test
+    void shouldCreateLesson() throws Exception {
+        Subject subject = new Subject(10, "Java");
+        Group group = new Group(20, "AA-01", Collections.emptyList());
+        Teacher teacher = new Teacher(
+                30,
+                "Bob",
+                "Smith",
+                "bob.smith@example.com",
+                "secret-password",
+                "TEACHER"
+        );
+
+        Lesson createdLesson = createLesson();
+
+        when(subjectService.getById(10)).thenReturn(subject);
+        when(groupService.getById(20)).thenReturn(group);
+        when(teacherService.getById(30)).thenReturn(teacher);
+        when(lessonService.create(any(Lesson.class))).thenReturn(createdLesson);
+
+        mockMvc.perform(post("/api/v1/lessons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": "Java Basics",
+                                  "date": "2023-08-05",
+                                  "startTime": "15:30:00",
+                                  "endTime": "16:30:00",
+                                  "subjectId": 10,
+                                  "groupId": 20,
+                                  "teacherId": 30
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/v1/lessons/1"))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("Java Basics"))
+                .andExpect(jsonPath("$.subjectId").value(10))
+                .andExpect(jsonPath("$.groupId").value(20))
+                .andExpect(jsonPath("$.teacherId").value(30));
+
+        verify(subjectService).getById(10);
+        verify(groupService).getById(20);
+        verify(teacherService).getById(30);
+        verify(lessonService).create(any(Lesson.class));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCreatingLessonWithBlankName() throws Exception {
+        mockMvc.perform(post("/api/v1/lessons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": " ",
+                                  "date": "2023-08-05",
+                                  "startTime": "15:30:00",
+                                  "endTime": "16:30:00",
+                                  "subjectId": 10,
+                                  "groupId": 20,
+                                  "teacherId": 30
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenEndTimeIsBeforeStartTime() throws Exception {
+        mockMvc.perform(post("/api/v1/lessons")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": "Java Basics",
+                                  "date": "2023-08-05",
+                                  "startTime": "16:30:00",
+                                  "endTime": "15:30:00",
+                                  "subjectId": 10,
+                                  "groupId": 20,
+                                  "teacherId": 30
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
 }

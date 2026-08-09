@@ -29,6 +29,11 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    public Lesson create(Lesson lesson) {
+        return lessonRepository.save(lesson);
+    }
+
+    @Override
     public Lesson getById(int lessonId) {
         return lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new LessonNotFoundException(lessonId));

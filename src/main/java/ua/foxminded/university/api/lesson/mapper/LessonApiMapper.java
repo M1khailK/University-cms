@@ -2,6 +2,7 @@ package ua.foxminded.university.api.lesson.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import ua.foxminded.university.api.lesson.dto.LessonCreateRequest;
 import ua.foxminded.university.api.lesson.dto.LessonResponse;
 import ua.foxminded.university.info.Lesson;
 
@@ -21,4 +22,10 @@ public interface LessonApiMapper {
     LessonResponse toResponse(Lesson lesson);
 
     List<LessonResponse> toResponses(List<Lesson> lessons);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "subject", ignore = true)
+    @Mapping(target = "group", ignore = true)
+    @Mapping(target = "teacher", ignore = true)
+    Lesson toEntity(LessonCreateRequest request);
 }
