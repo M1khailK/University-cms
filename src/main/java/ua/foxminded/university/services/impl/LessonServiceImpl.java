@@ -34,6 +34,21 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    public Lesson update(int lessonId, Lesson lesson) {
+        Lesson existingLesson = getById(lessonId);
+
+        existingLesson.setName(lesson.getName());
+        existingLesson.setDate(lesson.getDate());
+        existingLesson.setStartTime(lesson.getStartTime());
+        existingLesson.setEndTime(lesson.getEndTime());
+        existingLesson.setSubject(lesson.getSubject());
+        existingLesson.setGroup(lesson.getGroup());
+        existingLesson.setTeacher(lesson.getTeacher());
+
+        return lessonRepository.save(existingLesson);
+    }
+
+    @Override
     public Lesson getById(int lessonId) {
         return lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new LessonNotFoundException(lessonId));

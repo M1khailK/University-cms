@@ -30,6 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -223,4 +224,105 @@ class LessonRestControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void shouldUpdateLesson() throws Exception {
+        Subject subject = new Subject(10, "Java");
+        Group group = new Group(20, "AA-01", Collections.emptyList());
+        Teacher teacher = new Teacher(
+                30,
+                "Bob",
+                "Smith",
+                "bob.smith@example.com",
+                "secret-password",
+                "TEACHER"
+        );
+
+        Lesson updatedLesson = createLesson();
+
+        when(subjectService.getById(10)).thenReturn(subject);
+        when(groupService.getById(20)).thenReturn(group);
+        when(teacherService.getById(30)).thenReturn(teacher);
+        when(lessonService.update(any(Integer.class), any(Lesson.class))).thenReturn(updatedLesson);
+
+        mockMvc.perform(put("/api/v1/lessons/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": "Java Basics",
+                                  "date": "2023-08-05",
+                                  "startTime": "15:30:00",
+                                  "endTime": "16:30:00",
+                                  "subjectId": 10,
+                                  "groupId": 20,
+                                  "teacherId": 30
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("Java Basics"))
+                .andExpect(jsonPath("$.subjectId").value(10))
+                .andExpect(jsonPath("$.groupId").value(20))
+                .andExpect(jsonPath("$.teacherId").value(30));
+
+        verify(subjectService).getById(10);
+        verify(groupService).getById(20);
+        verify(teacherService).getById(30);
+        verify(lessonService).update(any(Integer.class), any(Lesson.class));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenUpdatingMissingLesson() throws Exception {
+        Subject subject = new Subject(10, "Java");
+        Group group = new Group(20, "AA-01", Collections.emptyList());
+        Teacher teacher = new Teacher(
+                30,
+                "Bob",
+                "Smith",
+                "bob.smith@example.com",
+                "secret-password",
+                "TEACHER"
+        );
+
+        when(subjectService.getById(10)).thenReturn(subject);
+        when(groupService.getById(20)).thenReturn(group);
+        when(teacherService.getById(30)).thenReturn(teacher);
+        when(lessonService.update(any(Integer.class), any(Lesson.class)))
+                .thenThrow(new LessonNotFoundException(999));
+
+        mockMvc.perform(put("/api/v1/lessons/{id}", 999)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": "Java Basics",
+                                  "date": "2023-08-05",
+                                  "startTime": "15:30:00",
+                                  "endTime": "16:30:00",
+                                  "subjectId": 10,
+                                  "groupId": 20,
+                                  "teacherId": 30
+                                }
+                                """))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Lesson not found"))
+                .andExpect(jsonPath("$.detail").value("Lesson was not found by id: 999"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenUpdatingLessonWithBlankName() throws Exception {
+        mockMvc.perform(put("/api/v1/lessons/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "name": " ",
+                                  "date": "2023-08-05",
+                                  "startTime": "15:30:00",
+                                  "endTime": "16:30:00",
+                                  "subjectId": 10,
+                                  "groupId": 20,
+                                  "teacherId": 30
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
 }
