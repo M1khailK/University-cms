@@ -99,10 +99,7 @@ public class SecurityConfig {
                                 "/createTeacher",
                                 "/createAdmin",
                                 "/createStudent",
-                                "/createAccount",
-                                "/createUniversityLesson",
-                                "/createLesson",
-                                "/editLesson"
+                                "/createAccount"
                         )
                         .hasRole("ADMIN")
 
