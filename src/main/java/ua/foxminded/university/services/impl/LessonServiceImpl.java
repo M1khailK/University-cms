@@ -1,12 +1,10 @@
 package ua.foxminded.university.services.impl;
 
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.foxminded.university.dto.LessonDTO;
+import ua.foxminded.university.customexceptions.LessonNotFoundException;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
-import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.services.LessonService;
@@ -17,15 +15,13 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
 
     private static final int HOUR_TO_DISPLAY_TOMORROW_SCHEDULE = 18;
 
-    @Autowired
-    private LessonRepository lessonRepository;
-
-    @Autowired
-    private Clock clock;
+    private final LessonRepository lessonRepository;
+    private final Clock clock;
 
     @Override
     public void save(Lesson lesson) {
@@ -33,8 +29,29 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    public Lesson create(Lesson lesson) {
+        return lessonRepository.save(lesson);
+    }
+
+    @Override
+    public Lesson update(int lessonId, Lesson lesson) {
+        Lesson existingLesson = getById(lessonId);
+
+        existingLesson.setName(lesson.getName());
+        existingLesson.setDate(lesson.getDate());
+        existingLesson.setStartTime(lesson.getStartTime());
+        existingLesson.setEndTime(lesson.getEndTime());
+        existingLesson.setSubject(lesson.getSubject());
+        existingLesson.setGroup(lesson.getGroup());
+        existingLesson.setTeacher(lesson.getTeacher());
+
+        return lessonRepository.save(existingLesson);
+    }
+
+    @Override
     public Lesson getById(int lessonId) {
-        return lessonRepository.findById(lessonId).orElseThrow(() -> new IllegalArgumentException("Lesson was not found by id"));
+        return lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new LessonNotFoundException(lessonId));
     }
 
     @Override
@@ -68,9 +85,13 @@ public class LessonServiceImpl implements LessonService {
         LocalDate today = LocalDate.now(clock);
         if (LocalTime.now(clock).isAfter(LocalTime.of(HOUR_TO_DISPLAY_TOMORROW_SCHEDULE, 0, 0, 0))) {
             return today.plusDays(1);
-        } else {
-            return today;
         }
+        return today;
     }
 
+    @Override
+    public void deleteById(int lessonId) {
+        Lesson lesson = getById(lessonId);
+        lessonRepository.delete(lesson);
+    }
 }
