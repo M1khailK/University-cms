@@ -115,12 +115,7 @@ public class SecurityConfig {
                         .requestMatchers("/getUserSchedule", "/grades")
                         .hasAnyRole("ADMIN", "STUDENT", "TEACHER")
 
-                        .requestMatchers(
-                                "/generalSchedule",
-                                "/teacherSchedule",
-                                "/studentSchedule",
-                                "/"
-                        )
+                        .requestMatchers("/")
                         .permitAll()
 
                         .requestMatchers("/**").permitAll()

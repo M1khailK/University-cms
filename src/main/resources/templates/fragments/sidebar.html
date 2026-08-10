@@ -16,7 +16,6 @@
                 </form>
             </li>
 
-            <li><a href="/generalSchedule"><i class="fa-regular fa-calendar-days"></i><p>General Schedule</p></a></li>
             <li><a href="/"><i class="fa-solid fa-house"></i><p>Main Page</p></a></li>
             <li sec:authorize="hasAnyRole('TEACHER','STUDENT')"><a href="/profile"><i class="fa-solid fa-user"></i><p>My profile</p></a></li>
             <li sec:authorize="hasAnyRole('TEACHER','STUDENT')"><a href="/mySchedule"><i class="fa-sharp fa-solid fa-calendar"></i><p>My Schedule</p></a></li>
