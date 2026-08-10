@@ -14,6 +14,7 @@ import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
 import java.util.Collections;
@@ -29,6 +30,9 @@ class ScheduleApiSecurityTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private UserService userService;
 
     @MockitoBean
     private LessonService lessonService;
@@ -113,5 +117,36 @@ class ScheduleApiSecurityTest {
 
         mockMvc.perform(get("/api/v1/schedules/options"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void scheduleApiSecurity_shouldAllowStudentToReadCurrentUserSchedule() throws Exception {
+        when(userService.getUserLessons(null, null)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/v1/schedules/me")
+                        .with(user("student").roles("STUDENT")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void scheduleApiSecurity_shouldAllowTeacherToReadCurrentUserSchedule() throws Exception {
+        when(userService.getUserLessons(null, null)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/v1/schedules/me")
+                        .with(user("teacher").roles("TEACHER")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void scheduleApiSecurity_shouldForbidAdminToReadCurrentUserSchedule() throws Exception {
+        mockMvc.perform(get("/api/v1/schedules/me")
+                        .with(user("admin").roles("ADMIN")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void scheduleApiSecurity_shouldRedirectAnonymousToLogin_whenReadingCurrentUserSchedule() throws Exception {
+        mockMvc.perform(get("/api/v1/schedules/me"))
+                .andExpect(status().is3xxRedirection());
     }
 }

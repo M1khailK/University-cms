@@ -18,6 +18,7 @@ import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -38,6 +39,9 @@ class ScheduleRestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private UserService userService;
 
     @MockitoBean
     private LessonService lessonService;
@@ -204,5 +208,52 @@ class ScheduleRestControllerTest {
 
         verify(groupService).getAll();
         verify(teacherService).getAll();
+    }
+
+    @Test
+    void scheduleRestController_shouldReturnCurrentUserSchedule_whenRequestIsValid() throws Exception {
+        Lesson lesson = createLesson();
+
+        when(userService.getUserLessons(
+                LocalDate.of(2023, 1, 1),
+                LocalDate.of(2023, 1, 30)
+        )).thenReturn(List.of(lesson));
+
+        mockMvc.perform(get("/api/v1/schedules/me")
+                        .param("from", "2023-01-01")
+                        .param("to", "2023-01-30"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].name").value("Java Basics"))
+                .andExpect(jsonPath("$[0].date").value("2023-08-05"))
+                .andExpect(jsonPath("$[0].startTime").value("15:30:00"))
+                .andExpect(jsonPath("$[0].endTime").value("16:30:00"))
+                .andExpect(jsonPath("$[0].subjectId").value(10))
+                .andExpect(jsonPath("$[0].subjectName").value("Java"))
+                .andExpect(jsonPath("$[0].groupId").value(20))
+                .andExpect(jsonPath("$[0].groupName").value("AA-01"))
+                .andExpect(jsonPath("$[0].teacherId").value(30))
+                .andExpect(jsonPath("$[0].teacherFirstName").value("Bob"))
+                .andExpect(jsonPath("$[0].teacherLastName").value("Smith"))
+                .andExpect(jsonPath("$[0].teacherEmail").doesNotExist());
+
+        verify(userService).getUserLessons(
+                LocalDate.of(2023, 1, 1),
+                LocalDate.of(2023, 1, 30)
+        );
+    }
+
+    @Test
+    void scheduleRestController_shouldReturnBadRequest_whenCurrentUserScheduleToDateProvidedWithoutFromDate() throws Exception {
+        when(userService.getUserLessons(null, LocalDate.of(2023, 1, 30)))
+                .thenThrow(new InvalidDateRangeException("From date cannot be null when To date is provided."));
+
+        mockMvc.perform(get("/api/v1/schedules/me")
+                        .param("to", "2023-01-30"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Invalid date range"))
+                .andExpect(jsonPath("$.detail").value("From date cannot be null when To date is provided."));
     }
 }

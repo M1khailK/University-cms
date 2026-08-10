@@ -16,6 +16,7 @@ import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.GroupService;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +30,7 @@ public class ScheduleRestController {
     private final GroupService groupService;
     private final TeacherService teacherService;
     private final ScheduleMapper scheduleMapper;
+    private final UserService userService;
 
     @GetMapping("/groups/{groupId}")
     public List<ScheduleLessonResponse> getGroupSchedule(
@@ -80,5 +82,17 @@ public class ScheduleRestController {
                 scheduleMapper.toGroupOptionResponses(groupService.getAll()),
                 scheduleMapper.toTeacherOptionResponses(teacherService.getAll())
         );
+    }
+
+    @GetMapping("/me")
+    public List<ScheduleLessonResponse> getCurrentUserSchedule(
+            @RequestParam(value = "from", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate from,
+            @RequestParam(value = "to", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate to
+    ) {
+        return scheduleMapper.toResponses(userService.getUserLessons(from, to));
     }
 }
