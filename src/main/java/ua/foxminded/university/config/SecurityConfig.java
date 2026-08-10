@@ -110,12 +110,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/profile",
                                 "/settings",
-                                "/updatePassword",
-                                "/mySchedule"
+                                "/updatePassword"
                         )
                         .hasAnyRole("STUDENT", "TEACHER")
 
-                        .requestMatchers("/getUserSchedule", "/grades")
+                        .requestMatchers("/grades")
                         .hasAnyRole("ADMIN", "STUDENT", "TEACHER")
 
                         .requestMatchers("/")
