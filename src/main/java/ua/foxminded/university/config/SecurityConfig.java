@@ -85,8 +85,8 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 HttpMethod.GET,
-                                "/api/v1/groups",
-                                "/api/v1/groups/{id}"
+                                "/api/v1/schedules/groups/{groupId}",
+                                "/api/v1/schedules/teachers/{teacherId}"
                         )
                         .permitAll()
 
