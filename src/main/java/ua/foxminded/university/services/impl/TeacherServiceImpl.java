@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
+import ua.foxminded.university.customexceptions.TeacherNotFoundException;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Teacher;
@@ -44,7 +45,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher getById(int teacherId) {
-        return teacherRepository.findById(teacherId).orElseThrow(() -> new IllegalArgumentException("Teacher id was not found"));
+        return teacherRepository.findById(teacherId)
+                .orElseThrow(() -> new TeacherNotFoundException(teacherId));
     }
 
     @Override
@@ -85,7 +87,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher getByEmail(String email) {
-        return teacherRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Teacher was not found by email"));
+        return teacherRepository.findByEmail(email)
+                .orElseThrow(() -> new TeacherNotFoundException(email));
     }
 
     @Override

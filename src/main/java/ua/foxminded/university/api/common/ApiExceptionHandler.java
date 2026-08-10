@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ua.foxminded.university.customexceptions.GroupNotFoundException;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
-import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.customexceptions.LessonNotFoundException;
+import ua.foxminded.university.customexceptions.SubjectNotFoundException;
+import ua.foxminded.university.customexceptions.TeacherNotFoundException;
 
 @RestControllerAdvice(basePackages = "ua.foxminded.university.api")
 public class ApiExceptionHandler {
@@ -40,6 +41,14 @@ public class ApiExceptionHandler {
     public ProblemDetail handleInvalidDateRange(InvalidDateRangeException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle("Invalid date range");
+        problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(TeacherNotFoundException.class)
+    public ProblemDetail handleTeacherNotFound(TeacherNotFoundException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setTitle("Teacher not found");
         problemDetail.setDetail(exception.getMessage());
         return problemDetail;
     }
