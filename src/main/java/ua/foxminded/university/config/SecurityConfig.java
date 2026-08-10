@@ -83,10 +83,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/lessons", "/api/v1/lessons/{id}")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/schedules/me")
+                        .hasAnyRole("STUDENT", "TEACHER")
+
                         .requestMatchers(
                                 HttpMethod.GET,
-                                "/api/v1/groups",
-                                "/api/v1/groups/{id}"
+                                "/api/v1/schedules/options",
+                                "/api/v1/schedules/groups/{groupId}",
+                                "/api/v1/schedules/teachers/{teacherId}"
                         )
                         .permitAll()
 
@@ -106,20 +110,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/profile",
                                 "/settings",
-                                "/updatePassword",
-                                "/mySchedule"
+                                "/updatePassword"
                         )
                         .hasAnyRole("STUDENT", "TEACHER")
 
-                        .requestMatchers("/getUserSchedule", "/grades")
+                        .requestMatchers("/grades")
                         .hasAnyRole("ADMIN", "STUDENT", "TEACHER")
 
-                        .requestMatchers(
-                                "/generalSchedule",
-                                "/teacherSchedule",
-                                "/studentSchedule",
-                                "/"
-                        )
+                        .requestMatchers("/")
                         .permitAll()
 
                         .requestMatchers("/**").permitAll()
