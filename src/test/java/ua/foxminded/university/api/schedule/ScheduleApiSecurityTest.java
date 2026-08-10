@@ -105,4 +105,13 @@ class ScheduleApiSecurityTest {
                         .with(user("teacher").roles("TEACHER")))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void scheduleApiSecurity_shouldAllowAnonymousToReadScheduleOptions() throws Exception {
+        when(groupService.getAll()).thenReturn(Collections.emptyList());
+        when(teacherService.getAll()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/v1/schedules/options"))
+                .andExpect(status().isOk());
+    }
 }

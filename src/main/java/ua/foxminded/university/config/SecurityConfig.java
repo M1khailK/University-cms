@@ -85,6 +85,7 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 HttpMethod.GET,
+                                "/api/v1/schedules/options",
                                 "/api/v1/schedules/groups/{groupId}",
                                 "/api/v1/schedules/teachers/{teacherId}"
                         )

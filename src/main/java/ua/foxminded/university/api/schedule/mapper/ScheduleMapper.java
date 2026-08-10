@@ -2,8 +2,12 @@ package ua.foxminded.university.api.schedule.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import ua.foxminded.university.api.schedule.dto.ScheduleGroupOptionResponse;
 import ua.foxminded.university.api.schedule.dto.ScheduleLessonResponse;
+import ua.foxminded.university.api.schedule.dto.ScheduleTeacherOptionResponse;
+import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
+import ua.foxminded.university.info.Teacher;
 
 import java.util.List;
 
@@ -20,4 +24,12 @@ public interface ScheduleMapper {
     ScheduleLessonResponse toResponse(Lesson lesson);
 
     List<ScheduleLessonResponse> toResponses(List<Lesson> lessons);
+
+    ScheduleGroupOptionResponse toGroupOptionResponse(Group group);
+
+    List<ScheduleGroupOptionResponse> toGroupOptionResponses(List<Group> groups);
+
+    ScheduleTeacherOptionResponse toTeacherOptionResponse(Teacher teacher);
+
+    List<ScheduleTeacherOptionResponse> toTeacherOptionResponses(List<Teacher> teachers);
 }

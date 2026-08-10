@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ua.foxminded.university.api.schedule.dto.ScheduleLessonResponse;
+import ua.foxminded.university.api.schedule.dto.ScheduleOptionsResponse;
 import ua.foxminded.university.api.schedule.mapper.ScheduleMapper;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.info.Group;
@@ -71,5 +72,13 @@ public class ScheduleRestController {
         if (from == null && to != null) {
             throw new InvalidDateRangeException("From date cannot be null when To date is provided.");
         }
+    }
+
+    @GetMapping("/options")
+    public ScheduleOptionsResponse getScheduleOptions() {
+        return new ScheduleOptionsResponse(
+                scheduleMapper.toGroupOptionResponses(groupService.getAll()),
+                scheduleMapper.toTeacherOptionResponses(teacherService.getAll())
+        );
     }
 }

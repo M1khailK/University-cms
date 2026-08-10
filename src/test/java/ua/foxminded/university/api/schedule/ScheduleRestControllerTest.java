@@ -176,4 +176,33 @@ class ScheduleRestControllerTest {
                 teacher
         );
     }
+
+    @Test
+    void scheduleRestController_shouldReturnScheduleOptions_whenRequestIsValid() throws Exception {
+        Group group = new Group(20, "AA-01", Collections.emptyList());
+        Teacher teacher = new Teacher(
+                30,
+                "Bob",
+                "Smith",
+                "bob.smith@example.com",
+                "secret-password",
+                "TEACHER"
+        );
+
+        when(groupService.getAll()).thenReturn(List.of(group));
+        when(teacherService.getAll()).thenReturn(List.of(teacher));
+
+        mockMvc.perform(get("/api/v1/schedules/options"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.groups[0].id").value(20))
+                .andExpect(jsonPath("$.groups[0].name").value("AA-01"))
+                .andExpect(jsonPath("$.teachers[0].id").value(30))
+                .andExpect(jsonPath("$.teachers[0].firstName").value("Bob"))
+                .andExpect(jsonPath("$.teachers[0].lastName").value("Smith"))
+                .andExpect(jsonPath("$.teachers[0].email").doesNotExist());
+
+        verify(groupService).getAll();
+        verify(teacherService).getAll();
+    }
 }
