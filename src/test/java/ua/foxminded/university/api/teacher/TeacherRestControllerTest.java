@@ -14,11 +14,16 @@ import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.UserService;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -36,6 +41,9 @@ class TeacherRestControllerTest {
 
     @MockitoBean
     private TeacherService teacherService;
+
+    @MockitoBean
+    private UserService userService;
 
     @Test
     void teacherRestController_shouldReturnAllTeachers_whenTeachersExist() throws Exception {
@@ -88,12 +96,12 @@ class TeacherRestControllerTest {
         when(teacherService.createTeacherAccount(eq("Alice"), eq("Brown"), eq("alice.brown@example.com"))).thenReturn(createdTeacher);
 
         mockMvc.perform(post("/api/v1/teachers").contentType(MediaType.APPLICATION_JSON).content("""
-                {
-                  "firstName": "Alice",
-                  "lastName": "Brown",
-                  "email": "alice.brown@example.com"
-                }
-                """)).andExpect(status().isCreated())
+                        {
+                          "firstName": "Alice",
+                          "lastName": "Brown",
+                          "email": "alice.brown@example.com"
+                        }
+                        """)).andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.firstName").value("Alice"))
@@ -119,12 +127,12 @@ class TeacherRestControllerTest {
         when(teacherService.createTeacherAccount(eq("Alice"), eq("Brown"), eq("alice.brown@example.com"))).thenThrow(new DuplicateEmailException("Email already exists. Please choose a different email."));
 
         mockMvc.perform(post("/api/v1/teachers").contentType(MediaType.APPLICATION_JSON).content("""
-                {
-                  "firstName": "Alice",
-                  "lastName": "Brown",
-                  "email": "alice.brown@example.com"
-                }
-                """)).andExpect(status().isConflict())
+                        {
+                          "firstName": "Alice",
+                          "lastName": "Brown",
+                          "email": "alice.brown@example.com"
+                        }
+                        """)).andExpect(status().isConflict())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.title").value("Duplicate email"))
                 .andExpect(jsonPath("$.detail").value("Email already exists. Please choose a different email."));
@@ -137,12 +145,12 @@ class TeacherRestControllerTest {
         when(teacherService.updateTeacherProfile(eq(1), eq("Robert"), eq("Johnson"), eq("robert.johnson@example.com"))).thenReturn(updatedTeacher);
 
         mockMvc.perform(put("/api/v1/teachers/{id}", 1).contentType(MediaType.APPLICATION_JSON).content("""
-                {
-                  "firstName": "Robert",
-                  "lastName": "Johnson",
-                  "email": "robert.johnson@example.com"
-                }
-                """)).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                        {
+                          "firstName": "Robert",
+                          "lastName": "Johnson",
+                          "email": "robert.johnson@example.com"
+                        }
+                        """)).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.firstName").value("Robert"))
                 .andExpect(jsonPath("$.lastName").value("Johnson"))
@@ -167,12 +175,12 @@ class TeacherRestControllerTest {
         when(teacherService.updateTeacherProfile(eq(999), eq("Robert"), eq("Johnson"), eq("robert.johnson@example.com"))).thenThrow(new TeacherNotFoundException(999));
 
         mockMvc.perform(put("/api/v1/teachers/{id}", 999).contentType(MediaType.APPLICATION_JSON).content("""
-                {
-                  "firstName": "Robert",
-                  "lastName": "Johnson",
-                  "email": "robert.johnson@example.com"
-                }
-                """)).andExpect(status().isNotFound())
+                        {
+                          "firstName": "Robert",
+                          "lastName": "Johnson",
+                          "email": "robert.johnson@example.com"
+                        }
+                        """)).andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.title").value("Teacher not found"))
                 .andExpect(jsonPath("$.detail").value("Teacher was not found by id: 999"));
@@ -183,14 +191,41 @@ class TeacherRestControllerTest {
         when(teacherService.updateTeacherProfile(eq(1), eq("Robert"), eq("Johnson"), eq("existing@example.com"))).thenThrow(new DuplicateEmailException("Email already exists. Please choose a different email."));
 
         mockMvc.perform(put("/api/v1/teachers/{id}", 1).contentType(MediaType.APPLICATION_JSON).content("""
-                {
-                  "firstName": "Robert",
-                  "lastName": "Johnson",
-                  "email": "existing@example.com"
-                }
-                """)).andExpect(status().isConflict())
+                        {
+                          "firstName": "Robert",
+                          "lastName": "Johnson",
+                          "email": "existing@example.com"
+                        }
+                        """)).andExpect(status().isConflict())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.title").value("Duplicate email"))
                 .andExpect(jsonPath("$.detail").value("Email already exists. Please choose a different email."));
+    }
+
+    @Test
+    void teacherRestController_shouldDeactivateTeacher_whenTeacherExists() throws Exception {
+        Teacher teacher = createTeacher();
+
+        when(teacherService.getById(1)).thenReturn(teacher);
+
+        mockMvc.perform(delete("/api/v1/teachers/{id}", 1))
+                .andExpect(status().isNoContent());
+
+        verify(teacherService).getById(1);
+        verify(userService).disableUserById(1);
+    }
+
+    @Test
+    void teacherRestController_shouldReturnNotFound_whenDeactivatedTeacherDoesNotExist() throws Exception {
+        when(teacherService.getById(999)).thenThrow(new TeacherNotFoundException(999));
+
+        mockMvc.perform(delete("/api/v1/teachers/{id}", 999))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Teacher not found"))
+                .andExpect(jsonPath("$.detail").value("Teacher was not found by id: 999"));
+
+        verify(teacherService).getById(999);
+        verify(userService, never()).disableUserById(anyInt());
     }
 }
