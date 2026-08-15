@@ -21,6 +21,7 @@ import ua.foxminded.university.services.PasswordService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doAnswer;
+
 import java.nio.CharBuffer;
 import java.time.Clock;
 import java.util.Arrays;
@@ -125,6 +126,54 @@ public class TeacherServiceImplTest {
                         && "Brown".equals(teacher.getLastName())
                         && "alice.brown@example.com".equals(teacher.getEmail())
                         && "encoded-generated-password".equals(teacher.getPassword())
+                        && "TEACHER".equals(teacher.getRole())
+        ));
+    }
+
+    @Test
+    public void teacherService_shouldUpdateTeacherProfile_whenInputIsValid() {
+        Teacher existingTeacher = new Teacher(
+                1,
+                "Bob",
+                "Smith",
+                "bob.smith@example.com",
+                "encoded-password",
+                "TEACHER"
+        );
+
+        Teacher updatedTeacher = new Teacher(
+                1,
+                "Robert",
+                "Johnson",
+                "robert.johnson@example.com",
+                "encoded-password",
+                "TEACHER"
+        );
+
+        when(teacherRepository.findById(1)).thenReturn(Optional.of(existingTeacher));
+        when(teacherRepository.save(existingTeacher)).thenReturn(updatedTeacher);
+
+        Teacher actual = teacherService.updateTeacherProfile(
+                1,
+                "Robert",
+                "Johnson",
+                "robert.johnson@example.com"
+        );
+
+        assertEquals(1, actual.getId());
+        assertEquals("Robert", actual.getFirstName());
+        assertEquals("Johnson", actual.getLastName());
+        assertEquals("robert.johnson@example.com", actual.getEmail());
+        assertEquals("encoded-password", actual.getPassword());
+        assertEquals("TEACHER", actual.getRole());
+
+        verify(teacherRepository).findById(1);
+        verify(teacherRepository).save(argThat(teacher ->
+                teacher.getId().equals(1)
+                        && "Robert".equals(teacher.getFirstName())
+                        && "Johnson".equals(teacher.getLastName())
+                        && "robert.johnson@example.com".equals(teacher.getEmail())
+                        && "encoded-password".equals(teacher.getPassword())
                         && "TEACHER".equals(teacher.getRole())
         ));
     }
