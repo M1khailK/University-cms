@@ -15,7 +15,12 @@ import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.dto.User;
+import ua.foxminded.university.services.PasswordService;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doAnswer;
 import java.nio.CharBuffer;
 import java.time.Clock;
 import java.util.Arrays;
@@ -47,6 +52,8 @@ public class TeacherServiceImplTest {
     private TeacherRepository teacherRepository;
     @MockBean
     private PasswordEncoder passwordEncoder;
+    @MockBean
+    private PasswordService passwordService;
 
     @BeforeEach
     public void setUp() {
@@ -79,5 +86,46 @@ public class TeacherServiceImplTest {
     public void teacherService_shouldThrowAnException_whenInputOldPasswordDoesNotMatchTeacherPassword() {
         when(passwordEncoder.matches(CharBuffer.wrap(PASSWORD), teacherRepository.findPasswordById(ID).orElseThrow(() -> new IllegalArgumentException("Password was not found by teacher's id")))).thenReturn(false);
         Assertions.assertThrows(InvalidOldPasswordException.class, () -> teacherService.changePassword(EMAIL, PASSWORD, NEW_PASS));
+    }
+
+    @Test
+    public void teacherService_shouldCreateTeacherAccount_whenInputIsValid() {
+        doAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setPassword("encoded-generated-password");
+            return null;
+        }).when(passwordService).generateAndSendPasswordForUser(any(User.class));
+
+        when(teacherRepository.save(any(Teacher.class))).thenReturn(new Teacher(
+                2,
+                "Alice",
+                "Brown",
+                "alice.brown@example.com",
+                "encoded-generated-password",
+                "TEACHER"
+        ));
+
+        Teacher actual = teacherService.createTeacherAccount(
+                "Alice",
+                "Brown",
+                "alice.brown@example.com"
+        );
+
+        assertEquals(2, actual.getId());
+        assertEquals("Alice", actual.getFirstName());
+        assertEquals("Brown", actual.getLastName());
+        assertEquals("alice.brown@example.com", actual.getEmail());
+        assertEquals("encoded-generated-password", actual.getPassword());
+        assertEquals("TEACHER", actual.getRole());
+
+        verify(passwordService).generateAndSendPasswordForUser(any(User.class));
+        verify(teacherRepository).save(argThat(teacher ->
+                teacher.getId() == null
+                        && "Alice".equals(teacher.getFirstName())
+                        && "Brown".equals(teacher.getLastName())
+                        && "alice.brown@example.com".equals(teacher.getEmail())
+                        && "encoded-generated-password".equals(teacher.getPassword())
+                        && "TEACHER".equals(teacher.getRole())
+        ));
     }
 }

@@ -11,6 +11,10 @@ import ua.foxminded.university.api.teacher.mapper.TeacherMapperImpl;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.TeacherService;
+import org.springframework.http.MediaType;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -82,5 +86,78 @@ class TeacherApiSecurityTest {
                 "secret-password",
                 "TEACHER"
         );
+    }
+
+    @Test
+    void teacherApiSecurity_shouldAllowCreateTeacher_whenUserIsAdmin() throws Exception {
+        when(teacherService.createTeacherAccount(
+                eq("Alice"),
+                eq("Brown"),
+                eq("alice.brown@example.com")
+        )).thenReturn(new Teacher(
+                2,
+                "Alice",
+                "Brown",
+                "alice.brown@example.com",
+                "encoded-password",
+                "TEACHER"
+        ));
+
+        mockMvc.perform(post("/api/v1/teachers")
+                        .with(user("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com"
+                                }
+                                """))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void teacherApiSecurity_shouldForbidCreateTeacher_whenUserIsStudent() throws Exception {
+        mockMvc.perform(post("/api/v1/teachers")
+                        .with(user("student").roles("STUDENT"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com"
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void teacherApiSecurity_shouldForbidCreateTeacher_whenUserIsTeacher() throws Exception {
+        mockMvc.perform(post("/api/v1/teachers")
+                        .with(user("teacher").roles("TEACHER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com"
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void teacherApiSecurity_shouldRedirectToLogin_whenAnonymousCreatesTeacher() throws Exception {
+        mockMvc.perform(post("/api/v1/teachers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com"
+                                }
+                                """))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
     }
 }

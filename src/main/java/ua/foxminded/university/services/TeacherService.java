@@ -8,4 +8,5 @@ public interface TeacherService extends EntityService<Teacher>, UserManagerServi
 
     String getPasswordById(int id);
 
+    Teacher createTeacherAccount(String firstName, String lastName, String email);
 }

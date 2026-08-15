@@ -37,10 +37,40 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private PasswordService passwordService;
 
+    private Teacher createAccount(User user, String role) {
+        try {
+            passwordService.generateAndSendPasswordForUser(user);
+
+            Teacher teacher = new Teacher(
+                    null,
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    role
+            );
+
+            return teacherRepository.save(teacher);
+        } catch (DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+        }
+    }
+
     @Override
     @Transactional
     public void save(Teacher teacher) {
         teacherRepository.save(teacher);
+    }
+
+    @Override
+    @Transactional
+    public Teacher createTeacherAccount(String firstName, String lastName, String email) {
+        User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+
+        return createAccount(user, "TEACHER");
     }
 
     @Override
@@ -74,15 +104,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void createUserAccountByRole(User user, String role) {
-        try {
-            passwordService.generateAndSendPasswordForUser(user);
-            Teacher teacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
-                    user.getPassword(), role);
-            save(teacher);
-        } catch (
-                DataIntegrityViolationException exception) {
-            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
-        }
+        createAccount(user, role);
     }
 
     @Override
