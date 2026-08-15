@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
+import ua.foxminded.university.customexceptions.TeacherNotFoundException;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Teacher;
@@ -36,6 +37,41 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     private PasswordService passwordService;
 
+    private Teacher createAccount(User user, String role) {
+        try {
+            passwordService.generateAndSendPasswordForUser(user);
+
+            Teacher teacher = new Teacher(
+                    null,
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    role
+            );
+
+            return teacherRepository.save(teacher);
+        } catch (DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+        }
+    }
+
+    @Override
+    @Transactional
+    public Teacher updateTeacherProfile(int id, String firstName, String lastName, String email) {
+        Teacher teacher = getById(id);
+
+        teacher.setFirstName(firstName);
+        teacher.setLastName(lastName);
+        teacher.setEmail(email);
+
+        try {
+            return teacherRepository.save(teacher);
+        } catch (DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+        }
+    }
+
     @Override
     @Transactional
     public void save(Teacher teacher) {
@@ -43,8 +79,20 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional
+    public Teacher createTeacherAccount(String firstName, String lastName, String email) {
+        User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+
+        return createAccount(user, "TEACHER");
+    }
+
+    @Override
     public Teacher getById(int teacherId) {
-        return teacherRepository.findById(teacherId).orElseThrow(() -> new IllegalArgumentException("Teacher id was not found"));
+        return teacherRepository.findById(teacherId)
+                .orElseThrow(() -> new TeacherNotFoundException(teacherId));
     }
 
     @Override
@@ -72,20 +120,13 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public void createUserAccountByRole(User user, String role) {
-        try {
-            passwordService.generateAndSendPasswordForUser(user);
-            Teacher teacher = new Teacher(null, user.getFirstName(), user.getLastName(), user.getEmail(),
-                    user.getPassword(), role);
-            save(teacher);
-        } catch (
-                DataIntegrityViolationException exception) {
-            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
-        }
+        createAccount(user, role);
     }
 
     @Override
     public Teacher getByEmail(String email) {
-        return teacherRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Teacher was not found by email"));
+        return teacherRepository.findByEmail(email)
+                .orElseThrow(() -> new TeacherNotFoundException(email));
     }
 
     @Override
