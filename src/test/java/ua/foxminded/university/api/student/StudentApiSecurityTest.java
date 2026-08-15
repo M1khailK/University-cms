@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
@@ -16,9 +17,11 @@ import ua.foxminded.university.services.StudentService;
 import javax.sql.DataSource;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -88,5 +91,76 @@ class StudentApiSecurityTest {
                 "secret-password",
                 "STUDENT"
         );
+    }
+
+    @Test
+    void studentApiSecurity_shouldAllowCreateStudent_whenUserIsAdmin() throws Exception {
+        when(studentService.createStudentAccount(
+                eq("Alice"),
+                eq("Brown"),
+                eq("alice.brown@example.com"),
+                eq(10)
+        )).thenReturn(createStudent());
+
+        mockMvc.perform(post("/api/v1/students")
+                        .with(user("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com",
+                                  "groupId": 10
+                                }
+                                """))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void studentApiSecurity_shouldForbidCreateStudent_whenUserIsStudent() throws Exception {
+        mockMvc.perform(post("/api/v1/students")
+                        .with(user("student").roles("STUDENT"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com",
+                                  "groupId": 10
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void studentApiSecurity_shouldForbidCreateStudent_whenUserIsTeacher() throws Exception {
+        mockMvc.perform(post("/api/v1/students")
+                        .with(user("teacher").roles("TEACHER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com",
+                                  "groupId": 10
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void studentApiSecurity_shouldRedirectToLogin_whenAnonymousCreatesStudent() throws Exception {
+        mockMvc.perform(post("/api/v1/students")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com",
+                                  "groupId": 10
+                                }
+                                """))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
     }
 }

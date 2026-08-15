@@ -10,6 +10,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.student.mapper.StudentMapperImpl;
+import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Student;
@@ -17,8 +18,10 @@ import ua.foxminded.university.services.StudentService;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -97,5 +100,78 @@ class StudentRestControllerTest {
                 "secret-password",
                 "STUDENT"
         );
+    }
+
+    @Test
+    void studentRestController_shouldCreateStudent_whenRequestIsValid() throws Exception {
+        Student createdStudent = createStudent();
+
+        when(studentService.createStudentAccount(
+                eq("Alice"),
+                eq("Brown"),
+                eq("alice.brown@example.com"),
+                eq(10)
+        )).thenReturn(createdStudent);
+
+        mockMvc.perform(post("/api/v1/students")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com",
+                                  "groupId": 10
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.firstName").value("Alice"))
+                .andExpect(jsonPath("$.lastName").value("Brown"))
+                .andExpect(jsonPath("$.email").value("alice.brown@example.com"))
+                .andExpect(jsonPath("$.groupId").value(10))
+                .andExpect(jsonPath("$.groupName").value("AA-11"))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.role").doesNotExist());
+    }
+
+    @Test
+    void studentRestController_shouldReturnBadRequest_whenCreateRequestIsInvalid() throws Exception {
+        mockMvc.perform(post("/api/v1/students")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "",
+                                  "lastName": "Brown",
+                                  "email": "invalid-email",
+                                  "groupId": -1
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void studentRestController_shouldReturnConflict_whenEmailAlreadyExists() throws Exception {
+        when(studentService.createStudentAccount(
+                eq("Alice"),
+                eq("Brown"),
+                eq("alice.brown@example.com"),
+                eq(10)
+        )).thenThrow(new DuplicateEmailException("Email already exists. Please choose a different email."));
+
+        mockMvc.perform(post("/api/v1/students")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com",
+                                  "groupId": 10
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Duplicate email"))
+                .andExpect(jsonPath("$.detail").value("Email already exists. Please choose a different email."));
     }
 }

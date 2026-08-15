@@ -36,13 +36,47 @@ public class StudentServiceImpl implements StudentService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private GroupService groupService;
+
     @Autowired
     private PasswordService passwordService;
+
+    private Student createAccount(User user, Group group, String role) {
+        try {
+            passwordService.generateAndSendPasswordForUser(user);
+
+            Student student = new Student(
+                    null,
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    group,
+                    user.getPassword(),
+                    role
+            );
+
+            return studentRepository.save(student);
+        } catch (DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+        }
+    }
 
     @Override
     @Transactional
     public void save(Student student) {
         studentRepository.save(student);
+    }
+
+    @Override
+    @Transactional
+    public Student createStudentAccount(String firstName, String lastName, String email, int groupId) {
+        User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+
+        Group group = groupService.getById(groupId);
+
+        return createAccount(user, group, "STUDENT");
     }
 
     @Override
@@ -95,16 +129,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void createUserAccountByRole(User user, String role) {
-        try {
-            passwordService.generateAndSendPasswordForUser(user);
-            Group group = groupService.getByName(user.getGroupName());
-            Student student = new Student(null, user.getFirstName(), user.getLastName(), user.getEmail(), group,
-                    user.getPassword(), role);
-            save(student);
-        } catch (
-                DataIntegrityViolationException exception) {
-            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
-        }
+        Group group = groupService.getByName(user.getGroupName());
+        createAccount(user, group, role);
     }
 
 }
