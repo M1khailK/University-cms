@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -158,6 +159,78 @@ class StudentApiSecurityTest {
                                   "lastName": "Brown",
                                   "email": "alice.brown@example.com",
                                   "groupId": 10
+                                }
+                                """))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+    }
+
+    @Test
+    void studentApiSecurity_shouldAllowUpdateStudent_whenUserIsAdmin() throws Exception {
+        when(studentService.updateStudentProfile(
+                eq(1),
+                eq("Alicia"),
+                eq("Johnson"),
+                eq("alicia.johnson@example.com"),
+                eq(20)
+        )).thenReturn(createStudent());
+
+        mockMvc.perform(put("/api/v1/students/{id}", 1)
+                        .with(user("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alicia",
+                                  "lastName": "Johnson",
+                                  "email": "alicia.johnson@example.com",
+                                  "groupId": 20
+                                }
+                                """))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void studentApiSecurity_shouldForbidUpdateStudent_whenUserIsStudent() throws Exception {
+        mockMvc.perform(put("/api/v1/students/{id}", 1)
+                        .with(user("student").roles("STUDENT"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alicia",
+                                  "lastName": "Johnson",
+                                  "email": "alicia.johnson@example.com",
+                                  "groupId": 20
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void studentApiSecurity_shouldForbidUpdateStudent_whenUserIsTeacher() throws Exception {
+        mockMvc.perform(put("/api/v1/students/{id}", 1)
+                        .with(user("teacher").roles("TEACHER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alicia",
+                                  "lastName": "Johnson",
+                                  "email": "alicia.johnson@example.com",
+                                  "groupId": 20
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void studentApiSecurity_shouldRedirectToLogin_whenAnonymousUpdatesStudent() throws Exception {
+        mockMvc.perform(put("/api/v1/students/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alicia",
+                                  "lastName": "Johnson",
+                                  "email": "alicia.johnson@example.com",
+                                  "groupId": 20
                                 }
                                 """))
                 .andExpect(status().is3xxRedirection())

@@ -133,4 +133,22 @@ public class StudentServiceImpl implements StudentService {
         createAccount(user, group, role);
     }
 
+    @Override
+    @Transactional
+    public Student updateStudentProfile(int id, String firstName, String lastName, String email, int groupId) {
+        Student student = getById(id);
+        Group group = groupService.getById(groupId);
+
+        student.setFirstName(firstName);
+        student.setLastName(lastName);
+        student.setEmail(email);
+        student.setGroup(group);
+
+        try {
+            return studentRepository.save(student);
+        } catch (DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+        }
+    }
+
 }

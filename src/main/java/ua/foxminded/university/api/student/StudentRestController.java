@@ -6,12 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ua.foxminded.university.api.student.dto.StudentCreateRequest;
 import ua.foxminded.university.api.student.dto.StudentResponse;
+import ua.foxminded.university.api.student.dto.StudentUpdateRequest;
 import ua.foxminded.university.api.student.mapper.StudentMapper;
 import ua.foxminded.university.services.StudentService;
 
@@ -54,5 +56,21 @@ public class StudentRestController {
                 .toUri();
 
         return ResponseEntity.created(location).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public StudentResponse updateStudent(
+            @PathVariable int id,
+            @Valid @RequestBody StudentUpdateRequest request
+    ) {
+        return studentMapper.toResponse(
+                studentService.updateStudentProfile(
+                        id,
+                        request.firstName(),
+                        request.lastName(),
+                        request.email(),
+                        request.groupId()
+                )
+        );
     }
 }

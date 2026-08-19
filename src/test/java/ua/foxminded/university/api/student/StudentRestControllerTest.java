@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -167,6 +168,119 @@ class StudentRestControllerTest {
                                   "lastName": "Brown",
                                   "email": "alice.brown@example.com",
                                   "groupId": 10
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Duplicate email"))
+                .andExpect(jsonPath("$.detail").value("Email already exists. Please choose a different email."));
+    }
+
+    @Test
+    void studentRestController_shouldUpdateStudent_whenRequestIsValid() throws Exception {
+        Group group = new Group();
+        group.setId(20);
+        group.setName("BB-22");
+
+        Student updatedStudent = new Student(
+                1,
+                "Alicia",
+                "Johnson",
+                "alicia.johnson@example.com",
+                group,
+                "encoded-password",
+                "STUDENT"
+        );
+
+        when(studentService.updateStudentProfile(
+                eq(1),
+                eq("Alicia"),
+                eq("Johnson"),
+                eq("alicia.johnson@example.com"),
+                eq(20)
+        )).thenReturn(updatedStudent);
+
+        mockMvc.perform(put("/api/v1/students/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alicia",
+                                  "lastName": "Johnson",
+                                  "email": "alicia.johnson@example.com",
+                                  "groupId": 20
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.firstName").value("Alicia"))
+                .andExpect(jsonPath("$.lastName").value("Johnson"))
+                .andExpect(jsonPath("$.email").value("alicia.johnson@example.com"))
+                .andExpect(jsonPath("$.groupId").value(20))
+                .andExpect(jsonPath("$.groupName").value("BB-22"))
+                .andExpect(jsonPath("$.password").doesNotExist())
+                .andExpect(jsonPath("$.role").doesNotExist());
+    }
+
+    @Test
+    void studentRestController_shouldReturnBadRequest_whenUpdateRequestIsInvalid() throws Exception {
+        mockMvc.perform(put("/api/v1/students/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "",
+                                  "lastName": "Johnson",
+                                  "email": "invalid-email",
+                                  "groupId": -1
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void studentRestController_shouldReturnNotFound_whenUpdatedStudentDoesNotExist() throws Exception {
+        when(studentService.updateStudentProfile(
+                eq(999),
+                eq("Alicia"),
+                eq("Johnson"),
+                eq("alicia.johnson@example.com"),
+                eq(20)
+        )).thenThrow(new StudentNotFoundException(999));
+
+        mockMvc.perform(put("/api/v1/students/{id}", 999)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alicia",
+                                  "lastName": "Johnson",
+                                  "email": "alicia.johnson@example.com",
+                                  "groupId": 20
+                                }
+                                """))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Student not found"))
+                .andExpect(jsonPath("$.detail").value("Student was not found by id: 999"));
+    }
+
+    @Test
+    void studentRestController_shouldReturnConflict_whenUpdatedEmailAlreadyExists() throws Exception {
+        when(studentService.updateStudentProfile(
+                eq(1),
+                eq("Alicia"),
+                eq("Johnson"),
+                eq("existing@example.com"),
+                eq(20)
+        )).thenThrow(new DuplicateEmailException("Email already exists. Please choose a different email."));
+
+        mockMvc.perform(put("/api/v1/students/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alicia",
+                                  "lastName": "Johnson",
+                                  "email": "existing@example.com",
+                                  "groupId": 20
                                 }
                                 """))
                 .andExpect(status().isConflict())
