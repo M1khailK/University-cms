@@ -13,6 +13,7 @@ import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.services.StudentService;
+import ua.foxminded.university.services.UserService;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -38,6 +40,9 @@ class StudentApiSecurityTest {
 
     @MockitoBean
     private DataSource dataSource;
+
+    @MockitoBean
+    private UserService userService;
 
     @Test
     void studentApiSecurity_shouldAllowReadAllStudents_whenUserIsAdmin() throws Exception {
@@ -233,6 +238,36 @@ class StudentApiSecurityTest {
                                   "groupId": 20
                                 }
                                 """))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
+    }
+
+    @Test
+    void studentApiSecurity_shouldAllowDeactivateStudent_whenUserIsAdmin() throws Exception {
+        when(studentService.getById(1)).thenReturn(createStudent());
+
+        mockMvc.perform(delete("/api/v1/students/{id}", 1)
+                        .with(user("admin").roles("ADMIN")))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void studentApiSecurity_shouldForbidDeactivateStudent_whenUserIsStudent() throws Exception {
+        mockMvc.perform(delete("/api/v1/students/{id}", 1)
+                        .with(user("student").roles("STUDENT")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void studentApiSecurity_shouldForbidDeactivateStudent_whenUserIsTeacher() throws Exception {
+        mockMvc.perform(delete("/api/v1/students/{id}", 1)
+                        .with(user("teacher").roles("TEACHER")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void studentApiSecurity_shouldRedirectToLogin_whenAnonymousDeactivatesStudent() throws Exception {
+        mockMvc.perform(delete("/api/v1/students/{id}", 1))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/login"));
     }

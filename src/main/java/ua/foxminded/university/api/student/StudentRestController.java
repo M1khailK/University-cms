@@ -3,6 +3,7 @@ package ua.foxminded.university.api.student;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import ua.foxminded.university.api.student.dto.StudentResponse;
 import ua.foxminded.university.api.student.dto.StudentUpdateRequest;
 import ua.foxminded.university.api.student.mapper.StudentMapper;
 import ua.foxminded.university.services.StudentService;
+import ua.foxminded.university.services.UserService;
 
 import java.net.URI;
 import java.util.List;
@@ -27,6 +29,7 @@ public class StudentRestController {
 
     private final StudentService studentService;
     private final StudentMapper studentMapper;
+    private final UserService userService;
 
     @GetMapping
     public List<StudentResponse> getAllStudents() {
@@ -72,5 +75,12 @@ public class StudentRestController {
                         request.groupId()
                 )
         );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deactivateStudent(@PathVariable int id) {
+        studentService.getById(id);
+        userService.disableUserById(id);
+        return ResponseEntity.noContent().build();
     }
 }

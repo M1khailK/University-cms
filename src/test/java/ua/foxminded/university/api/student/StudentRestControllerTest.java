@@ -15,11 +15,16 @@ import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.services.StudentService;
+import ua.foxminded.university.services.UserService;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -37,6 +42,9 @@ class StudentRestControllerTest {
 
     @MockitoBean
     private StudentService studentService;
+
+    @MockitoBean
+    private UserService userService;
 
     @Test
     void studentRestController_shouldReturnAllStudents_whenStudentsExist() throws Exception {
@@ -287,5 +295,32 @@ class StudentRestControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.title").value("Duplicate email"))
                 .andExpect(jsonPath("$.detail").value("Email already exists. Please choose a different email."));
+    }
+
+    @Test
+    void studentRestController_shouldDeactivateStudent_whenStudentExists() throws Exception {
+        Student student = createStudent();
+
+        when(studentService.getById(1)).thenReturn(student);
+
+        mockMvc.perform(delete("/api/v1/students/{id}", 1))
+                .andExpect(status().isNoContent());
+
+        verify(studentService).getById(1);
+        verify(userService).disableUserById(1);
+    }
+
+    @Test
+    void studentRestController_shouldReturnNotFound_whenDeactivatedStudentDoesNotExist() throws Exception {
+        when(studentService.getById(999)).thenThrow(new StudentNotFoundException(999));
+
+        mockMvc.perform(delete("/api/v1/students/{id}", 999))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Student not found"))
+                .andExpect(jsonPath("$.detail").value("Student was not found by id: 999"));
+
+        verify(studentService).getById(999);
+        verify(userService, never()).disableUserById(anyInt());
     }
 }
