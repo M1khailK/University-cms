@@ -110,6 +110,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/students", "/api/v1/students/{id}")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.POST, "/api/v1/admins")
+                        .hasRole("ADMIN")
+
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/v1/schedules/options",

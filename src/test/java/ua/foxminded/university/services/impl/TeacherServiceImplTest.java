@@ -58,7 +58,7 @@ public class TeacherServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        when(teacherRepository.findByEmail(EMAIL)).thenReturn(Optional.of(teacher));
+        when(teacherRepository.findByEmailAndRole(EMAIL, "TEACHER")).thenReturn(Optional.of(teacher));
         when(teacherRepository.findPasswordById(teacher.getId())).thenReturn(Optional.of(Arrays.toString(PASSWORD)));
     }
 
@@ -69,14 +69,14 @@ public class TeacherServiceImplTest {
 
         Teacher teacher = new Teacher(ID, "Alex", "First", EMAIL, "encodedOldPassword", "TEACHER");
 
-        when(teacherRepository.findByEmail(EMAIL)).thenReturn(Optional.of(teacher));
+        when(teacherRepository.findByEmailAndRole(EMAIL, "TEACHER")).thenReturn(Optional.of(teacher));
         when(teacherRepository.findPasswordById(ID)).thenReturn(Optional.of("encodedOldPassword"));
         when(passwordEncoder.matches(any(CharSequence.class), eq("encodedOldPassword"))).thenReturn(true);
         when(passwordEncoder.encode(any(CharSequence.class))).thenReturn("encodedNewPassword");
 
         teacherService.changePassword(EMAIL, oldPassword, newPassword);
 
-        verify(teacherRepository).findByEmail(EMAIL);
+        verify(teacherRepository).findByEmailAndRole(EMAIL, "TEACHER");
         verify(teacherRepository).findPasswordById(ID);
         verify(passwordEncoder).matches(any(CharSequence.class), eq("encodedOldPassword"));
         verify(passwordEncoder).encode(any(CharSequence.class));
@@ -150,7 +150,7 @@ public class TeacherServiceImplTest {
                 "TEACHER"
         );
 
-        when(teacherRepository.findById(1)).thenReturn(Optional.of(existingTeacher));
+        when(teacherRepository.findByIdAndRole(1, "TEACHER")).thenReturn(Optional.of(existingTeacher));
         when(teacherRepository.save(existingTeacher)).thenReturn(updatedTeacher);
 
         Teacher actual = teacherService.updateTeacherProfile(
@@ -167,7 +167,7 @@ public class TeacherServiceImplTest {
         assertEquals("encoded-password", actual.getPassword());
         assertEquals("TEACHER", actual.getRole());
 
-        verify(teacherRepository).findById(1);
+        verify(teacherRepository).findByIdAndRole(1, "TEACHER");
         verify(teacherRepository).save(argThat(teacher ->
                 teacher.getId().equals(1)
                         && "Robert".equals(teacher.getFirstName())
@@ -195,5 +195,46 @@ public class TeacherServiceImplTest {
 
         assertEquals(List.of(teacher), actual);
         verify(teacherRepository).findAllByRole("TEACHER");
+    }
+
+    @Test
+    public void teacherService_shouldCreateAdminAccount_whenInputIsValid() {
+        doAnswer(invocation -> {
+            User user = invocation.getArgument(0);
+            user.setPassword("encoded-generated-password");
+            return null;
+        }).when(passwordService).generateAndSendPasswordForUser(any(User.class));
+
+        when(teacherRepository.save(any(Teacher.class))).thenReturn(new Teacher(
+                100,
+                "Alice",
+                "Root",
+                "alice.root@example.com",
+                "encoded-generated-password",
+                "ADMIN"
+        ));
+
+        Teacher actual = teacherService.createAdminAccount(
+                "Alice",
+                "Root",
+                "alice.root@example.com"
+        );
+
+        assertEquals(100, actual.getId());
+        assertEquals("Alice", actual.getFirstName());
+        assertEquals("Root", actual.getLastName());
+        assertEquals("alice.root@example.com", actual.getEmail());
+        assertEquals("encoded-generated-password", actual.getPassword());
+        assertEquals("ADMIN", actual.getRole());
+
+        verify(passwordService).generateAndSendPasswordForUser(any(User.class));
+        verify(teacherRepository).save(argThat(admin ->
+                admin.getId() == null
+                        && "Alice".equals(admin.getFirstName())
+                        && "Root".equals(admin.getLastName())
+                        && "alice.root@example.com".equals(admin.getEmail())
+                        && "encoded-generated-password".equals(admin.getPassword())
+                        && "ADMIN".equals(admin.getRole())
+        ));
     }
 }

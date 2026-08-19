@@ -29,4 +29,8 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
     void changePasswordById(String newPassword, int id);
 
     List<Teacher> findAllByRole(String role);
+
+    Optional<Teacher> findByIdAndRole(Integer id, String role);
+
+    Optional<Teacher> findByEmailAndRole(String email, String role);
 }
