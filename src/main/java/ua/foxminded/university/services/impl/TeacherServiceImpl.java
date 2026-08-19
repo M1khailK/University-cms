@@ -132,11 +132,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public void createUserAccountByRole(User user, String role) {
-        createAccount(user, role);
-    }
-
-    @Override
     public Teacher getByEmail(String email) {
         return teacherRepository.findByEmailAndRole(email, TEACHER_ROLE)
                 .orElseThrow(() -> new TeacherNotFoundException(email));
@@ -152,7 +147,6 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     public void register(ServiceManager manager) {
         manager.register("ROLE_TEACHER", this);
-        manager.register("ROLE_ADMIN", this);
     }
 
 }

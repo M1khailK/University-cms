@@ -128,12 +128,6 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void createUserAccountByRole(User user, String role) {
-        Group group = groupService.getByName(user.getGroupName());
-        createAccount(user, group, role);
-    }
-
-    @Override
     @Transactional
     public Student updateStudentProfile(int id, String firstName, String lastName, String email, int groupId) {
         Student student = getById(id);

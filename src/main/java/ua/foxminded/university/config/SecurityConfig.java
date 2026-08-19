@@ -125,14 +125,6 @@ public class SecurityConfig {
                         .hasRole("TEACHER")
 
                         .requestMatchers(
-                                "/createTeacher",
-                                "/createAdmin",
-                                "/createStudent",
-                                "/createAccount"
-                        )
-                        .hasRole("ADMIN")
-
-                        .requestMatchers(
                                 "/profile",
                                 "/settings",
                                 "/updatePassword"
