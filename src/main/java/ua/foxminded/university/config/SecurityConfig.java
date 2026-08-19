@@ -122,8 +122,6 @@ public class SecurityConfig {
                         .hasRole("TEACHER")
 
                         .requestMatchers(
-                                "/deactivationPage",
-                                "/deactivateUser",
                                 "/createTeacher",
                                 "/createAdmin",
                                 "/createStudent",
