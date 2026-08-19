@@ -27,6 +27,7 @@ import java.util.List;
 public class TeacherServiceImpl implements TeacherService {
 
     private static final String PASSWORD_IS_INCORRECT = "The old password is incorrect!";
+    private static final String TEACHER_ROLE = "TEACHER";
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -97,7 +98,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Teacher> getAll() {
-        return teacherRepository.findAll();
+        return teacherRepository.findAllByRole(TEACHER_ROLE);
     }
 
     @Override

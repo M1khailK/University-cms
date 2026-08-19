@@ -10,25 +10,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import ua.foxminded.university.config.service.ServicesTestConfig;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
+import ua.foxminded.university.dto.User;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.repository.TeacherRepository;
-import ua.foxminded.university.services.TeacherService;
-import ua.foxminded.university.dto.User;
 import ua.foxminded.university.services.PasswordService;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.doAnswer;
+import ua.foxminded.university.services.TeacherService;
 
 import java.nio.CharBuffer;
 import java.time.Clock;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -176,5 +176,24 @@ public class TeacherServiceImplTest {
                         && "encoded-password".equals(teacher.getPassword())
                         && "TEACHER".equals(teacher.getRole())
         ));
+    }
+
+    @Test
+    public void teacherService_shouldReturnOnlyTeachers_whenGetAllIsCalled() {
+        Teacher teacher = new Teacher(
+                ID,
+                "Bob",
+                "First",
+                EMAIL,
+                "password",
+                "TEACHER"
+        );
+
+        when(teacherRepository.findAllByRole("TEACHER")).thenReturn(List.of(teacher));
+
+        List<Teacher> actual = teacherService.getAll();
+
+        assertEquals(List.of(teacher), actual);
+        verify(teacherRepository).findAllByRole("TEACHER");
     }
 }
