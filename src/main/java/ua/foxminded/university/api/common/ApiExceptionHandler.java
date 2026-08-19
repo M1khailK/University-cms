@@ -10,6 +10,7 @@ import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.customexceptions.LessonNotFoundException;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
+import ua.foxminded.university.customexceptions.StudentNotFoundException;
 
 @RestControllerAdvice(basePackages = "ua.foxminded.university.api")
 public class ApiExceptionHandler {
@@ -58,6 +59,14 @@ public class ApiExceptionHandler {
     public ProblemDetail handleDuplicateEmail(DuplicateEmailException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         problemDetail.setTitle("Duplicate email");
+        problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(StudentNotFoundException.class)
+    public ProblemDetail handleStudentNotFound(StudentNotFoundException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setTitle("Student not found");
         problemDetail.setDetail(exception.getMessage());
         return problemDetail;
     }

@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
+import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
@@ -35,8 +36,29 @@ public class StudentServiceImpl implements StudentService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private GroupService groupService;
+
     @Autowired
     private PasswordService passwordService;
+
+    private Student createAccount(User user, Group group, String role) {
+        try {
+            passwordService.generateAndSendPasswordForUser(user);
+
+            Student student = new Student(
+                    null,
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    group,
+                    user.getPassword(),
+                    role
+            );
+
+            return studentRepository.save(student);
+        } catch (DataIntegrityViolationException exception) {
+            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+        }
+    }
 
     @Override
     @Transactional
@@ -45,8 +67,22 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
+    public Student createStudentAccount(String firstName, String lastName, String email, int groupId) {
+        User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+
+        Group group = groupService.getById(groupId);
+
+        return createAccount(user, group, "STUDENT");
+    }
+
+    @Override
     public Student getById(int studentId) {
-        return studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student was not found by id"));
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException(studentId));
     }
 
     @Override
@@ -56,7 +92,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student getByEmail(String email) {
-        return studentRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Student was not found by email"));
+        return studentRepository.findByEmail(email)
+                .orElseThrow(() -> new StudentNotFoundException(email));
     }
 
     @Override
@@ -92,14 +129,24 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void createUserAccountByRole(User user, String role) {
+        Group group = groupService.getByName(user.getGroupName());
+        createAccount(user, group, role);
+    }
+
+    @Override
+    @Transactional
+    public Student updateStudentProfile(int id, String firstName, String lastName, String email, int groupId) {
+        Student student = getById(id);
+        Group group = groupService.getById(groupId);
+
+        student.setFirstName(firstName);
+        student.setLastName(lastName);
+        student.setEmail(email);
+        student.setGroup(group);
+
         try {
-            passwordService.generateAndSendPasswordForUser(user);
-            Group group = groupService.getByName(user.getGroupName());
-            Student student = new Student(null, user.getFirstName(), user.getLastName(), user.getEmail(), group,
-                    user.getPassword(), role);
-            save(student);
-        } catch (
-                DataIntegrityViolationException exception) {
+            return studentRepository.save(student);
+        } catch (DataIntegrityViolationException exception) {
             throw new DuplicateEmailException("Email already exists. Please choose a different email.");
         }
     }

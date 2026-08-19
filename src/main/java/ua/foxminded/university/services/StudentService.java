@@ -1,14 +1,12 @@
 package ua.foxminded.university.services;
 
-import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Student;
 
-import java.util.List;
-
-public interface StudentService extends EntityService<Student>, UserManagerService {
+public interface StudentService extends EntityService<Student>, UserManagerService<Student> {
 
     String getPasswordById(int id);
 
+    Student createStudentAccount(String firstName, String lastName, String email, int groupId);
 
-
+    Student updateStudentProfile(int id, String firstName, String lastName, String email, int groupId);
 }
