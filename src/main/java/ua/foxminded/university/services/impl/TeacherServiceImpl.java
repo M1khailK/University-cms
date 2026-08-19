@@ -27,6 +27,8 @@ import java.util.List;
 public class TeacherServiceImpl implements TeacherService {
 
     private static final String PASSWORD_IS_INCORRECT = "The old password is incorrect!";
+    private static final String TEACHER_ROLE = "TEACHER";
+    private static final String ADMIN_ROLE = "ADMIN";
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -54,6 +56,17 @@ public class TeacherServiceImpl implements TeacherService {
         } catch (DataIntegrityViolationException exception) {
             throw new DuplicateEmailException("Email already exists. Please choose a different email.");
         }
+    }
+
+    @Override
+    @Transactional
+    public Teacher createAdminAccount(String firstName, String lastName, String email) {
+        User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+
+        return createAccount(user, ADMIN_ROLE);
     }
 
     @Override
@@ -86,18 +99,18 @@ public class TeacherServiceImpl implements TeacherService {
         user.setLastName(lastName);
         user.setEmail(email);
 
-        return createAccount(user, "TEACHER");
+        return createAccount(user, TEACHER_ROLE);
     }
 
     @Override
     public Teacher getById(int teacherId) {
-        return teacherRepository.findById(teacherId)
+        return teacherRepository.findByIdAndRole(teacherId, TEACHER_ROLE)
                 .orElseThrow(() -> new TeacherNotFoundException(teacherId));
     }
 
     @Override
     public List<Teacher> getAll() {
-        return teacherRepository.findAll();
+        return teacherRepository.findAllByRole(TEACHER_ROLE);
     }
 
     @Override
@@ -119,13 +132,8 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public void createUserAccountByRole(User user, String role) {
-        createAccount(user, role);
-    }
-
-    @Override
     public Teacher getByEmail(String email) {
-        return teacherRepository.findByEmail(email)
+        return teacherRepository.findByEmailAndRole(email, TEACHER_ROLE)
                 .orElseThrow(() -> new TeacherNotFoundException(email));
     }
 
@@ -139,7 +147,6 @@ public class TeacherServiceImpl implements TeacherService {
     @Autowired
     public void register(ServiceManager manager) {
         manager.register("ROLE_TEACHER", this);
-        manager.register("ROLE_ADMIN", this);
     }
 
 }
