@@ -144,6 +144,12 @@ public class SecurityConfig {
                         .requestMatchers("/grades")
                         .hasAnyRole("ADMIN", "STUDENT", "TEACHER")
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/grades/me")
+                        .hasRole("STUDENT")
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/grades")
+                        .hasAnyRole("ADMIN", "TEACHER")
+
                         .requestMatchers("/")
                         .permitAll()
 
