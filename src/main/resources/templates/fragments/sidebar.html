@@ -17,7 +17,6 @@
             </li>
 
             <li><a href="/"><i class="fa-solid fa-house"></i><p>Main Page</p></a></li>
-            <li sec:authorize="hasAnyRole('TEACHER','STUDENT')"><a href="/profile"><i class="fa-solid fa-user"></i><p>My profile</p></a></li>
             <li sec:authorize="hasRole('TEACHER')"><a href="/grades"><i class="fa-solid fa-school"></i><p>Grades</p></a></li>
             <li sec:authorize="hasRole('TEACHER')"><a href="/attendance/analytics"><i class="fa-solid fa-school"></i><p>Attendance</p></a></li>
         </ul>

@@ -43,7 +43,6 @@ public class SecurityTestConfig {
     public SecurityFilterChain config(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests()
                 .requestMatchers("/login").anonymous()
-                .requestMatchers("/profile","/settings","/updatePassword").hasAnyRole("STUDENT", "TEACHER")
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/**").hasRole("ADMIN")
                 .and().formLogin().loginPage("/login").usernameParameter("email").defaultSuccessUrl("/")
