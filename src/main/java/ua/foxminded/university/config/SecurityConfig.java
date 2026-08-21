@@ -130,13 +130,6 @@ public class SecurityConfig {
                         .requestMatchers("/addGrade", "/deleteGrade")
                         .hasRole("TEACHER")
 
-                        .requestMatchers(
-                                "/profile",
-                                "/settings",
-                                "/updatePassword"
-                        )
-                        .hasAnyRole("STUDENT", "TEACHER")
-
                         .requestMatchers("/grades")
                         .hasAnyRole("ADMIN", "STUDENT", "TEACHER")
 
