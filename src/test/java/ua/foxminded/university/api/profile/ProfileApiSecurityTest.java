@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.profile.mapper.ProfileMapper;
@@ -19,6 +20,7 @@ import javax.sql.DataSource;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -97,5 +99,65 @@ class ProfileApiSecurityTest {
                 "encoded-password",
                 "TEACHER"
         );
+    }
+
+    @Test
+    void profileApiSecurity_shouldAllowUpdatePassword_whenUserIsStudent() throws Exception {
+        when(serviceManager.getUserManagerServiceByAuthentication()).thenReturn(userManagerService);
+
+        mockMvc.perform(put("/api/v1/profile/password")
+                        .with(user("student").roles("STUDENT"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "oldPassword": "oldPassword",
+                                  "newPassword": "newPassword"
+                                }
+                                """))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void profileApiSecurity_shouldAllowUpdatePassword_whenUserIsTeacher() throws Exception {
+        when(serviceManager.getUserManagerServiceByAuthentication()).thenReturn(userManagerService);
+
+        mockMvc.perform(put("/api/v1/profile/password")
+                        .with(user("teacher").roles("TEACHER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "oldPassword": "oldPassword",
+                                  "newPassword": "newPassword"
+                                }
+                                """))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void profileApiSecurity_shouldForbidUpdatePassword_whenUserIsAdmin() throws Exception {
+        mockMvc.perform(put("/api/v1/profile/password")
+                        .with(user("admin").roles("ADMIN"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "oldPassword": "oldPassword",
+                                  "newPassword": "newPassword"
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void profileApiSecurity_shouldRedirectToLogin_whenAnonymousUpdatesPassword() throws Exception {
+        mockMvc.perform(put("/api/v1/profile/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "oldPassword": "oldPassword",
+                                  "newPassword": "newPassword"
+                                }
+                                """))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login"));
     }
 }

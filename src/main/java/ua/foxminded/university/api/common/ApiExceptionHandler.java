@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.GroupNotFoundException;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
+import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.customexceptions.LessonNotFoundException;
+import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
-import ua.foxminded.university.customexceptions.StudentNotFoundException;
 
 @RestControllerAdvice(basePackages = "ua.foxminded.university.api")
 public class ApiExceptionHandler {
@@ -67,6 +68,14 @@ public class ApiExceptionHandler {
     public ProblemDetail handleStudentNotFound(StudentNotFoundException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setTitle("Student not found");
+        problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(InvalidOldPasswordException.class)
+    public ProblemDetail handleInvalidOldPassword(InvalidOldPasswordException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Invalid old password");
         problemDetail.setDetail(exception.getMessage());
         return problemDetail;
     }
