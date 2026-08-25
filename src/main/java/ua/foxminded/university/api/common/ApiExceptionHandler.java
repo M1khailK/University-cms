@@ -5,6 +5,8 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
+import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
+import ua.foxminded.university.customexceptions.GradeNotFoundException;
 import ua.foxminded.university.customexceptions.GroupNotFoundException;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
@@ -76,6 +78,22 @@ public class ApiExceptionHandler {
     public ProblemDetail handleInvalidOldPassword(InvalidOldPasswordException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle("Invalid old password");
+        problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(GradeNotFoundException.class)
+    public ProblemDetail handleGradeNotFound(GradeNotFoundException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setTitle("Grade not found");
+        problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(GradeAccessDeniedException.class)
+    public ProblemDetail handleGradeAccessDenied(GradeAccessDeniedException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problemDetail.setTitle("Grade access denied");
         problemDetail.setDetail(exception.getMessage());
         return problemDetail;
     }

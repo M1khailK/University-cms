@@ -127,11 +127,17 @@ public class SecurityConfig {
                         )
                         .permitAll()
 
-                        .requestMatchers("/addGrade", "/deleteGrade")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/grades")
                         .hasRole("TEACHER")
 
-                        .requestMatchers("/grades")
-                        .hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/grades/{id}")
+                        .hasRole("TEACHER")
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/grades/me")
+                        .hasRole("STUDENT")
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/grades")
+                        .hasAnyRole("ADMIN", "TEACHER")
 
                         .requestMatchers("/")
                         .permitAll()
