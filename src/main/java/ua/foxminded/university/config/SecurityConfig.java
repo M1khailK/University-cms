@@ -127,23 +127,6 @@ public class SecurityConfig {
                         )
                         .permitAll()
 
-                        .requestMatchers("/addGrade", "/deleteGrade")
-                        .hasRole("TEACHER")
-
-                        .requestMatchers("/attendance/analytics")
-                        .hasRole("TEACHER")
-
-                        .requestMatchers(
-                                "/grades/analytics",
-                                "/grades/filterByLesson",
-                                "/grades/sortByGrade",
-                                "/grades/filterByDate"
-                        )
-                        .hasAnyRole("ADMIN", "TEACHER")
-
-                        .requestMatchers("/grades")
-                        .hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-
                         .requestMatchers(HttpMethod.POST, "/api/v1/grades")
                         .hasRole("TEACHER")
 
