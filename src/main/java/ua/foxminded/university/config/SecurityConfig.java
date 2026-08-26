@@ -141,6 +141,9 @@ public class SecurityConfig {
                         .requestMatchers("/")
                         .permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/api/v1/attendance-records")
+                        .hasRole("TEACHER")
+
                         .requestMatchers("/**").permitAll()
                 )
 

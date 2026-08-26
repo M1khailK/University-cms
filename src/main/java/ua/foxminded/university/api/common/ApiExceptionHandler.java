@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ua.foxminded.university.customexceptions.AttendanceAccessDeniedException;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
 import ua.foxminded.university.customexceptions.GradeNotFoundException;
@@ -94,6 +95,14 @@ public class ApiExceptionHandler {
     public ProblemDetail handleGradeAccessDenied(GradeAccessDeniedException exception) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         problemDetail.setTitle("Grade access denied");
+        problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(AttendanceAccessDeniedException.class)
+    public ProblemDetail handleAttendanceAccessDenied(AttendanceAccessDeniedException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problemDetail.setTitle("Attendance access denied");
         problemDetail.setDetail(exception.getMessage());
         return problemDetail;
     }

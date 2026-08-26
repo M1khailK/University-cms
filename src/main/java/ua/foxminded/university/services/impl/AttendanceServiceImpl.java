@@ -1,38 +1,60 @@
 package ua.foxminded.university.services.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.foxminded.university.customexceptions.AttendanceAccessDeniedException;
 import ua.foxminded.university.info.AttendanceRecord;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.Student;
 import ua.foxminded.university.repository.AttendanceRepository;
-import ua.foxminded.university.repository.LessonRepository;
-import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.services.AttendanceService;
+import ua.foxminded.university.services.LessonService;
+import ua.foxminded.university.services.StudentService;
+import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class AttendanceServiceImpl implements AttendanceService {
 
-    @Autowired
-    private AttendanceRepository attendanceRepository;
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private LessonRepository lessonRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final StudentService studentService;
+    private final LessonService lessonService;
+    private final UserService userService;
 
     @Override
-    public void recordAttendance(Integer studentId, Integer lessonId, LocalDate date, LocalTime time) {
-        Student student = studentRepository.findById(studentId).orElseThrow();
-        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow();
+    @Transactional
+    public AttendanceRecord recordAttendance(
+            Integer studentId,
+            Integer lessonId,
+            LocalDate attendanceDate,
+            LocalTime attendanceTime,
+            String teacherEmail
+    ) {
+        Lesson lesson = lessonService.getById(lessonId);
+        assertTeacherOwnsLesson(lesson, teacherEmail);
+
+        Student student = studentService.getById(studentId);
 
         AttendanceRecord record = new AttendanceRecord();
         record.setStudent(student);
         record.setLesson(lesson);
-        record.setAttendanceDate(date);
-        record.setAttendanceTime(time);
-        attendanceRepository.save(record);
+        record.setAttendanceDate(attendanceDate);
+        record.setAttendanceTime(attendanceTime);
+
+        return attendanceRepository.save(record);
+    }
+
+    private void assertTeacherOwnsLesson(Lesson lesson, String teacherEmail) {
+        int teacherId = userService.getUserIdByEmail(teacherEmail);
+
+        if (lesson.getTeacher() == null
+                || !Objects.equals(lesson.getTeacher().getId(), teacherId)) {
+            throw new AttendanceAccessDeniedException(lesson.getId());
+        }
     }
 }
