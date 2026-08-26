@@ -2,10 +2,12 @@ package ua.foxminded.university.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ua.foxminded.university.services.AttendanceService;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -20,12 +22,20 @@ public class AttendanceController {
             @RequestParam Integer studentId,
             @RequestParam Integer lessonId,
             @RequestParam String date,
-            @RequestParam String time) {
+            @RequestParam String time,
+            Authentication authentication) {
 
         LocalDate attendanceDate = LocalDate.parse(date);
         LocalTime attendanceTime = LocalTime.parse(time);
 
-        attendanceService.recordAttendance(studentId, lessonId, attendanceDate, attendanceTime);
+        attendanceService.recordAttendance(
+                studentId,
+                lessonId,
+                attendanceDate,
+                attendanceTime,
+                authentication.getName()
+        );
+
         return ResponseEntity.ok("Attendance recorded successfully");
     }
 }
