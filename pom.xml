@@ -62,11 +62,6 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
-        <!-- Temporary email templating. Remove after password email template migration. -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
         <!-- Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

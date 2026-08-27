@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.thymeleaf.spring6.SpringTemplateEngine;
 import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.repository.AttendanceRepository;
 import ua.foxminded.university.repository.GradeRepository;
@@ -47,8 +46,6 @@ public class ServiceAspectTestConfig {
     public PasswordEncoder passwordEncoder;
     @MockBean
     public PasswordGenerator passwordGenerator;
-    @MockBean
-    public SpringTemplateEngine springTemplateEngine;
     @MockBean
     public JavaMailSender javaMailSender;
     @MockBean
