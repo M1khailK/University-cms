@@ -144,8 +144,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/attendance-records")
                         .hasRole("TEACHER")
 
-                        .requestMatchers("/**").permitAll()
-                )
+                        .anyRequest().denyAll()                )
 
                 .formLogin(form -> form
                         .usernameParameter("email")
