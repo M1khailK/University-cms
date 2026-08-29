@@ -9,6 +9,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.lesson.mapper.LessonApiMapperImpl;
+import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
@@ -32,11 +33,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = LessonRestController.class)
-@Import({SecurityConfig.class, LessonApiMapperImpl.class, ApiExceptionHandler.class})
+@Import({SecurityConfig.class, JwtConfig.class, LessonApiMapperImpl.class, ApiExceptionHandler.class})
 class LessonApiSecurityTest {
 
     @Autowired
@@ -92,8 +92,7 @@ class LessonApiSecurityTest {
     @Test
     void shouldRedirectAnonymousUserToLoginWhenReadingLessons() throws Exception {
         mockMvc.perform(get("/api/v1/lessons"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
     private Lesson createLesson() {

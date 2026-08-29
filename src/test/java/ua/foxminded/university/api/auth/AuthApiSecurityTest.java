@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.services.AuthService;
 import ua.foxminded.university.services.model.AccessToken;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthRestController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, JwtConfig.class})
 class AuthApiSecurityTest {
 
     @Autowired

@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.grade.mapper.GradeMapper;
+import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Grade;
 import ua.foxminded.university.info.Group;
@@ -26,11 +27,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = GradeRestController.class)
-@Import({SecurityConfig.class, GradeMapper.class})
+@Import({SecurityConfig.class, JwtConfig.class, GradeMapper.class})
 class GradeApiSecurityTest {
 
     @Autowired
@@ -70,8 +70,7 @@ class GradeApiSecurityTest {
     @Test
     void gradeApiSecurity_shouldRedirectToLogin_whenAnonymousReadsAllGrades() throws Exception {
         mockMvc.perform(get("/api/v1/grades"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -100,8 +99,7 @@ class GradeApiSecurityTest {
     @Test
     void gradeApiSecurity_shouldRedirectToLogin_whenAnonymousReadsOwnGrades() throws Exception {
         mockMvc.perform(get("/api/v1/grades/me"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
     private Grade createGrade() {
@@ -188,8 +186,7 @@ class GradeApiSecurityTest {
                                   "value": 5
                                 }
                                 """))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -216,7 +213,6 @@ class GradeApiSecurityTest {
     @Test
     void gradeApiSecurity_shouldRedirectToLogin_whenAnonymousDeletesGrade() throws Exception {
         mockMvc.perform(delete("/api/v1/grades/500"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 }

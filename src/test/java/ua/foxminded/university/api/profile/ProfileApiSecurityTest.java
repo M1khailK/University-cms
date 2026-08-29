@@ -4,10 +4,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.profile.mapper.ProfileMapper;
+import ua.foxminded.university.config.JwtConfig;
+import ua.foxminded.university.config.JwtProperties;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Student;
@@ -16,20 +24,26 @@ import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.UserManagerService;
 
 import javax.sql.DataSource;
+import java.time.Instant;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ProfileRestController.class)
-@Import({SecurityConfig.class, ProfileMapper.class})
+@Import({SecurityConfig.class, JwtConfig.class, ProfileMapper.class})
 class ProfileApiSecurityTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JwtEncoder jwtEncoder;
+
+    @Autowired
+    private JwtProperties jwtProperties;
 
     @MockitoBean
     private ServiceManager serviceManager;
@@ -46,7 +60,10 @@ class ProfileApiSecurityTest {
         when(userManagerService.getByEmail("student")).thenReturn(createStudent());
 
         mockMvc.perform(get("/api/v1/profile")
-                        .with(user("student").roles("STUDENT")))
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + createToken("student", "ROLE_STUDENT")
+                        ))
                 .andExpect(status().isOk());
     }
 
@@ -56,22 +73,48 @@ class ProfileApiSecurityTest {
         when(userManagerService.getByEmail("teacher")).thenReturn(createTeacher());
 
         mockMvc.perform(get("/api/v1/profile")
-                        .with(user("teacher").roles("TEACHER")))
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + createToken("teacher", "ROLE_TEACHER")
+                        ))
                 .andExpect(status().isOk());
     }
 
     @Test
     void profileApiSecurity_shouldForbidReadProfile_whenUserIsAdmin() throws Exception {
         mockMvc.perform(get("/api/v1/profile")
-                        .with(user("admin").roles("ADMIN")))
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + createToken("admin", "ROLE_ADMIN")
+                        ))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    void profileApiSecurity_shouldRedirectToLogin_whenUserIsAnonymous() throws Exception {
-        mockMvc.perform(get("/api/v1/profile"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+    void profileApiSecurity_shouldReturnUnauthorized_whenUserIsAnonymous() throws Exception {
+        mockMvc.perform(get("/api/v1/profile")).andExpect(status().isUnauthorized());
+    }
+
+    private String createToken(String subject, String authority) {
+        Instant issuedAt = Instant.now();
+        Instant expiresAt = issuedAt.plus(jwtProperties.accessTokenTtl());
+
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer(jwtProperties.issuer())
+                .subject(subject)
+                .issuedAt(issuedAt)
+                .expiresAt(expiresAt)
+                .claim("authorities", List.of(authority))
+                .build();
+
+        JwsHeader header = JwsHeader
+                .with(MacAlgorithm.HS256)
+                .build();
+
+        return jwtEncoder.encode(
+                        JwtEncoderParameters.from(header, claims)
+                )
+                .getTokenValue();
     }
 
     private Student createStudent() {
@@ -106,7 +149,10 @@ class ProfileApiSecurityTest {
         when(serviceManager.getUserManagerServiceByAuthentication()).thenReturn(userManagerService);
 
         mockMvc.perform(put("/api/v1/profile/password")
-                        .with(user("student").roles("STUDENT"))
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + createToken("student", "ROLE_STUDENT")
+                        )
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -122,7 +168,10 @@ class ProfileApiSecurityTest {
         when(serviceManager.getUserManagerServiceByAuthentication()).thenReturn(userManagerService);
 
         mockMvc.perform(put("/api/v1/profile/password")
-                        .with(user("teacher").roles("TEACHER"))
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + createToken("teacher", "ROLE_TEACHER")
+                        )
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -136,7 +185,10 @@ class ProfileApiSecurityTest {
     @Test
     void profileApiSecurity_shouldForbidUpdatePassword_whenUserIsAdmin() throws Exception {
         mockMvc.perform(put("/api/v1/profile/password")
-                        .with(user("admin").roles("ADMIN"))
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + createToken("admin", "ROLE_ADMIN")
+                        )
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -148,7 +200,7 @@ class ProfileApiSecurityTest {
     }
 
     @Test
-    void profileApiSecurity_shouldRedirectToLogin_whenAnonymousUpdatesPassword() throws Exception {
+    void profileApiSecurity_shouldReturnUnauthorized_whenAnonymousUpdatesPassword() throws Exception {
         mockMvc.perform(put("/api/v1/profile/password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -157,7 +209,16 @@ class ProfileApiSecurityTest {
                                   "newPassword": "newPassword"
                                 }
                                 """))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void profileApiSecurity_shouldReturnUnauthorized_whenBearerTokenIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/v1/profile")
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer invalid-token"
+                        ))
+                .andExpect(status().isUnauthorized());
     }
 }

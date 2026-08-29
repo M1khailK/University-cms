@@ -9,6 +9,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.teacher.mapper.TeacherMapperImpl;
+import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.TeacherService;
@@ -24,11 +25,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = TeacherRestController.class)
-@Import({SecurityConfig.class, TeacherMapperImpl.class, ApiExceptionHandler.class})
+@Import({SecurityConfig.class, JwtConfig.class, TeacherMapperImpl.class, ApiExceptionHandler.class})
 class TeacherApiSecurityTest {
 
     @Autowired
@@ -78,8 +78,7 @@ class TeacherApiSecurityTest {
     @Test
     void teacherApiSecurity_shouldRedirectToLogin_whenUserIsAnonymous() throws Exception {
         mockMvc.perform(get("/api/v1/teachers"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
     private Teacher createTeacher() {
@@ -162,8 +161,7 @@ class TeacherApiSecurityTest {
                                   "email": "alice.brown@example.com"
                                 }
                                 """))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -236,8 +234,7 @@ class TeacherApiSecurityTest {
                                   "email": "robert.johnson@example.com"
                                 }
                                 """))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -266,8 +263,7 @@ class TeacherApiSecurityTest {
     @Test
     void teacherApiSecurity_shouldRedirectToLogin_whenAnonymousDeactivatesTeacher() throws Exception {
         mockMvc.perform(delete("/api/v1/teachers/{id}", 1))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
 }

@@ -8,6 +8,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.schedule.mapper.ScheduleMapperImpl;
+import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Teacher;
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ScheduleRestController.class)
-@Import({SecurityConfig.class, ScheduleMapperImpl.class, ApiExceptionHandler.class})
+@Import({SecurityConfig.class, JwtConfig.class, ScheduleMapperImpl.class, ApiExceptionHandler.class})
 class ScheduleApiSecurityTest {
 
     @Autowired
@@ -147,6 +148,6 @@ class ScheduleApiSecurityTest {
     @Test
     void scheduleApiSecurity_shouldRedirectAnonymousToLogin_whenReadingCurrentUserSchedule() throws Exception {
         mockMvc.perform(get("/api/v1/schedules/me"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().isUnauthorized());
     }
 }

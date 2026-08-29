@@ -9,6 +9,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.admin.mapper.AdminMapperImpl;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
+import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.TeacherService;
@@ -19,11 +20,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = AdminRestController.class)
-@Import({SecurityConfig.class, AdminMapperImpl.class, ApiExceptionHandler.class})
+@Import({SecurityConfig.class, JwtConfig.class, AdminMapperImpl.class, ApiExceptionHandler.class})
 class AdminApiSecurityTest {
 
     @Autowired
@@ -97,8 +97,7 @@ class AdminApiSecurityTest {
                                   "email": "alice.root@example.com"
                                 }
                                 """))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
     private Teacher createAdmin() {
