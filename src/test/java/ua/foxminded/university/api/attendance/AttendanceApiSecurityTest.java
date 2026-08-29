@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.attendance.mapper.AttendanceMapper;
+import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.AttendanceRecord;
 import ua.foxminded.university.info.Lesson;
@@ -22,11 +23,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = AttendanceRestController.class)
-@Import({SecurityConfig.class, AttendanceMapper.class})
+@Import({SecurityConfig.class, JwtConfig.class, AttendanceMapper.class})
 class AttendanceApiSecurityTest {
 
     @Autowired
@@ -78,8 +78,7 @@ class AttendanceApiSecurityTest {
         mockMvc.perform(post("/api/v1/attendance-records")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRequest()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/login"));
+                .andExpect(status().isUnauthorized());
     }
 
     private String validRequest() {

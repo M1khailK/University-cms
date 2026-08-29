@@ -9,6 +9,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.subject.mapper.SubjectMapperImpl;
+import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.Subject;
 import ua.foxminded.university.services.SubjectService;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = SubjectRestController.class)
 @Import({
         SecurityConfig.class,
+        JwtConfig.class,
         SubjectMapperImpl.class,
         ApiExceptionHandler.class
 })
