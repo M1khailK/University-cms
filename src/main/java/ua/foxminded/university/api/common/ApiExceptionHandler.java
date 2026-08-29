@@ -2,6 +2,7 @@ package ua.foxminded.university.api.common;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ua.foxminded.university.customexceptions.AttendanceAccessDeniedException;
@@ -15,7 +16,7 @@ import ua.foxminded.university.customexceptions.LessonNotFoundException;
 import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
-
+import org.springframework.security.core.AuthenticationException;
 @RestControllerAdvice(basePackages = "ua.foxminded.university.api")
 public class ApiExceptionHandler {
 
@@ -105,5 +106,21 @@ public class ApiExceptionHandler {
         problemDetail.setTitle("Attendance access denied");
         problemDetail.setDetail(exception.getMessage());
         return problemDetail;
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ProblemDetail> handleAuthenticationException(
+            AuthenticationException exception) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED,
+                "Invalid email or password"
+        );
+
+        problemDetail.setTitle("Authentication failed");
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(problemDetail);
     }
 }
