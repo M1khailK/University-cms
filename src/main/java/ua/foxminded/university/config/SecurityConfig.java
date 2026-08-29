@@ -3,6 +3,9 @@ package ua.foxminded.university.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,6 +19,19 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            JdbcUserDetailsManager users,
+            PasswordEncoder passwordEncoder) {
+
+        DaoAuthenticationProvider authenticationProvider =
+                new DaoAuthenticationProvider(users);
+
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+
+        return new ProviderManager(authenticationProvider);
+    }
 
     @Bean
     public JdbcUserDetailsManager users(DataSource dataSource) {
@@ -38,11 +54,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity httpSecurity,
+            AuthenticationManager authenticationManager) throws Exception {
         return httpSecurity
+                .authenticationManager(authenticationManager)
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login")
+                        .permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/api/v1/subjects")
                         .hasRole("ADMIN")
 
@@ -144,7 +167,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/attendance-records")
                         .hasRole("TEACHER")
 
-                        .anyRequest().denyAll()                )
+                        .anyRequest().denyAll())
 
                 .formLogin(form -> form
                         .usernameParameter("email")

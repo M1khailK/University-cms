@@ -15,9 +15,11 @@ import ua.foxminded.university.repository.SubjectRepository;
 import ua.foxminded.university.repository.TeacherRepository;
 import ua.foxminded.university.repository.UserRepository;
 import ua.foxminded.university.services.AttendanceService;
+import ua.foxminded.university.services.AuthService;
 import ua.foxminded.university.services.GradeService;
 import ua.foxminded.university.services.StudentService;
 import ua.foxminded.university.services.TeacherService;
+import ua.foxminded.university.services.TokenService;
 import ua.foxminded.university.services.impl.UserServiceImpl;
 
 import java.time.Clock;
@@ -58,5 +60,8 @@ public class ServiceAspectTestConfig {
     public GradeService gradeService;
     @MockBean
     public AttendanceService attendanceService;
-
+    @MockBean
+    private AuthService authService;
+    @MockBean
+    private TokenService tokenService;
 }
