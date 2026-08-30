@@ -22,6 +22,8 @@ import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.UserManagerService;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import javax.sql.DataSource;
 import java.time.Instant;
@@ -87,12 +89,28 @@ class ProfileApiSecurityTest {
                                 HttpHeaders.AUTHORIZATION,
                                 "Bearer " + createToken("admin", "ROLE_ADMIN")
                         ))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.title").value("Forbidden"))
+                .andExpect(jsonPath("$.detail").value(
+                        "Access is denied"
+                ));;
     }
 
     @Test
     void profileApiSecurity_shouldReturnUnauthorized_whenUserIsAnonymous() throws Exception {
-        mockMvc.perform(get("/api/v1/profile")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/v1/profile")).andExpect(status().isUnauthorized())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.title").value("Unauthorized"))
+                .andExpect(jsonPath("$.detail").value(
+                        "Authentication is required"
+                ));;
     }
 
     private String createToken(String subject, String authority) {
@@ -219,6 +237,14 @@ class ProfileApiSecurityTest {
                                 HttpHeaders.AUTHORIZATION,
                                 "Bearer invalid-token"
                         ))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.title").value("Unauthorized"))
+                .andExpect(jsonPath("$.detail").value(
+                        "Authentication is required"
+                ));;
     }
 }
