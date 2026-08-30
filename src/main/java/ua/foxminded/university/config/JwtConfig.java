@@ -17,7 +17,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.time.Clock;
 import java.util.Base64;
 
 @Configuration
@@ -51,11 +50,6 @@ public class JwtConfig {
         );
 
         return jwtDecoder;
-    }
-
-    @Bean
-    public Clock clock() {
-        return Clock.systemUTC();
     }
 
     @Bean

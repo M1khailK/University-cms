@@ -1,8 +1,8 @@
 package ua.foxminded.university.config.aspect;
 
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +24,7 @@ import ua.foxminded.university.services.impl.UserServiceImpl;
 
 import java.time.Clock;
 
-@Configuration
+@TestConfiguration
 @ComponentScan({"ua.foxminded.university.aop.service", "ua.foxminded.university.services"})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class ServiceAspectTestConfig {
