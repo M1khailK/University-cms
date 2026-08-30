@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.sql.DataSource;
 
 @Configuration
@@ -56,9 +56,17 @@ public class SecurityConfig {
     }
 
     @Bean
+    public SecurityProblemDetailHandler securityProblemDetailHandler(
+            ObjectMapper objectMapper) {
+
+        return new SecurityProblemDetailHandler(objectMapper);
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity httpSecurity,
-            JwtAuthenticationConverter jwtAuthenticationConverter) throws Exception {
+            JwtAuthenticationConverter jwtAuthenticationConverter,
+            SecurityProblemDetailHandler securityProblemDetailHandler) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
@@ -173,6 +181,8 @@ public class SecurityConfig {
 
                         .anyRequest().denyAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
+                        .authenticationEntryPoint(securityProblemDetailHandler)
+                        .accessDeniedHandler(securityProblemDetailHandler)
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(
                                         jwtAuthenticationConverter
