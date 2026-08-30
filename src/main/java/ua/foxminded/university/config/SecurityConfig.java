@@ -173,9 +173,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/grades")
                         .hasAnyRole("ADMIN", "TEACHER")
 
-                        .requestMatchers("/")
-                        .permitAll()
-
                         .requestMatchers(HttpMethod.POST, "/api/v1/attendance-records")
                         .hasRole("TEACHER")
 
