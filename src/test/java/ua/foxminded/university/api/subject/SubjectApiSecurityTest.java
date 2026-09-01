@@ -1,5 +1,6 @@
 package ua.foxminded.university.api.subject;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -51,6 +52,24 @@ class SubjectApiSecurityTest {
 
         mockMvc.perform(get("/api/v1/subjects"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnProblemDetail_whenSubjectIdHasInvalidType()
+            throws Exception {
+
+        mockMvc.perform(get("/api/v1/subjects/not-a-number"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title")
+                        .value("Invalid parameter"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Request parameter has an invalid value"))
+                .andExpect(jsonPath("$.parameter")
+                        .value("id"));
     }
 
     @Test
