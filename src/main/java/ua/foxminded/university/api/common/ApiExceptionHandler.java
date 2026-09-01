@@ -3,11 +3,13 @@ package ua.foxminded.university.api.common;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ua.foxminded.university.customexceptions.AttendanceAccessDeniedException;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
@@ -19,7 +21,7 @@ import ua.foxminded.university.customexceptions.LessonNotFoundException;
 import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +115,21 @@ public class ApiExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         problemDetail.setTitle("Attendance access denied");
         problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ProblemDetail handleArgumentTypeMismatch(
+            MethodArgumentTypeMismatchException exception) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "Request parameter has an invalid value"
+        );
+
+        problemDetail.setTitle("Invalid parameter");
+        problemDetail.setProperty("parameter", exception.getName());
+
         return problemDetail;
     }
 
