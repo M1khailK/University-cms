@@ -19,7 +19,7 @@ import ua.foxminded.university.customexceptions.LessonNotFoundException;
 import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
-
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +113,20 @@ public class ApiExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         problemDetail.setTitle("Attendance access denied");
         problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail handleMalformedRequest(
+            HttpMessageNotReadableException exception) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "Request body is malformed"
+        );
+
+        problemDetail.setTitle("Malformed request");
+
         return problemDetail;
     }
 
