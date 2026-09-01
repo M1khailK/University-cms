@@ -10,9 +10,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ua.foxminded.university.config.JwtProperties;
@@ -20,12 +22,12 @@ import ua.foxminded.university.config.JwtProperties;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class AuthLoginIntegrationTest {
@@ -62,16 +64,16 @@ class AuthLoginIntegrationTest {
 
         jdbcTemplate.update(
                 """
-                INSERT INTO users (
-                    user_id,
-                    first_name,
-                    last_name,
-                    email,
-                    password,
-                    isEnabled
-                )
-                VALUES (?, ?, ?, ?, ?, true)
-                """,
+                        INSERT INTO users (
+                            user_id,
+                            first_name,
+                            last_name,
+                            email,
+                            password,
+                            isEnabled
+                        )
+                        VALUES (?, ?, ?, ?, ?, true)
+                        """,
                 USER_ID,
                 "JWT",
                 "Integration",
@@ -81,11 +83,19 @@ class AuthLoginIntegrationTest {
 
         jdbcTemplate.update(
                 """
-                INSERT INTO user_role (user_id, role)
-                VALUES (?, ?)
-                """,
+                        INSERT INTO user_role (user_id, role)
+                        VALUES (?, ?)
+                        """,
                 USER_ID,
                 ROLE
+        );
+
+        jdbcTemplate.update(
+                """
+                        INSERT INTO students (user_id, group_id)
+                        VALUES (?, NULL)
+                        """,
+                USER_ID
         );
     }
 
@@ -156,6 +166,39 @@ class AuthLoginIntegrationTest {
                         .value("Invalid email or password"));
     }
 
+    @Test
+    void authLogin_shouldAuthorizeProfileRequest_whenIssuedTokenIsUsedAsBearer()
+            throws Exception {
+
+        MvcResult loginResult = mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginRequest(PASSWORD))
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        JsonNode loginResponse = objectMapper.readTree(
+                loginResult.getResponse().getContentAsString()
+        );
+
+        String accessToken = loginResponse
+                .get("accessToken")
+                .asText();
+
+        mockMvc.perform(
+                        get("/api/v1/profile")
+                                .header(
+                                        "Authorization",
+                                        "Bearer " + accessToken
+                                )
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_JSON
+                ));
+    }
+
     private String loginRequest(String password) throws Exception {
         return objectMapper.writeValueAsString(
                 Map.of(
@@ -168,6 +211,11 @@ class AuthLoginIntegrationTest {
     private void removeTestUser() {
         jdbcTemplate.update(
                 "DELETE FROM user_role WHERE user_id = ?",
+                USER_ID
+        );
+
+        jdbcTemplate.update(
+                "DELETE FROM students WHERE user_id = ?",
                 USER_ID
         );
 
