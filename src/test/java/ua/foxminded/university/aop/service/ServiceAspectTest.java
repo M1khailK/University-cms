@@ -49,7 +49,7 @@ public class ServiceAspectTest {
         List<ILoggingEvent> logList = listAppender.list;
 
         String firstExpected = "Calling: void ua.foxminded.university.services.impl.GroupServiceImpl.save(Group)";
-        String secondExpected = "void ua.foxminded.university.services.impl.GroupServiceImpl.save(Group) response: null";
+        String secondExpected = "void ua.foxminded.university.services.impl.GroupServiceImpl.save(Group) completed successfully";
         Assertions.assertEquals(firstExpected, logList.get(0).getFormattedMessage());
         Assertions.assertEquals(secondExpected, logList.get(1).getFormattedMessage());
         Assertions.assertEquals(Level.TRACE, logList.get(0).getLevel());
@@ -70,7 +70,7 @@ public class ServiceAspectTest {
         List<ILoggingEvent> logList = listAppender.list;
 
         String firstExpected = "Calling: Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int)";
-        String secondExpected = "Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int) response: Group{id=1, name='Group'}";
+        String secondExpected = "Group ua.foxminded.university.services.impl.GroupServiceImpl.getById(int) completed successfully";
         Assertions.assertEquals(firstExpected, logList.get(0).getFormattedMessage());
         Assertions.assertEquals(secondExpected, logList.get(1).getFormattedMessage());
         Assertions.assertEquals(Level.TRACE, logList.get(0).getLevel());
