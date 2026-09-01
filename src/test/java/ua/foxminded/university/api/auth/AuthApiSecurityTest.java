@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,5 +55,34 @@ class AuthApiSecurityTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken")
                         .value("jwt-token"));
+    }
+
+    @Test
+    void login_shouldReturnValidationProblemDetail_whenRequestIsInvalid()
+            throws Exception {
+
+        mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {
+                                          "email": "invalid-email",
+                                          "password": ""
+                                        }
+                                        """)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title")
+                        .value("Validation failed"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Request validation failed"))
+                .andExpect(jsonPath("$.errors.email").isArray())
+                .andExpect(jsonPath("$.errors.email[0]").isString())
+                .andExpect(jsonPath("$.errors.password").isArray())
+                .andExpect(jsonPath("$.errors.password[0]").isString());
     }
 }
