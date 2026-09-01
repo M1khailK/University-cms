@@ -85,4 +85,29 @@ class AuthApiSecurityTest {
                 .andExpect(jsonPath("$.errors.password").isArray())
                 .andExpect(jsonPath("$.errors.password[0]").isString());
     }
+
+    @Test
+    void login_shouldReturnProblemDetail_whenJsonIsMalformed()
+            throws Exception {
+
+        mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                    {
+                                      "email": "student@example.com",
+                                      "password":
+                                    }
+                                    """)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title")
+                        .value("Malformed request"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Request body is malformed"));
+    }
 }
