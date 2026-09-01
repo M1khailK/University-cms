@@ -22,8 +22,6 @@ import ua.foxminded.university.info.Student;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.manager.ServiceManager;
 import ua.foxminded.university.services.UserManagerService;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import javax.sql.DataSource;
 import java.time.Instant;
@@ -32,6 +30,8 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ProfileRestController.class)
@@ -97,7 +97,8 @@ class ProfileApiSecurityTest {
                 .andExpect(jsonPath("$.title").value("Forbidden"))
                 .andExpect(jsonPath("$.detail").value(
                         "Access is denied"
-                ));;
+                ));
+        ;
     }
 
     @Test
@@ -110,12 +111,37 @@ class ProfileApiSecurityTest {
                 .andExpect(jsonPath("$.title").value("Unauthorized"))
                 .andExpect(jsonPath("$.detail").value(
                         "Authentication is required"
-                ));;
+                ));
+        ;
     }
 
     private String createToken(String subject, String authority) {
         Instant issuedAt = Instant.now();
-        Instant expiresAt = issuedAt.plus(jwtProperties.accessTokenTtl());
+
+        return createToken(
+                subject,
+                authority,
+                issuedAt,
+                issuedAt.plus(jwtProperties.accessTokenTtl())
+        );
+    }
+
+    private String createExpiredToken(String subject, String authority) {
+        Instant expiresAt = Instant.now().minusSeconds(120);
+
+        return createToken(
+                subject,
+                authority,
+                expiresAt.minus(jwtProperties.accessTokenTtl()),
+                expiresAt
+        );
+    }
+
+    private String createToken(
+            String subject,
+            String authority,
+            Instant issuedAt,
+            Instant expiresAt) {
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(jwtProperties.issuer())
@@ -245,6 +271,28 @@ class ProfileApiSecurityTest {
                 .andExpect(jsonPath("$.title").value("Unauthorized"))
                 .andExpect(jsonPath("$.detail").value(
                         "Authentication is required"
-                ));;
+                ));
+        ;
+    }
+
+    @Test
+    void profileApiSecurity_shouldReturnUnauthorized_whenBearerTokenIsExpired() throws Exception {
+        mockMvc.perform(get("/api/v1/profile")
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "Bearer " + createExpiredToken(
+                                        "student",
+                                        "ROLE_STUDENT"
+                                )
+                        ))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.title").value("Unauthorized"))
+                .andExpect(jsonPath("$.detail").value(
+                        "Authentication is required"
+                ));
     }
 }
