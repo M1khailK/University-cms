@@ -167,6 +167,31 @@ class AuthLoginIntegrationTest {
     }
 
     @Test
+    void authLogin_shouldReturnUnauthorized_whenUserIsDisabled()
+            throws Exception {
+
+        jdbcTemplate.update(
+                "UPDATE users SET isEnabled = false WHERE user_id = ?",
+                USER_ID
+        );
+
+        mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginRequest(PASSWORD))
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.title")
+                        .value("Authentication failed"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Invalid email or password"));
+    }
+
+    @Test
     void authLogin_shouldAuthorizeProfileRequest_whenIssuedTokenIsUsedAsBearer()
             throws Exception {
 
