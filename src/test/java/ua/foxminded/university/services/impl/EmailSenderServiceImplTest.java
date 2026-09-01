@@ -4,24 +4,24 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Part;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ua.foxminded.university.config.service.ServicesTestConfig;
+import ua.foxminded.university.config.service.ServicesTestMocks;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.repository.LessonRepository;
 import ua.foxminded.university.repository.StudentRepository;
 import ua.foxminded.university.repository.TeacherRepository;
-import jakarta.mail.Multipart;
-import jakarta.mail.Part;
 
-import java.io.IOException;
 import java.io.IOException;
 import java.time.Clock;
 
@@ -29,11 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@MockBean(LessonRepository.class)
-@MockBean(TeacherRepository.class)
-@MockBean(StudentRepository.class)
-@MockBean(Clock.class)
-@MockBean(PasswordEncoder.class)
+@MockitoBean(types = LessonRepository.class)
+@MockitoBean(types = TeacherRepository.class)
+@MockitoBean(types = StudentRepository.class)
+@MockitoBean(types = Clock.class)
+@MockitoBean(types = PasswordEncoder.class)
+@ServicesTestMocks
 @ContextConfiguration(classes = ServicesTestConfig.class)
 class EmailSenderServiceImplTest {
 

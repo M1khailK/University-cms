@@ -5,10 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ua.foxminded.university.config.service.ServicesTestConfig;
+import ua.foxminded.university.config.service.ServicesTestMocks;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.info.Teacher;
@@ -33,9 +34,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@MockBean(LessonRepository.class)
-@MockBean(StudentRepository.class)
-@MockBean(Clock.class)
+@MockitoBean(types = LessonRepository.class)
+@MockitoBean(types = StudentRepository.class)
+@MockitoBean(types = Clock.class)
+@ServicesTestMocks
 @ContextConfiguration(classes = ServicesTestConfig.class)
 public class TeacherServiceImplTest {
 
@@ -49,11 +51,11 @@ public class TeacherServiceImplTest {
 
     @Autowired
     private TeacherService teacherService;
-    @MockBean
+    @MockitoBean
     private TeacherRepository teacherRepository;
-    @MockBean
+    @MockitoBean
     private PasswordEncoder passwordEncoder;
-    @MockBean
+    @MockitoBean
     private PasswordService passwordService;
 
     @BeforeEach
