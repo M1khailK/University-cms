@@ -110,4 +110,29 @@ class AuthApiSecurityTest {
                 .andExpect(jsonPath("$.detail")
                         .value("Request body is malformed"));
     }
+
+    @Test
+    void login_shouldReturnProblemDetail_whenContentTypeIsUnsupported()
+            throws Exception {
+
+        mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .contentType(MediaType.TEXT_PLAIN)
+                                .content("""
+                                    {
+                                      "email": "student@example.com",
+                                      "password": "password"
+                                    }
+                                    """)
+                )
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(415))
+                .andExpect(jsonPath("$.title")
+                        .value("Unsupported media type"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Request content type is not supported"));
+    }
 }
