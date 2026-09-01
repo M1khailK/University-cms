@@ -21,6 +21,7 @@ import ua.foxminded.university.customexceptions.LessonNotFoundException;
 import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -129,6 +130,20 @@ public class ApiExceptionHandler {
 
         problemDetail.setTitle("Invalid parameter");
         problemDetail.setProperty("parameter", exception.getName());
+
+        return problemDetail;
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ProblemDetail handleUnsupportedMediaType(
+            HttpMediaTypeNotSupportedException exception) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+                "Request content type is not supported"
+        );
+
+        problemDetail.setTitle("Unsupported media type");
 
         return problemDetail;
     }
