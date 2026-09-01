@@ -5,11 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ua.foxminded.university.config.service.ServicesTestConfig;
+import ua.foxminded.university.config.service.ServicesTestMocks;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.dto.User;
@@ -35,9 +36,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@MockBean(LessonRepository.class)
-@MockBean(TeacherRepository.class)
-@MockBean(Clock.class)
+@MockitoBean(types = LessonRepository.class)
+@MockitoBean(types = TeacherRepository.class)
+@MockitoBean(types = Clock.class)
+@ServicesTestMocks
 @ContextConfiguration(classes = ServicesTestConfig.class)
 public class StudentServiceImplTest {
 
@@ -51,13 +53,13 @@ public class StudentServiceImplTest {
 
     @Autowired
     private StudentService studentService;
-    @MockBean
+    @MockitoBean
     private StudentRepository studentRepository;
-    @MockBean
+    @MockitoBean
     private PasswordEncoder passwordEncoder;
-    @MockBean
+    @MockitoBean
     private GroupService groupService;
-    @MockBean
+    @MockitoBean
     private PasswordService passwordService;
 
     private Group createGroup() {
