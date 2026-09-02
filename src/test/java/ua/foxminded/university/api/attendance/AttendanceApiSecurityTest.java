@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,7 +56,11 @@ class AttendanceApiSecurityTest {
                         .with(user("teacher").roles("TEACHER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRequest()))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(header().string(
+                        "Location",
+                        "http://localhost/api/v1/attendance-records/500"
+                ));
     }
 
     @Test
@@ -66,13 +71,13 @@ class AttendanceApiSecurityTest {
                         .with(user("teacher").roles("TEACHER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {
-                              "studentId": 0,
-                              "lessonId": -1,
-                              "attendanceDate": "2026-08-26",
-                              "attendanceTime": "10:00"
-                            }
-                            """))
+                                {
+                                  "studentId": 0,
+                                  "lessonId": -1,
+                                  "attendanceDate": "2026-08-26",
+                                  "attendanceTime": "10:00"
+                                }
+                                """))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(
                         MediaType.APPLICATION_PROBLEM_JSON
