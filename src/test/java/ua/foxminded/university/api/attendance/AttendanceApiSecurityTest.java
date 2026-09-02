@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.attendance.mapper.AttendanceMapper;
+import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.info.AttendanceRecord;
@@ -23,10 +24,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = AttendanceRestController.class)
-@Import({SecurityConfig.class, JwtConfig.class, AttendanceMapper.class})
+@Import({SecurityConfig.class, JwtConfig.class, AttendanceMapper.class, ApiExceptionHandler.class})
 class AttendanceApiSecurityTest {
 
     @Autowired
@@ -53,6 +56,36 @@ class AttendanceApiSecurityTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validRequest()))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void attendanceApiSecurity_shouldReturnValidationProblemDetail_whenIdsAreNotPositive()
+            throws Exception {
+
+        mockMvc.perform(post("/api/v1/attendance-records")
+                        .with(user("teacher").roles("TEACHER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                              "studentId": 0,
+                              "lessonId": -1,
+                              "attendanceDate": "2026-08-26",
+                              "attendanceTime": "10:00"
+                            }
+                            """))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title")
+                        .value("Validation failed"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Request validation failed"))
+                .andExpect(jsonPath("$.errors.studentId[0]")
+                        .value("Student id must be positive"))
+                .andExpect(jsonPath("$.errors.lessonId[0]")
+                        .value("Lesson id must be positive"));
     }
 
     @Test
