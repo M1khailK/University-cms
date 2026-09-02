@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,7 +23,6 @@ import ua.foxminded.university.customexceptions.LessonNotFoundException;
 import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -144,6 +145,20 @@ public class ApiExceptionHandler {
         );
 
         problemDetail.setTitle("Unsupported media type");
+
+        return problemDetail;
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ProblemDetail handleNotAcceptable(
+            HttpMediaTypeNotAcceptableException exception) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_ACCEPTABLE,
+                "Requested response media type is not supported"
+        );
+
+        problemDetail.setTitle("Not acceptable");
 
         return problemDetail;
     }

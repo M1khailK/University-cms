@@ -1,6 +1,5 @@
 package ua.foxminded.university.api.subject;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,6 +25,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = SubjectRestController.class)
@@ -145,4 +146,26 @@ class SubjectApiSecurityTest {
                         .with(user("student").roles("STUDENT")))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void shouldReturnProblemDetail_whenAcceptMediaTypeIsUnsupported()
+            throws Exception {
+
+        when(subjectService.getAll()).thenReturn(List.of());
+
+        mockMvc.perform(
+                        get("/api/v1/subjects")
+                                .accept(MediaType.TEXT_PLAIN)
+                )
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(406))
+                .andExpect(jsonPath("$.title")
+                        .value("Not acceptable"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Requested response media type is not supported"));
+    }
+
 }
