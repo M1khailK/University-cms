@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.grade.mapper.GradeMapper;
 import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
@@ -27,10 +28,12 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = GradeRestController.class)
-@Import({SecurityConfig.class, JwtConfig.class, GradeMapper.class})
+@Import({SecurityConfig.class, JwtConfig.class, GradeMapper.class, ApiExceptionHandler.class})
 class GradeApiSecurityTest {
 
     @Autowired
@@ -143,6 +146,34 @@ class GradeApiSecurityTest {
                                 }
                                 """))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void gradeApiSecurity_shouldReturnValidationProblemDetail_whenIdsAreNotPositive()
+            throws Exception {
+
+        mockMvc.perform(post("/api/v1/grades")
+                        .with(user("teacher").roles("TEACHER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "studentId": 0,
+                                  "lessonId": -1,
+                                  "value": 5
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title").value("Validation failed"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Request validation failed"))
+                .andExpect(jsonPath("$.errors.studentId[0]")
+                        .value("Student id must be positive"))
+                .andExpect(jsonPath("$.errors.lessonId[0]")
+                        .value("Lesson id must be positive"));
     }
 
     @Test
