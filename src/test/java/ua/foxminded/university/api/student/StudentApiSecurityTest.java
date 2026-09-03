@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = StudentRestController.class)
@@ -45,12 +48,27 @@ class StudentApiSecurityTest {
     private UserService userService;
 
     @Test
-    void studentApiSecurity_shouldAllowReadAllStudents_whenUserIsAdmin() throws Exception {
-        when(studentService.getAll()).thenReturn(List.of(createStudent()));
+    void studentApiSecurity_shouldReturnPagedStudents_whenUserIsAdmin()
+            throws Exception {
+
+        when(studentService.getAll(1, 2)).thenReturn(
+                new PageImpl<>(
+                        List.of(createStudent()),
+                        PageRequest.of(1, 2),
+                        3
+                )
+        );
 
         mockMvc.perform(get("/api/v1/students")
+                        .param("page", "1")
+                        .param("size", "2")
                         .with(user("admin").roles("ADMIN")))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.page").value(1))
+                .andExpect(jsonPath("$.size").value(2))
+                .andExpect(jsonPath("$.totalElements").value(3))
+                .andExpect(jsonPath("$.totalPages").value(2));
     }
 
     @Test
