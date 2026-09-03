@@ -337,4 +337,40 @@ class StudentRestControllerTest {
         verify(studentService).getById(999);
         verify(userService, never()).disableUserById(anyInt());
     }
+
+    @Test
+    void studentRestController_shouldReturnBadRequest_whenPageIsNegative()
+            throws Exception {
+
+        mockMvc.perform(get("/api/v1/students")
+                        .param("page", "-1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title").value("Validation failed"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Request parameter validation failed"));
+
+        verify(studentService, never()).getAll(anyInt(), anyInt());
+    }
+
+    @Test
+    void studentRestController_shouldReturnBadRequest_whenPageSizeExceedsLimit()
+            throws Exception {
+
+        mockMvc.perform(get("/api/v1/students")
+                        .param("size", "101"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.title").value("Validation failed"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Request parameter validation failed"));
+
+        verify(studentService, never()).getAll(anyInt(), anyInt());
+    }
 }
