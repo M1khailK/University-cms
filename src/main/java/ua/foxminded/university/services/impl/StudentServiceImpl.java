@@ -3,6 +3,9 @@ package ua.foxminded.university.services.impl;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
@@ -88,6 +91,17 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Student> getAll() {
         return studentRepository.findAll();
+    }
+
+    @Override
+    public Page<Student> getAll(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.ASC, "id")
+        );
+
+        return studentRepository.findAll(pageRequest);
     }
 
     @Override

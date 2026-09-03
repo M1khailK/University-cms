@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -47,24 +49,36 @@ class StudentRestControllerTest {
     private UserService userService;
 
     @Test
-    void studentRestController_shouldReturnAllStudents_whenStudentsExist() throws Exception {
+    void studentRestController_shouldReturnPagedStudents_whenStudentsExist()
+            throws Exception {
+
         Student student = createStudent();
 
-        when(studentService.getAll()).thenReturn(List.of(student));
+        when(studentService.getAll(0, 20)).thenReturn(
+                new PageImpl<>(
+                        List.of(student),
+                        PageRequest.of(0, 20),
+                        1
+                )
+        );
 
         mockMvc.perform(get("/api/v1/students"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].firstName").value("Alice"))
-                .andExpect(jsonPath("$[0].lastName").value("Brown"))
-                .andExpect(jsonPath("$[0].email").value("alice.brown@example.com"))
-                .andExpect(jsonPath("$[0].groupId").value(10))
-                .andExpect(jsonPath("$[0].groupName").value("AA-11"))
-                .andExpect(jsonPath("$[0].password").doesNotExist())
-                .andExpect(jsonPath("$[0].role").doesNotExist());
+                .andExpect(jsonPath("$.content[0].id").value(1))
+                .andExpect(jsonPath("$.content[0].firstName").value("Alice"))
+                .andExpect(jsonPath("$.content[0].lastName").value("Brown"))
+                .andExpect(jsonPath("$.content[0].email")
+                        .value("alice.brown@example.com"))
+                .andExpect(jsonPath("$.content[0].groupId").value(10))
+                .andExpect(jsonPath("$.content[0].groupName").value("AA-11"))
+                .andExpect(jsonPath("$.content[0].password").doesNotExist())
+                .andExpect(jsonPath("$.content[0].role").doesNotExist())
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.size").value(20))
+                .andExpect(jsonPath("$.totalElements").value(1))
+                .andExpect(jsonPath("$.totalPages").value(1));
     }
-
     @Test
     void studentRestController_shouldReturnStudentById_whenStudentExists() throws Exception {
         Student student = createStudent();
