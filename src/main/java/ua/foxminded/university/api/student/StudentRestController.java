@@ -1,6 +1,8 @@
 package ua.foxminded.university.api.student;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +38,14 @@ public class StudentRestController {
 
     @GetMapping
     public PageResponse<StudentResponse> getAllStudents(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "Page must be zero or greater")
+            int page,
+
+            @RequestParam(defaultValue = "20")
+            @Min(value = 1, message = "Size must be at least 1")
+            @Max(value = 100, message = "Size must be at most 100")
+            int size
     ) {
         Page<Student> students = studentService.getAll(page, size);
 

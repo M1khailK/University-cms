@@ -11,6 +11,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ua.foxminded.university.customexceptions.AttendanceAccessDeniedException;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
@@ -218,5 +219,19 @@ public class ApiExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(problemDetail);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ProblemDetail handleMethodValidation(
+            HandlerMethodValidationException exception) {
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "Request parameter validation failed"
+        );
+
+        problemDetail.setTitle("Validation failed");
+
+        return problemDetail;
     }
 }
