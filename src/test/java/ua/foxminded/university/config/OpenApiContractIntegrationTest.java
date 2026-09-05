@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,5 +46,16 @@ class OpenApiContractIntegrationTest {
                 .andExpect(jsonPath(
                         "$.components.securitySchemes.bearerAuth.bearerFormat"
                 ).value("JWT"));
+    }
+
+    @Test
+    void swaggerUi_shouldBePublic() throws Exception {
+
+        mockMvc.perform(get("/swagger-ui.html"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(header().string(
+                        "Location",
+                        "/swagger-ui/index.html"
+                ));
     }
 }
