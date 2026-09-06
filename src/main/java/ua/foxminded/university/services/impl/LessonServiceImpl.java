@@ -83,9 +83,14 @@ public class LessonServiceImpl implements LessonService {
 
     private LocalDate getDefaultDate() {
         LocalDate today = LocalDate.now(clock);
-        if (LocalTime.now(clock).isAfter(LocalTime.of(HOUR_TO_DISPLAY_TOMORROW_SCHEDULE, 0, 0, 0))) {
+        LocalTime now = LocalTime.now(clock);
+        LocalTime tomorrowScheduleCutoff =
+                LocalTime.of(HOUR_TO_DISPLAY_TOMORROW_SCHEDULE, 0);
+
+        if (!now.isBefore(tomorrowScheduleCutoff)) {
             return today.plusDays(1);
         }
+
         return today;
     }
 

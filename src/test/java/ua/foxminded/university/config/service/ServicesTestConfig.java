@@ -8,10 +8,11 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @TestConfiguration
 @ComponentScan({"ua.foxminded.university.services", "ua.foxminded.university.manager"})
 public class ServicesTestConfig {
-
     @Bean
     public JavaMailSenderImpl javaMailSender() {
-        return new JavaMailSenderImpl();
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("localhost");
+        mailSender.setPort(3025);
+        return mailSender;
     }
-
 }
