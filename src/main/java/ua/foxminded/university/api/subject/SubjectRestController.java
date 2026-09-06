@@ -1,5 +1,6 @@
 package ua.foxminded.university.api.subject;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,7 @@ public class SubjectRestController {
                 .toList();
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<SubjectResponse> createSubject(@Valid @RequestBody SubjectCreateRequest request) {
         Subject subject = subjectMapper.toEntity(request);
@@ -58,6 +60,7 @@ public class SubjectRestController {
         return subjectMapper.toResponse(subjectService.getById(id));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
     public SubjectResponse updateSubject(
             @PathVariable int id,
@@ -67,6 +70,7 @@ public class SubjectRestController {
         return subjectMapper.toResponse(updatedSubject);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSubject(@PathVariable int id) {
         subjectService.deleteById(id);

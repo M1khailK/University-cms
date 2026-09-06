@@ -45,7 +45,10 @@ class OpenApiContractIntegrationTest {
                 ).value("bearer"))
                 .andExpect(jsonPath(
                         "$.components.securitySchemes.bearerAuth.bearerFormat"
-                ).value("JWT"));
+                ).value("JWT"))
+                .andExpect(jsonPath(
+                        "$.paths['/api/v1/profile'].get.security[0].bearerAuth"
+                ).isArray());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package ua.foxminded.university.api.attendance;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.net.URI;
 @RestController
 @RequestMapping("/api/v1/attendance-records")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class AttendanceRestController {
 
     private final AttendanceService attendanceService;

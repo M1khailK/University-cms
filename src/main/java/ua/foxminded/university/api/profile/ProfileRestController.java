@@ -1,5 +1,6 @@
 package ua.foxminded.university.api.profile;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("/api/v1/profile")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class ProfileRestController {
 
     private final ServiceManager serviceManager;
