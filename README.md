@@ -1,5 +1,7 @@
 # University CMS
 
+[![CI](https://github.com/M1khailK/University-cms/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/M1khailK/University-cms/actions/workflows/ci.yml)
+
 ## Project Overview
 "University CMS" is a university management system designed to facilitate student and teacher interactions.  
 The system provides functionalities for scheduling, attendance tracking, and grade management.
