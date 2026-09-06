@@ -1,5 +1,6 @@
 package ua.foxminded.university.api.teacher;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/teachers")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class TeacherRestController {
 
     private final TeacherService teacherService;

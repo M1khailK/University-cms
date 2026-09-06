@@ -1,5 +1,6 @@
 package ua.foxminded.university.api.student;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -30,6 +31,7 @@ import java.net.URI;
 @RestController
 @RequestMapping("/api/v1/students")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class StudentRestController {
 
     private final StudentService studentService;

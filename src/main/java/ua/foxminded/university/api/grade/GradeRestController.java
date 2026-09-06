@@ -1,5 +1,6 @@
 package ua.foxminded.university.api.grade;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/grades")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
 public class GradeRestController {
 
     private final GradeService gradeService;

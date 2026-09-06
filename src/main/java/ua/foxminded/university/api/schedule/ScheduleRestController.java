@@ -1,5 +1,6 @@
 package ua.foxminded.university.api.schedule;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,6 +85,7 @@ public class ScheduleRestController {
         );
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/me")
     public List<ScheduleLessonResponse> getCurrentUserSchedule(
             @RequestParam(value = "from", required = false)

@@ -1,5 +1,6 @@
 package ua.foxminded.university.api.group;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,7 @@ public class GroupRestController {
         return groupMapper.toResponse(groupService.getById(id));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping
     public ResponseEntity<GroupResponse> createGroup(@Valid @RequestBody GroupCreateRequest request) {
         Group createdGroup = groupService.create(groupMapper.toEntity(request));
@@ -54,11 +56,13 @@ public class GroupRestController {
                 .body(groupMapper.toResponse(createdGroup));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/{id}")
     public GroupResponse updateGroup(@PathVariable int id, @Valid @RequestBody GroupUpdateRequest request) {
         return groupMapper.toResponse(groupService.updateName(id, request.name()));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGroup(@PathVariable int id) {
         groupService.deleteById(id);
