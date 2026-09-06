@@ -2,7 +2,7 @@ package ua.foxminded.university.services.impl;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetup;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
 import jakarta.mail.Part;
@@ -45,7 +45,7 @@ class EmailSenderServiceImplTest {
     private EmailSenderServiceImpl emailSender;
 
     private static final GreenMail greenMail =
-            new GreenMail(new ServerSetup(25, "localhost", "smtp"))
+            new GreenMail(ServerSetupTest.SMTP)
                     .withConfiguration(
                             GreenMailConfiguration.aConfig()
                                     .withUser("admin", "password")

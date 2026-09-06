@@ -19,7 +19,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
@@ -83,11 +82,8 @@ public class LessonServiceImplTest {
 
         List<Lesson> expected = Collections.singletonList(new Lesson(ID, "TOMORROW" + LESSON_NAME, LOCAL_DATE.plusDays(1), START_TIME, END_TIME, null, new Group(ID, GROUP_NAME, Collections.emptyList()), null));
 
-        LocalTime localTime = LocalTime.of(18, 0, 0);
-        LocalDate localDate = LocalDate.of(YEAR, MONTH, DAY);
-
-        Instant fixedInstant = localTime.atDate(localDate).toInstant(ZoneOffset.UTC);
-        Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.systemDefault());
+        Instant fixedInstant = Instant.parse("2023-03-29T18:00:00Z");
+        Clock fixedClock = Clock.fixed(fixedInstant, ZoneOffset.UTC);
 
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
@@ -102,11 +98,8 @@ public class LessonServiceImplTest {
 
         List<Lesson> expected = Collections.singletonList(new Lesson(ID, "TODAY" + LESSON_NAME, LOCAL_DATE, START_TIME, END_TIME, null, new Group(ID, GROUP_NAME, Collections.emptyList()), null));
 
-        LocalTime localTime = LocalTime.of(17, 59, 59);
-        LocalDate localDate = LocalDate.of(YEAR, MONTH, DAY);
-
-        Instant fixedInstant = localTime.atDate(localDate).toInstant(ZoneOffset.UTC);
-        Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.of("UTC"));
+        Instant fixedInstant = Instant.parse("2023-03-29T17:59:59Z");
+        Clock fixedClock = Clock.fixed(fixedInstant, ZoneOffset.UTC);
 
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
