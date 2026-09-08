@@ -1,0 +1,24 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  padding-top: 64px;
+}
+
+.login-card {
+  width: min(420px, 100%);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.message {
+  margin: 0;
+}
+
+.error {
+  color: var(--mat-sys-error);
+}
