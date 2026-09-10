@@ -1,12 +1,15 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { TokenStorageService } from './token-storage.service';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const tokenStorage = inject(TokenStorageService);
+  const router = inject(Router);
   const accessToken = tokenStorage.getAccessToken();
 
-  if (!accessToken || !request.url.startsWith('/api/')) {
+  if (!accessToken || !request.url.startsWith('/api/') || request.url === '/api/v1/auth/login') {
     return next(request);
   }
 
@@ -16,5 +19,14 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
     },
   });
 
-  return next(authorizedRequest);
+  return next(authorizedRequest).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        tokenStorage.clear();
+        void router.navigateByUrl('/login');
+      }
+
+      return throwError(() => error);
+    }),
+  );
 };
