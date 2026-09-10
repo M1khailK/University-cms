@@ -14,11 +14,7 @@ describe('AuthService', () => {
     sessionStorage.clear();
 
     TestBed.configureTestingModule({
-      providers: [
-        AuthService,
-        TokenStorageService,
-        provideHttpClientTesting(),
-      ],
+      providers: [AuthService, TokenStorageService, provideHttpClientTesting()],
     });
 
     authService = TestBed.inject(AuthService);
@@ -43,9 +39,7 @@ describe('AuthService', () => {
       expiresIn: 900,
     };
 
-    const responsePromise = firstValueFrom(
-      authService.login(loginRequest),
-    );
+    const responsePromise = firstValueFrom(authService.login(loginRequest));
 
     const request = httpTesting.expectOne('/api/v1/auth/login');
 
@@ -58,5 +52,14 @@ describe('AuthService', () => {
 
     expect(response).toEqual(tokenResponse);
     expect(tokenStorage.getAccessToken()).toBe('test-access-token');
+  });
+
+  it('should clear access token on logout', () => {
+    tokenStorage.setAccessToken('test-access-token');
+
+    authService.logout();
+
+    expect(tokenStorage.getAccessToken()).toBeNull();
+    expect(authService.isAuthenticated()).toBe(false);
   });
 });

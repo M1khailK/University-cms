@@ -1,5 +1,11 @@
 <mat-toolbar>
-  University CMS
+  <span>University CMS</span>
+
+  <span class="toolbar-spacer"></span>
+
+  @if (isAuthenticated()) {
+    <button mat-button type="button" (click)="logout()">Logout</button>
+  }
 </mat-toolbar>
 
 <main class="app-content">

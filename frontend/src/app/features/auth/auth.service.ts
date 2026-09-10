@@ -10,14 +10,13 @@ import { TokenStorageService } from './token-storage.service';
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly tokenStorage = inject(TokenStorageService);
-
+  readonly isAuthenticated = this.tokenStorage.isAuthenticated;
   login(request: LoginRequest): Observable<TokenResponse> {
     return this.http
       .post<TokenResponse>('/api/v1/auth/login', request)
-      .pipe(
-        tap((response) =>
-          this.tokenStorage.setAccessToken(response.accessToken),
-        ),
-      );
+      .pipe(tap((response) => this.tokenStorage.setAccessToken(response.accessToken)));
+  }
+  logout(): void {
+    this.tokenStorage.clear();
   }
 }

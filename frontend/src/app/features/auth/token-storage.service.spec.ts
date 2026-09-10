@@ -29,4 +29,16 @@ describe('TokenStorageService', () => {
 
     expect(service.getAccessToken()).toBeNull();
   });
+
+  it('should update authentication state when token changes', () => {
+    expect(service.isAuthenticated()).toBe(false);
+
+    service.setAccessToken('test-token');
+
+    expect(service.isAuthenticated()).toBe(true);
+
+    service.clear();
+
+    expect(service.isAuthenticated()).toBe(false);
+  });
 });
