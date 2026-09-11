@@ -14,3 +14,10 @@ export interface StudentsPageResponse {
   totalElements: number;
   totalPages: number;
 }
+
+export interface StudentCreateRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  groupId: number;
+}

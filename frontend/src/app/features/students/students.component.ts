@@ -4,10 +4,11 @@ import { MatTableModule } from '@angular/material/table';
 import { finalize } from 'rxjs';
 import { StudentResponse } from './student.models';
 import { StudentService } from './student.service';
-
+import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-students',
-  imports: [MatTableModule, MatPaginatorModule],
+  imports: [MatButtonModule, MatPaginatorModule, MatTableModule, RouterLink],
   templateUrl: './students.component.html',
   styleUrl: './students.component.scss',
 })
@@ -25,7 +26,7 @@ export class StudentsComponent implements OnInit {
   ngOnInit(): void {
     this.loadStudents(this.pageIndex(), this.pageSize());
   }
-  
+
   protected onPageChange(event: PageEvent): void {
     this.loadStudents(event.pageIndex, event.pageSize);
   }

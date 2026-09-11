@@ -6,7 +6,7 @@ import { vi } from 'vitest';
 import { StudentsPageResponse } from './student.models';
 import { StudentService } from './student.service';
 import { StudentsComponent } from './students.component';
-
+import { provideRouter } from '@angular/router';
 describe('StudentsComponent', () => {
   let fixture: ComponentFixture<StudentsComponent>;
 
@@ -54,7 +54,7 @@ describe('StudentsComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [StudentsComponent],
-      providers: [{ provide: StudentService, useValue: studentService }],
+      providers: [{ provide: StudentService, useValue: studentService }, provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StudentsComponent);
