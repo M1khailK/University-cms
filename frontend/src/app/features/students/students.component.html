@@ -1,0 +1,52 @@
+<h1>Students</h1>
+
+@if (loading()) {
+  <p>Loading students...</p>
+} @else if (errorMessage()) {
+  <p>{{ errorMessage() }}</p>
+} @else {
+  @if (students().length === 0) {
+    <p>No students found.</p>
+  } @else {
+    <table mat-table [dataSource]="students()">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let student">{{ student.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef>First name</th>
+        <td mat-cell *matCellDef="let student">{{ student.firstName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef>Last name</th>
+        <td mat-cell *matCellDef="let student">{{ student.lastName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let student">{{ student.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="groupName">
+        <th mat-header-cell *matHeaderCellDef>Group</th>
+        <td mat-cell *matCellDef="let student">{{ student.groupName }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  }
+
+  <mat-paginator
+    [length]="totalElements()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    [disabled]="loading()"
+    showFirstLastButtons
+    aria-label="Select students page"
+    (page)="onPageChange($event)"
+  ></mat-paginator>
+}

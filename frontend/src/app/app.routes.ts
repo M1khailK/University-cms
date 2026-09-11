@@ -21,6 +21,12 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'students',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/students/students.component').then((module) => module.StudentsComponent),
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },
