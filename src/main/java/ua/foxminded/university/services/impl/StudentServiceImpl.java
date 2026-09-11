@@ -57,7 +57,7 @@ public class StudentServiceImpl implements StudentService {
                     role
             );
 
-            return studentRepository.save(student);
+            return studentRepository.saveAndFlush(student);
         } catch (DataIntegrityViolationException exception) {
             throw new DuplicateEmailException("Email already exists. Please choose a different email.");
         }
