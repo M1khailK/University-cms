@@ -1,0 +1,87 @@
+<section class="student-create">
+  <h1>Create student</h1>
+
+  @if (groupLoadError()) {
+    <p class="error-message">{{ groupLoadError() }}</p>
+  }
+
+  <form class="student-form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field>
+      <mat-label>First name</mat-label>
+      <input matInput formControlName="firstName" />
+
+      @if (
+        form.controls.firstName.hasError('required') || form.controls.firstName.hasError('blank')
+      ) {
+        <mat-error>First name is required.</mat-error>
+      } @else if (form.controls.firstName.hasError('maxlength')) {
+        <mat-error>First name must be at most 50 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Last name</mat-label>
+      <input matInput formControlName="lastName" />
+
+      @if (
+        form.controls.lastName.hasError('required') || form.controls.lastName.hasError('blank')
+      ) {
+        <mat-error>Last name is required.</mat-error>
+      } @else if (form.controls.lastName.hasError('maxlength')) {
+        <mat-error>Last name must be at most 50 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" />
+
+      @if (form.controls.email.hasError('required')) {
+        <mat-error>Email is required.</mat-error>
+      } @else if (form.controls.email.hasError('email')) {
+        <mat-error>Enter a valid email address.</mat-error>
+      } @else if (form.controls.email.hasError('maxlength')) {
+        <mat-error>Email must be at most 50 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Group</mat-label>
+      <mat-select formControlName="groupId">
+        @for (group of groups(); track group.id) {
+          <mat-option [value]="group.id">{{ group.name }}</mat-option>
+        }
+      </mat-select>
+
+      @if (form.controls.groupId.hasError('required')) {
+        <mat-error>Group is required.</mat-error>
+      }
+    </mat-form-field>
+
+    @if (loadingGroups()) {
+      <p>Loading groups...</p>
+    }
+
+    @if (!loadingGroups() && !groupLoadError() && groups().length === 0) {
+      <p>No groups are available.</p>
+    }
+
+    @if (submitError()) {
+      <p class="error-message">{{ submitError() }}</p>
+    }
+
+    <div class="form-actions">
+      <button
+        mat-flat-button
+        type="submit"
+        [disabled]="
+          submitting() || loadingGroups() || groupLoadError() !== null || groups().length === 0
+        "
+      >
+        {{ submitting() ? 'Creating...' : 'Create student' }}
+      </button>
+
+      <button mat-button type="button" [disabled]="submitting()" (click)="cancel()">Cancel</button>
+    </div>
+  </form>
+</section>

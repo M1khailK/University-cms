@@ -2,7 +2,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 import { StudentService } from './student.service';
-import { StudentsPageResponse } from './student.models';
+import { StudentCreateRequest, StudentResponse, StudentsPageResponse } from './student.models';
 
 describe('StudentService', () => {
   let service: StudentService;
@@ -49,6 +49,35 @@ describe('StudentService', () => {
     );
 
     expect(request.request.method).toBe('GET');
+
+    request.flush(expectedResponse);
+
+    await expect(responsePromise).resolves.toEqual(expectedResponse);
+  });
+
+  it('should create student', async () => {
+    const requestBody: StudentCreateRequest = {
+      firstName: 'Alice',
+      lastName: 'Stone',
+      email: 'alice@example.com',
+      groupId: 10,
+    };
+
+    const expectedResponse: StudentResponse = {
+      id: 1,
+      firstName: 'Alice',
+      lastName: 'Stone',
+      email: 'alice@example.com',
+      groupId: 10,
+      groupName: 'Java-01',
+    };
+
+    const responsePromise = firstValueFrom(service.createStudent(requestBody));
+
+    const request = httpTesting.expectOne('/api/v1/students');
+
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual(requestBody);
 
     request.flush(expectedResponse);
 
