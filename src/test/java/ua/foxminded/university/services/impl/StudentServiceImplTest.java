@@ -200,46 +200,27 @@ public class StudentServiceImplTest {
                 "STUDENT"
         );
 
-        Student updatedStudent = new Student(
-                1,
-                "Alicia",
-                "Johnson",
-                "alicia.johnson@example.com",
-                newGroup,
-                "encoded-password",
-                "STUDENT"
-        );
-
-        when(studentRepository.findById(1)).thenReturn(Optional.of(existingStudent));
-        when(groupService.getById(20)).thenReturn(newGroup);
-        when(studentRepository.save(existingStudent)).thenReturn(updatedStudent);
+        when(studentRepository.findById(1))
+                .thenReturn(Optional.of(existingStudent));
+        when(groupService.getById(20))
+                .thenReturn(newGroup);
 
         Student actual = studentService.updateStudentProfile(
                 1,
-                "Alicia",
-                "Johnson",
-                "alicia.johnson@example.com",
+                "Updated",
+                "Student",
+                "updated.student@example.com",
                 20
         );
 
         assertEquals(1, actual.getId());
-        assertEquals("Alicia", actual.getFirstName());
-        assertEquals("Johnson", actual.getLastName());
-        assertEquals("alicia.johnson@example.com", actual.getEmail());
+        assertEquals("Updated", actual.getFirstName());
+        assertEquals("Student", actual.getLastName());
+        assertEquals("updated.student@example.com", actual.getEmail());
         assertEquals(newGroup, actual.getGroup());
-        assertEquals("encoded-password", actual.getPassword());
-        assertEquals("STUDENT", actual.getRole());
 
         verify(studentRepository).findById(1);
         verify(groupService).getById(20);
-        verify(studentRepository).save(argThat(student ->
-                student.getId().equals(1)
-                        && "Alicia".equals(student.getFirstName())
-                        && "Johnson".equals(student.getLastName())
-                        && "alicia.johnson@example.com".equals(student.getEmail())
-                        && student.getGroup() == newGroup
-                        && "encoded-password".equals(student.getPassword())
-                        && "STUDENT".equals(student.getRole())
-        ));
+        verify(studentRepository).flush();
     }
 }

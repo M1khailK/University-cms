@@ -143,7 +143,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
-    public Student updateStudentProfile(int id, String firstName, String lastName, String email, int groupId) {
+    public Student updateStudentProfile(
+            int id,
+            String firstName,
+            String lastName,
+            String email,
+            int groupId
+    ) {
         Student student = getById(id);
         Group group = groupService.getById(groupId);
 
@@ -153,10 +159,13 @@ public class StudentServiceImpl implements StudentService {
         student.setGroup(group);
 
         try {
-            return studentRepository.save(student);
+            studentRepository.flush();
+            return student;
         } catch (DataIntegrityViolationException exception) {
-            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+            throw new DuplicateEmailException(
+                    "Email already exists. Please choose a different email."
+            );
         }
-    }
+    }   
 
 }
