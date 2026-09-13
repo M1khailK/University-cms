@@ -117,7 +117,7 @@ public class StudentServiceImplTest {
         }).when(passwordService).generateAndSendPasswordForUser(any(User.class));
 
         when(groupService.getById(10)).thenReturn(group);
-        when(studentRepository.save(any(Student.class))).thenReturn(new Student(
+        when(studentRepository.saveAndFlush(any(Student.class))).thenReturn(new Student(
                 2,
                 "Alice",
                 "Brown",
@@ -144,7 +144,7 @@ public class StudentServiceImplTest {
 
         verify(groupService).getById(10);
         verify(passwordService).generateAndSendPasswordForUser(any(User.class));
-        verify(studentRepository).save(argThat(student ->
+        verify(studentRepository).saveAndFlush(argThat(student ->
                 student.getId() == null
                         && "Alice".equals(student.getFirstName())
                         && "Brown".equals(student.getLastName())
@@ -166,7 +166,7 @@ public class StudentServiceImplTest {
         }).when(passwordService).generateAndSendPasswordForUser(any(User.class));
 
         when(groupService.getById(10)).thenReturn(group);
-        when(studentRepository.save(any(Student.class)))
+        when(studentRepository.saveAndFlush(any(Student.class)))
                 .thenThrow(new DataIntegrityViolationException("duplicate email"));
 
         Assertions.assertThrows(DuplicateEmailException.class, () ->
