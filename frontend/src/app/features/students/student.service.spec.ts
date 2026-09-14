@@ -2,7 +2,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 import { StudentService } from './student.service';
-import { StudentCreateRequest, StudentResponse, StudentsPageResponse } from './student.models';
+import {
+  StudentCreateRequest,
+  StudentResponse,
+  StudentsPageResponse,
+  StudentUpdateRequest,
+} from './student.models';
 
 describe('StudentService', () => {
   let service: StudentService;
@@ -82,5 +87,52 @@ describe('StudentService', () => {
     request.flush(expectedResponse);
 
     await expect(responsePromise).resolves.toEqual(expectedResponse);
+  });
+
+  it('should get student by id', () => {
+    const response: StudentResponse = {
+      id: 7,
+      firstName: 'Arthur',
+      lastName: 'Morgan',
+      email: 'arthur.morgan@example.com',
+      groupId: 10,
+      groupName: 'Exact Sciences Group',
+    };
+
+    service.getStudent(7).subscribe((student) => {
+      expect(student).toEqual(response);
+    });
+
+    const request = httpTesting.expectOne('/api/v1/students/7');
+
+    expect(request.request.method).toBe('GET');
+
+    request.flush(response);
+  });
+
+  it('should update student', () => {
+    const updateRequest: StudentUpdateRequest = {
+      firstName: 'Arthur',
+      lastName: 'Morgan',
+      email: 'arthur.updated@example.com',
+      groupId: 20,
+    };
+
+    const response: StudentResponse = {
+      id: 7,
+      ...updateRequest,
+      groupName: 'Updated Group',
+    };
+
+    service.updateStudent(7, updateRequest).subscribe((student) => {
+      expect(student).toEqual(response);
+    });
+
+    const request = httpTesting.expectOne('/api/v1/students/7');
+
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(updateRequest);
+
+    request.flush(response);
   });
 });

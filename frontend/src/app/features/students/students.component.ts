@@ -14,7 +14,14 @@ import { RouterLink } from '@angular/router';
 })
 export class StudentsComponent implements OnInit {
   private readonly studentService = inject(StudentService);
-  protected readonly displayedColumns = ['id', 'firstName', 'lastName', 'email', 'groupName'];
+  protected readonly displayedColumns = [
+    'id',
+    'firstName',
+    'lastName',
+    'email',
+    'groupName',
+    'actions',
+  ];
   protected readonly pageIndex = signal(0);
   protected readonly pageSize = signal(20);
   protected readonly totalElements = signal(0);
