@@ -135,4 +135,18 @@ describe('StudentService', () => {
 
     request.flush(response);
   });
+  it('should deactivate student', () => {
+    service.deactivateStudent(7).subscribe((response) => {
+      expect(response).toBeNull();
+    });
+
+    const request = httpTesting.expectOne('/api/v1/students/7');
+
+    expect(request.request.method).toBe('DELETE');
+
+    request.flush(null, {
+      status: 204,
+      statusText: 'No Content',
+    });
+  });
 });

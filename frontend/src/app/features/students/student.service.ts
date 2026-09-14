@@ -30,4 +30,7 @@ export class StudentService {
   updateStudent(id: number, request: StudentUpdateRequest): Observable<StudentResponse> {
     return this.http.put<StudentResponse>(`/api/v1/students/${id}`, request);
   }
+  deactivateStudent(id: number): Observable<void> {
+    return this.http.delete<void>(`/api/v1/students/${id}`);
+  }
 }
