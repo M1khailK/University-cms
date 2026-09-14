@@ -27,13 +27,21 @@ export const routes: Routes = [
       import('./features/students/students.component').then((module) => module.StudentsComponent),
   },
   {
-  path: 'students/new',
-  canActivate: [authGuard],
-  loadComponent: () =>
-    import('./features/students/create/student-create.component').then(
-      (module) => module.StudentCreateComponent,
-    ),
-},
+    path: 'students/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/students/create/student-create.component').then(
+        (module) => module.StudentCreateComponent,
+      ),
+  },
+  {
+    path: 'students/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/students/edit/student-edit.component').then(
+        (module) => module.StudentEditComponent,
+      ),
+  },
   {
     path: '**',
     redirectTo: 'login',

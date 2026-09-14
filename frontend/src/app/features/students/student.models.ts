@@ -21,3 +21,10 @@ export interface StudentCreateRequest {
   email: string;
   groupId: number;
 }
+
+export interface StudentUpdateRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  groupId: number;
+}
