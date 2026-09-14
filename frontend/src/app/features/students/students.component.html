@@ -1,5 +1,10 @@
 <h1>Students</h1>
 <a mat-flat-button routerLink="/students/new">Add student</a>
+@if (actionError()) {
+  <p class="error-message" role="alert">
+    {{ actionError() }}
+  </p>
+}
 @if (loading()) {
   <p>Loading students...</p>
 } @else if (errorMessage()) {
@@ -36,11 +41,21 @@
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
+
         <td mat-cell *matCellDef="let student">
-          <a mat-button [routerLink]="['/students', student.id, 'edit']">Edit</a>
+          <a mat-button [routerLink]="['/students', student.id, 'edit']"> Edit </a>
+
+          <button
+            mat-button
+            type="button"
+            [disabled]="deactivatingStudentId() === student.id"
+            (click)="deactivateStudent(student)"
+          >
+            {{ deactivatingStudentId() === student.id ? 'Deactivating...' : 'Deactivate' }}
+          </button>
         </td>
       </ng-container>
-      
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
