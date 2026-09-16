@@ -43,6 +43,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'assistant',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/assistant/assistant.component').then(
+        (module) => module.AssistantComponent,
+      ),
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },
