@@ -9,6 +9,13 @@ public interface UserService {
 
     List<Lesson> getUserLessons(LocalDate dateFrom, LocalDate dateTo);
 
+    List<Lesson> getUserLessons(
+            String email,
+            String role,
+            LocalDate dateFrom,
+            LocalDate dateTo
+    );
+
     int getUserIdByEmail(String email);
 
     void disableUserById(int id);

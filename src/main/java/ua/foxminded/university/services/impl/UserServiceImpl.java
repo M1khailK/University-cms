@@ -38,12 +38,56 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public List<Lesson> getUserLessons(LocalDate dateFrom, LocalDate dateTo) {
-        if (dateFrom == null && dateTo != null) {
-            throw new InvalidDateRangeException("From date cannot be null when To date is provided.");
-        }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        validateDateRange(dateFrom, dateTo);
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
         int id = getUserIdByEmail(authentication.getName());
-        UserManagerService service = serviceManager.getUserManagerServiceByAuthentication();
-        return service.getLessonsByUserIdAndDateBetween(id, dateFrom, dateTo);
+
+        UserManagerService service =
+                serviceManager.getUserManagerServiceByAuthentication();
+
+        return service.getLessonsByUserIdAndDateBetween(
+                id,
+                dateFrom,
+                dateTo
+        );
+    }
+
+    @Override
+    @Transactional
+    public List<Lesson> getUserLessons(
+            String email,
+            String role,
+            LocalDate dateFrom,
+            LocalDate dateTo
+    ) {
+        validateDateRange(dateFrom, dateTo);
+
+        int id = getUserIdByEmail(email);
+
+        UserManagerService service = serviceManager
+                .getServiceByRole(role)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Schedule service is not available for the authenticated role."
+                ));
+
+        return service.getLessonsByUserIdAndDateBetween(
+                id,
+                dateFrom,
+                dateTo
+        );
+    }
+
+    private void validateDateRange(
+            LocalDate dateFrom,
+            LocalDate dateTo
+    ) {
+        if (dateFrom == null && dateTo != null) {
+            throw new InvalidDateRangeException(
+                    "From date cannot be null when To date is provided."
+            );
+        }
     }
 }
