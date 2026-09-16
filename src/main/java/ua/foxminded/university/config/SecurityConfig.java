@@ -184,6 +184,12 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST, "/api/v1/attendance-records")
                         .hasRole("TEACHER")
+                        .requestMatchers(
+
+                                HttpMethod.POST,
+                                "/api/v1/assistant/messages"
+                        )
+                        .hasAnyRole("ADMIN", "TEACHER", "STUDENT")
 
                         .anyRequest().denyAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
