@@ -124,9 +124,7 @@ describe('StudentCreateComponent', () => {
 
     component['submit']();
 
-    expect(component['submitError']()).toBe(
-      'A student with this email already exists.',
-    );
+    expect(component['submitError']()).toBe('A student with this email already exists.');
     expect(router.navigateByUrl).not.toHaveBeenCalled();
   });
 });

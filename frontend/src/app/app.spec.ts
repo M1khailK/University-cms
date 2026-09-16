@@ -5,8 +5,7 @@ describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-    })
-      .compileComponents();
+    }).compileComponents();
   });
 
   it('should create the app', () => {
@@ -15,13 +14,12 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
- it('should render application title', async () => {
-   const fixture = TestBed.createComponent(App);
-   await fixture.whenStable();
+  it('should render application title', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
 
-   const compiled = fixture.nativeElement as HTMLElement;
+    const compiled = fixture.nativeElement as HTMLElement;
 
-   expect(compiled.querySelector('mat-toolbar')?.textContent)
-     .toContain('University CMS');
- });
+    expect(compiled.querySelector('mat-toolbar')?.textContent).toContain('University CMS');
+  });
 });
