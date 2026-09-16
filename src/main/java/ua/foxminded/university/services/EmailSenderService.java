@@ -4,5 +4,5 @@ import ua.foxminded.university.dto.User;
 
 public interface EmailSenderService {
 
-    void sendRegistrationEmail(User user,CharSequence password);
+    void sendRegistrationEmail(User user, CharSequence password);
 }

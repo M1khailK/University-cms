@@ -8,7 +8,6 @@ import ua.foxminded.university.generator.PasswordGenerator;
 import ua.foxminded.university.services.EmailSenderService;
 import ua.foxminded.university.services.PasswordService;
 
-import java.lang.reflect.Array;
 import java.nio.CharBuffer;
 import java.util.Arrays;
 

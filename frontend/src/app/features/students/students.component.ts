@@ -98,7 +98,7 @@ export class StudentsComponent implements OnInit {
         },
       });
   }
-  
+
   private getDeactivateErrorMessage(error: unknown): string {
     if (!(error instanceof HttpErrorResponse)) {
       return 'Failed to deactivate student.';

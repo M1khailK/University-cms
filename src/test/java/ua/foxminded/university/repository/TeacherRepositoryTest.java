@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @DataJpaTest
 @Sql(scripts = {"/test_data.sql"})
-@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = RepositoriesTestConfig.class)
 public class TeacherRepositoryTest {
 

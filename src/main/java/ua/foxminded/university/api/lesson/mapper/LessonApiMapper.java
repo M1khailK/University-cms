@@ -4,8 +4,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ua.foxminded.university.api.lesson.dto.LessonCreateRequest;
 import ua.foxminded.university.api.lesson.dto.LessonResponse;
-import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.api.lesson.dto.LessonUpdateRequest;
+import ua.foxminded.university.info.Lesson;
 
 import java.util.List;
 

@@ -43,5 +43,6 @@ public class ServiceManagerImpl implements ServiceManager {
         if (services.size() > 1) {
             throw new IllegalStateException("Multiple services found for the user.");
         }
-        return services.get(0);    }
+        return services.get(0);
+    }
 }

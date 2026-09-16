@@ -13,15 +13,15 @@
         </encoder>
     </appender>
 
-    <logger name="ua.foxminded.university.Main" level="INFO" >
-        <appender-ref ref="FILE" />
+    <logger name="ua.foxminded.university.Main" level="INFO">
+        <appender-ref ref="FILE"/>
     </logger>
 
-    <logger name="ua.foxminded.university.aop.service" level="TRACE" >
-        <appender-ref ref="FILE" />
+    <logger name="ua.foxminded.university.aop.service" level="TRACE">
+        <appender-ref ref="FILE"/>
     </logger>
 
     <root level="INFO">
-        <appender-ref ref="Console" />
+        <appender-ref ref="Console"/>
     </root>
 </configuration>

@@ -17,6 +17,7 @@ public class RoleProvider {
                 user(USERNAME).roles("STUDENT"),
                 user(USERNAME).roles("TEACHER"));
     }
+
     public static Stream<RequestPostProcessor> provideAllRoles() {
         return Stream.of(
                 user(USERNAME).roles("STUDENT"),

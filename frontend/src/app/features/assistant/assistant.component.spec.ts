@@ -97,20 +97,20 @@ describe('AssistantComponent', () => {
   });
 
   it('should submit message through the form', () => {
-  component['messageControl'].setValue('  Hello assistant  ');
-  fixture.detectChanges();
+    component['messageControl'].setValue('  Hello assistant  ');
+    fixture.detectChanges();
 
-  const form: HTMLFormElement = fixture.nativeElement.querySelector('form');
+    const form: HTMLFormElement = fixture.nativeElement.querySelector('form');
 
-  form.dispatchEvent(
-    new Event('submit', {
-      bubbles: true,
-      cancelable: true,
-    }),
-  );
+    form.dispatchEvent(
+      new Event('submit', {
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
 
-  expect(assistantService.sendMessage).toHaveBeenCalledWith({
-    message: 'Hello assistant',
+    expect(assistantService.sendMessage).toHaveBeenCalledWith({
+      message: 'Hello assistant',
+    });
   });
-});
 });
