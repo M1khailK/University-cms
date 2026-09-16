@@ -6,14 +6,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.customexceptions.AssistantUnavailableException;
 import ua.foxminded.university.services.AssistantService;
 
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -31,14 +33,24 @@ class AssistantRestControllerTest {
     @MockitoBean
     private AssistantService assistantService;
 
+    private final Authentication authentication =
+            new TestingAuthenticationToken(
+                    "student",
+                    "password",
+                    "ROLE_STUDENT"
+            );
+
     @Test
     void assistantRestController_shouldReturnAnswer_whenRequestIsValid()
             throws Exception {
 
-        when(assistantService.answer("What can you help me with?"))
-                .thenReturn("I can help with University-CMS questions.");
+        when(assistantService.answer(
+                "What can you help me with?",
+                authentication
+        )).thenReturn("I can help with University-CMS questions.");
 
         mockMvc.perform(post("/api/v1/assistant/messages")
+                        .principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -50,6 +62,11 @@ class AssistantRestControllerTest {
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.answer")
                         .value("I can help with University-CMS questions."));
+
+        verify(assistantService).answer(
+                "What can you help me with?",
+                authentication
+        );
     }
 
     @Test
@@ -72,7 +89,7 @@ class AssistantRestControllerTest {
                         .value("Validation failed"))
                 .andExpect(jsonPath("$.errors.message").exists());
 
-        verify(assistantService, never()).answer("   ");
+        verifyNoInteractions(assistantService);
     }
 
     @Test
@@ -97,19 +114,20 @@ class AssistantRestControllerTest {
                         .value("Validation failed"))
                 .andExpect(jsonPath("$.errors.message").exists());
 
-        verify(assistantService, never()).answer(message);
+        verifyNoInteractions(assistantService);
     }
 
     @Test
     void assistantRestController_shouldReturnServiceUnavailable_whenAssistantIsUnavailable()
             throws Exception {
 
-        when(assistantService.answer("Hello"))
+        when(assistantService.answer("Hello", authentication))
                 .thenThrow(new AssistantUnavailableException(
                         "AI assistant is not configured."
                 ));
 
         mockMvc.perform(post("/api/v1/assistant/messages")
+                        .principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

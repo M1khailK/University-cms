@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
@@ -14,6 +15,8 @@ import ua.foxminded.university.services.AssistantService;
 
 import javax.sql.DataSource;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,7 +44,10 @@ class AssistantApiSecurityTest {
     void assistantApiSecurity_shouldAllowRequest_whenUserIsAdmin()
             throws Exception {
 
-        when(assistantService.answer("Hello"))
+        when(assistantService.answer(
+                eq("Hello"),
+                any(Authentication.class)
+        ))
                 .thenReturn("Hello from assistant");
 
         mockMvc.perform(post("/api/v1/assistant/messages")
@@ -61,9 +67,11 @@ class AssistantApiSecurityTest {
     void assistantApiSecurity_shouldAllowRequest_whenUserIsTeacher()
             throws Exception {
 
-        when(assistantService.answer("Hello"))
+        when(assistantService.answer(
+                eq("Hello"),
+                any(Authentication.class)
+        ))
                 .thenReturn("Hello from assistant");
-
         mockMvc.perform(post("/api/v1/assistant/messages")
                         .with(user("teacher").roles("TEACHER"))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -79,9 +87,11 @@ class AssistantApiSecurityTest {
     void assistantApiSecurity_shouldAllowRequest_whenUserIsStudent()
             throws Exception {
 
-        when(assistantService.answer("Hello"))
+        when(assistantService.answer(
+                eq("Hello"),
+                any(Authentication.class)
+        ))
                 .thenReturn("Hello from assistant");
-
         mockMvc.perform(post("/api/v1/assistant/messages")
                         .with(user("student").roles("STUDENT"))
                         .contentType(MediaType.APPLICATION_JSON)
