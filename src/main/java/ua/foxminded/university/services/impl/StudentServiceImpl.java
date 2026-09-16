@@ -166,6 +166,6 @@ public class StudentServiceImpl implements StudentService {
                     "Email already exists. Please choose a different email."
             );
         }
-    }   
+    }
 
 }

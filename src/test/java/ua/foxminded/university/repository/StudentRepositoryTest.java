@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @DataJpaTest
 @Sql(scripts = {"/test_data.sql"})
-@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = RepositoriesTestConfig.class)
 public class StudentRepositoryTest {
 
@@ -29,7 +29,7 @@ public class StudentRepositoryTest {
 
     @Test
     public void studentRepository_shouldReturnStudentByEmail_whenInputHasEmail() {
-        Student expected = new Student(2, "Bob", "Second", EMAIL, null, "password","STUDENT");
+        Student expected = new Student(2, "Bob", "Second", EMAIL, null, "password", "STUDENT");
         Optional<Student> actual = studentRepository.findByEmail(EMAIL);
         Assertions.assertEquals(Optional.of(expected), actual);
     }
@@ -53,8 +53,8 @@ public class StudentRepositoryTest {
 
     @Test
     public void studentRepository_shouldReturnListOfStudents_whenTheirAccountsAreEnabled() {
-       List<Student> actual = studentRepository.findAll();
-       List<Student> expected = List.of(new Student(2, "Bob", "Second", "bob.2@example.com", null, "password","STUDENT"));
+        List<Student> actual = studentRepository.findAll();
+        List<Student> expected = List.of(new Student(2, "Bob", "Second", "bob.2@example.com", null, "password", "STUDENT"));
         Assertions.assertEquals(expected, actual);
     }
 

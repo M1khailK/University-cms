@@ -73,13 +73,13 @@ public class UniversityAssistantTools {
 
     @Tool(
             description = """
-                Get the schedule for the currently authenticated student or teacher.
-                Both dates must use ISO format YYYY-MM-DD.
-                The requested date range must not exceed 31 days.
-                Use this tool only for the current user's own schedule.
-                If the user asks for all lessons without a bounded period,
-                do not request more than 31 days.
-                """
+                    Get the schedule for the currently authenticated student or teacher.
+                    Both dates must use ISO format YYYY-MM-DD.
+                    The requested date range must not exceed 31 days.
+                    Use this tool only for the current user's own schedule.
+                    If the user asks for all lessons without a bounded period,
+                    do not request more than 31 days.
+                    """
     )
     public ScheduleResult getMySchedule(
             @ToolParam(
@@ -142,6 +142,7 @@ public class UniversityAssistantTools {
 
         return ScheduleResult.success(lessons);
     }
+
     private AssistantToolContext getAssistantContext(
             ToolContext toolContext
     ) {

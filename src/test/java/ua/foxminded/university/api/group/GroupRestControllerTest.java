@@ -13,18 +13,19 @@ import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.group.mapper.GroupMapperImpl;
 import ua.foxminded.university.customexceptions.GroupNotFoundException;
 import ua.foxminded.university.info.Group;
+import ua.foxminded.university.info.Student;
 import ua.foxminded.university.services.GroupService;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -32,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import ua.foxminded.university.info.Student;
 
 @WebMvcTest(controllers = GroupRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -234,6 +234,7 @@ class GroupRestControllerTest {
                 .andExpect(jsonPath("$.title").value("Group not found"))
                 .andExpect(jsonPath("$.detail").value("Group was not found by id: 999"));
     }
+
     @Test
     void shouldDeleteGroup() throws Exception {
         doNothing().when(groupService).deleteById(1);
@@ -243,6 +244,7 @@ class GroupRestControllerTest {
 
         verify(groupService).deleteById(1);
     }
+
     @Test
     void shouldReturnNotFoundWhenDeletingMissingGroup() throws Exception {
         doThrow(new GroupNotFoundException(999))

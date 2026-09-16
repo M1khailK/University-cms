@@ -79,6 +79,7 @@ class StudentRestControllerTest {
                 .andExpect(jsonPath("$.totalElements").value(1))
                 .andExpect(jsonPath("$.totalPages").value(1));
     }
+
     @Test
     void studentRestController_shouldReturnStudentById_whenStudentExists() throws Exception {
         Student student = createStudent();

@@ -31,6 +31,7 @@ public class Group {
 
     @OneToMany(mappedBy = "group")
     private List<Student> students;
+
     @Override
     public String toString() {
         return "Group{" +
@@ -38,6 +39,7 @@ public class Group {
                 ", name='" + name + '\'' +
                 '}';
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

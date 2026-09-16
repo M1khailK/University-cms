@@ -1,23 +1,22 @@
 package ua.foxminded.university.api.grade;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ua.foxminded.university.api.grade.dto.GradeResponse;
-import ua.foxminded.university.api.grade.mapper.GradeMapper;
-import ua.foxminded.university.services.GradeService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ua.foxminded.university.api.grade.dto.GradeCreateRequest;
+import ua.foxminded.university.api.grade.dto.GradeResponse;
+import ua.foxminded.university.api.grade.mapper.GradeMapper;
+import ua.foxminded.university.services.GradeService;
 
 import java.net.URI;
 import java.util.List;
@@ -40,6 +39,7 @@ public class GradeRestController {
     public List<GradeResponse> getMyGrades(Authentication authentication) {
         return gradeMapper.toResponses(gradeService.getGradesByEmail(authentication.getName()));
     }
+
     @PostMapping
     public ResponseEntity<GradeResponse> createGrade(@Valid @RequestBody GradeCreateRequest request,
                                                      Authentication authentication) {

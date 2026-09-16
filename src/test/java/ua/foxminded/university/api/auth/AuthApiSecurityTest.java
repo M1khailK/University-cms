@@ -94,11 +94,11 @@ class AuthApiSecurityTest {
                         post("/api/v1/auth/login")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
-                                    {
-                                      "email": "student@example.com",
-                                      "password":
-                                    }
-                                    """)
+                                        {
+                                          "email": "student@example.com",
+                                          "password":
+                                        }
+                                        """)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(
@@ -119,11 +119,11 @@ class AuthApiSecurityTest {
                         post("/api/v1/auth/login")
                                 .contentType(MediaType.TEXT_PLAIN)
                                 .content("""
-                                    {
-                                      "email": "student@example.com",
-                                      "password": "password"
-                                    }
-                                    """)
+                                        {
+                                          "email": "student@example.com",
+                                          "password": "password"
+                                        }
+                                        """)
                 )
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(content().contentTypeCompatibleWith(
