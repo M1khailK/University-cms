@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import ua.foxminded.university.customexceptions.AssistantUnavailableException;
 import ua.foxminded.university.customexceptions.AttendanceAccessDeniedException;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
@@ -231,6 +232,20 @@ public class ApiExceptionHandler {
         );
 
         problemDetail.setTitle("Validation failed");
+
+        return problemDetail;
+    }
+
+    @ExceptionHandler(AssistantUnavailableException.class)
+    public ProblemDetail handleAssistantUnavailable(
+            AssistantUnavailableException exception
+    ) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                exception.getMessage()
+        );
+
+        problemDetail.setTitle("AI assistant unavailable");
 
         return problemDetail;
     }
