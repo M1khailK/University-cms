@@ -10,6 +10,8 @@ import ua.foxminded.university.services.AssistantService;
 import ua.foxminded.university.services.assistant.AssistantToolContext;
 import ua.foxminded.university.services.assistant.UniversityAssistantTools;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -20,11 +22,22 @@ public class AssistantServiceImpl implements AssistantService {
     private static final String SYSTEM_PROMPT = """
             You are the University-CMS Assistant.
             
+            The current server date is %s.
+            
             You do not have direct access to University-CMS private data.
             Use only application tools explicitly provided to you.
             
             When an appropriate tool is available, use it for university-specific
             information instead of inventing an answer.
+            
+            For schedule requests:
+            - If the user provides an explicit date or date range, use that period.
+            - Resolve relative dates such as "today" and "tomorrow" using the
+              current server date above.
+            - If the user asks for their schedule or all lessons without specifying
+              a period, do not invent a date range. Ask them to provide one.
+            - A schedule request must not exceed 31 days.
+            - Never invent dates that the user did not request.
             
             If no appropriate tool is available, clearly state that you cannot
             access the requested University-CMS data.
@@ -33,6 +46,7 @@ public class AssistantServiceImpl implements AssistantService {
             Never claim that you performed an action in University-CMS unless an
             explicit application tool performed that action.
             """;
+
     private static final Set<String> PROFILE_TOOL_ROLES = Set.of(
             "ROLE_STUDENT",
             "ROLE_TEACHER"
@@ -49,8 +63,12 @@ public class AssistantServiceImpl implements AssistantService {
     }
 
     @Override
-    public String answer(String message, Authentication authentication) {
-        ChatClient.Builder builder = chatClientBuilderProvider.getIfAvailable();
+    public String answer(
+            String message,
+            Authentication authentication
+    ) {
+        ChatClient.Builder builder =
+                chatClientBuilderProvider.getIfAvailable();
 
         if (builder == null) {
             throw new AssistantUnavailableException(
@@ -59,8 +77,12 @@ public class AssistantServiceImpl implements AssistantService {
         }
 
         try {
+            String systemPrompt = SYSTEM_PROMPT.formatted(
+                    LocalDate.now()
+            );
+
             ChatClient.ChatClientRequestSpec requestSpec = builder
-                    .defaultSystem(SYSTEM_PROMPT)
+                    .defaultSystem(systemPrompt)
                     .build()
                     .prompt()
                     .user(message.strip());
@@ -98,6 +120,7 @@ public class AssistantServiceImpl implements AssistantService {
             );
         }
     }
+
     private Optional<AssistantToolContext> resolveProfileToolContext(
             Authentication authentication
     ) {
@@ -105,7 +128,7 @@ public class AssistantServiceImpl implements AssistantService {
             return Optional.empty();
         }
 
-        var profileRoles = authentication.getAuthorities()
+        List<String> profileRoles = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(PROFILE_TOOL_ROLES::contains)
