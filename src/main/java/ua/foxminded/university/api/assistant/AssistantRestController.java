@@ -3,6 +3,7 @@ package ua.foxminded.university.api.assistant;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +22,11 @@ public class AssistantRestController {
 
     @PostMapping("/messages")
     public AssistantMessageResponse sendMessage(
-            @Valid @RequestBody AssistantMessageRequest request
+            @Valid @RequestBody AssistantMessageRequest request,
+            Authentication authentication
     ) {
         return new AssistantMessageResponse(
-                assistantService.answer(request.message())
+                assistantService.answer(request.message(), authentication)
         );
     }
 }
