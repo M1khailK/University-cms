@@ -1,0 +1,79 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>My Schedule</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="loadSchedule()">
+      <div class="filters">
+        <mat-form-field>
+          <mat-label>From</mat-label>
+          <input matInput type="date" formControlName="from" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>To</mat-label>
+          <input matInput type="date" formControlName="to" />
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          type="submit"
+          [disabled]="form.invalid || loading()"
+        >
+          {{ loading() ? 'Loading...' : 'Load schedule' }}
+        </button>
+      </div>
+    </form>
+
+    @if (errorMessage()) {
+      <p class="error">{{ errorMessage() }}</p>
+    }
+
+    @if (!loading() && !errorMessage() && lessons().length === 0) {
+      <p>No lessons found for the selected period.</p>
+    }
+
+    @if (lessons().length > 0) {
+      <table mat-table [dataSource]="lessons()">
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let lesson">
+            {{ lesson.date }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="time">
+          <th mat-header-cell *matHeaderCellDef>Time</th>
+          <td mat-cell *matCellDef="let lesson">
+            {{ lesson.startTime }}–{{ lesson.endTime }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="subject">
+          <th mat-header-cell *matHeaderCellDef>Subject</th>
+          <td mat-cell *matCellDef="let lesson">
+            {{ lesson.subjectName }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="group">
+          <th mat-header-cell *matHeaderCellDef>Group</th>
+          <td mat-cell *matCellDef="let lesson">
+            {{ lesson.groupName }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="teacher">
+          <th mat-header-cell *matHeaderCellDef>Teacher</th>
+          <td mat-cell *matCellDef="let lesson">
+            {{ lesson.teacherFirstName }} {{ lesson.teacherLastName }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    }
+  </mat-card-content>
+</mat-card>
