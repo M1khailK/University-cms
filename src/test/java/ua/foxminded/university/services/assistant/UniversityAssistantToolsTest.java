@@ -296,4 +296,124 @@ class UniversityAssistantToolsTest {
 
         verifyNoInteractions(userService);
     }
+
+    @Test
+    void getMySchedule_shouldReturnInvalidRequest_whenDateFormatIsInvalid() {
+        UniversityAssistantTools tools =
+                new UniversityAssistantTools(
+                        serviceManager,
+                        userService
+                );
+
+        ToolContext toolContext = new ToolContext(
+                Map.of(
+                        UniversityAssistantTools.ASSISTANT_CONTEXT_KEY,
+                        new AssistantToolContext(
+                                "student@university.com",
+                                "ROLE_STUDENT"
+                        )
+                )
+        );
+
+        UniversityAssistantTools.ScheduleResult result =
+                tools.getMySchedule(
+                        "17-09-2026",
+                        "2026-09-18",
+                        toolContext
+                );
+
+        assertFalse(result.successful());
+        assertEquals(
+                "Dates must use format YYYY-MM-DD.",
+                result.message()
+        );
+        assertEquals(List.of(), result.lessons());
+
+        verifyNoInteractions(userService);
+    }
+
+    @Test
+    void getMySchedule_shouldReturnInvalidRequest_whenEndDateIsBeforeStartDate() {
+        UniversityAssistantTools tools =
+                new UniversityAssistantTools(
+                        serviceManager,
+                        userService
+                );
+
+        ToolContext toolContext = new ToolContext(
+                Map.of(
+                        UniversityAssistantTools.ASSISTANT_CONTEXT_KEY,
+                        new AssistantToolContext(
+                                "student@university.com",
+                                "ROLE_STUDENT"
+                        )
+                )
+        );
+
+        UniversityAssistantTools.ScheduleResult result =
+                tools.getMySchedule(
+                        "2026-09-18",
+                        "2026-09-17",
+                        toolContext
+                );
+
+        assertFalse(result.successful());
+        assertEquals(
+                "Schedule end date cannot be before start date.",
+                result.message()
+        );
+        assertEquals(List.of(), result.lessons());
+
+        verifyNoInteractions(userService);
+    }
+
+    @Test
+    void getMySchedule_shouldPropagateBackendFailure() {
+        LocalDate from = LocalDate.of(2026, 9, 17);
+        LocalDate to = LocalDate.of(2026, 9, 18);
+
+        RuntimeException backendException =
+                new RuntimeException("Database unavailable");
+
+        when(userService.getUserLessons(
+                "student@university.com",
+                "ROLE_STUDENT",
+                from,
+                to
+        )).thenThrow(backendException);
+
+        UniversityAssistantTools tools =
+                new UniversityAssistantTools(
+                        serviceManager,
+                        userService
+                );
+
+        ToolContext toolContext = new ToolContext(
+                Map.of(
+                        UniversityAssistantTools.ASSISTANT_CONTEXT_KEY,
+                        new AssistantToolContext(
+                                "student@university.com",
+                                "ROLE_STUDENT"
+                        )
+                )
+        );
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> tools.getMySchedule(
+                        "2026-09-17",
+                        "2026-09-18",
+                        toolContext
+                )
+        );
+
+        assertEquals(backendException, exception);
+
+        verify(userService).getUserLessons(
+                "student@university.com",
+                "ROLE_STUDENT",
+                from,
+                to
+        );
+    }
 }

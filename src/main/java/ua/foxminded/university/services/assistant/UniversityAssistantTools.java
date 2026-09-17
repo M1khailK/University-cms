@@ -159,18 +159,6 @@ public class UniversityAssistantTools {
         return context;
     }
 
-    private LocalDate parseDate(String value, String parameterName) {
-        try {
-            return LocalDate.parse(value);
-        } catch (DateTimeParseException exception) {
-            throw new IllegalArgumentException(
-                    "Invalid " + parameterName
-                            + " date. Expected format YYYY-MM-DD.",
-                    exception
-            );
-        }
-    }
-
     private ScheduleLessonResult toScheduleLessonResult(Lesson lesson) {
         return new ScheduleLessonResult(
                 lesson.getName(),

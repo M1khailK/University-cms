@@ -72,6 +72,60 @@ class AssistantServiceImplTest {
     }
 
     @Test
+    void answer_shouldExposeToolsWithTrustedContext_whenUserIsTeacher() {
+        configureChatClient();
+
+        when(chatClient.prompt()).thenReturn(requestSpec);
+        when(requestSpec.user("What is my schedule?"))
+                .thenReturn(requestSpec);
+        when(requestSpec.tools(universityAssistantTools))
+                .thenReturn(requestSpec);
+        when(requestSpec.toolContext(anyMap()))
+                .thenReturn(requestSpec);
+        when(requestSpec.call()).thenReturn(responseSpec);
+        when(responseSpec.content())
+                .thenReturn("Teacher schedule");
+
+        AssistantServiceImpl assistantService =
+                new AssistantServiceImpl(
+                        chatClientBuilderProvider,
+                        universityAssistantTools
+                );
+
+        Authentication authentication =
+                new TestingAuthenticationToken(
+                        "teacher@university.com",
+                        "password",
+                        "ROLE_TEACHER"
+                );
+
+        String answer = assistantService.answer(
+                "What is my schedule?",
+                authentication
+        );
+
+        assertEquals("Teacher schedule", answer);
+
+        verify(requestSpec)
+                .tools(universityAssistantTools);
+
+        verify(requestSpec)
+                .toolContext(
+                        argThat(context ->
+                                new AssistantToolContext(
+                                        "teacher@university.com",
+                                        "ROLE_TEACHER"
+                                ).equals(
+                                        context.get(
+                                                UniversityAssistantTools
+                                                        .ASSISTANT_CONTEXT_KEY
+                                        )
+                                )
+                        )
+                );
+    }
+
+    @Test
     void answer_shouldExposeProfileToolWithTrustedContext_whenUserIsStudent() {
         configureChatClient();
 
@@ -123,6 +177,45 @@ class AssistantServiceImplTest {
                                 )
                         )
                 );
+    }
+
+    @Test
+    void answer_shouldNotExposeTools_whenAuthenticationHasMultiplePrivateRoles() {
+        configureChatClient();
+
+        when(chatClient.prompt()).thenReturn(requestSpec);
+        when(requestSpec.user("Show my data"))
+                .thenReturn(requestSpec);
+        when(requestSpec.call()).thenReturn(responseSpec);
+        when(responseSpec.content())
+                .thenReturn("No private tools available");
+
+        AssistantServiceImpl assistantService =
+                new AssistantServiceImpl(
+                        chatClientBuilderProvider,
+                        universityAssistantTools
+                );
+
+        Authentication authentication =
+                new TestingAuthenticationToken(
+                        "user@university.com",
+                        "password",
+                        "ROLE_STUDENT",
+                        "ROLE_TEACHER"
+                );
+
+        String answer = assistantService.answer(
+                "Show my data",
+                authentication
+        );
+
+        assertEquals("No private tools available", answer);
+
+        verify(requestSpec, never())
+                .tools(universityAssistantTools);
+
+        verify(requestSpec, never())
+                .toolContext(anyMap());
     }
 
     @Test
