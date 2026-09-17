@@ -52,19 +52,48 @@ CREATE TABLE lessons
 
 CREATE TABLE lesson_materials
 (
-    material_id      SERIAL PRIMARY KEY,
-    lesson_id        INT          NOT NULL,
-    object_key       VARCHAR(512) NOT NULL,
-    original_filename VARCHAR(255) NOT NULL,
-    content_type     VARCHAR(100) NOT NULL,
-    size_bytes       BIGINT       NOT NULL,
-    uploaded_at      TIMESTAMP WITH TIME ZONE NOT NULL,
+    material_id       SERIAL PRIMARY KEY,
+    lesson_id         INT                      NOT NULL,
+    object_key        VARCHAR(512)             NOT NULL,
+    original_filename VARCHAR(255)             NOT NULL,
+    content_type      VARCHAR(100)             NOT NULL,
+    expected_size_bytes BIGINT                 NOT NULL,
+    actual_size_bytes BIGINT,
+    status            VARCHAR(32)              NOT NULL,
+    checksum_sha256   VARCHAR(128),
+    created_at        TIMESTAMP WITH TIME ZONE NOT NULL,
+    uploaded_at       TIMESTAMP WITH TIME ZONE,
+    processed_at      TIMESTAMP WITH TIME ZONE,
+    s3_version_id     VARCHAR(1024),
+    s3_sequencer      VARCHAR(128),
+    failure_reason    VARCHAR(1000),
+
     FOREIGN KEY (lesson_id) REFERENCES lessons (lesson_id),
-    UNIQUE (object_key)
+    UNIQUE (object_key),
+
+    CONSTRAINT chk_lesson_material_status
+        CHECK (
+            status IN (
+                       'PENDING_UPLOAD',
+                       'UPLOADED',
+                       'PROCESSING',
+                       'READY',
+                       'FAILED'
+                )
+            ),
+
+    CONSTRAINT chk_lesson_material_expected_size
+        CHECK (expected_size_bytes > 0),
+
+    CONSTRAINT chk_lesson_material_actual_size
+        CHECK (actual_size_bytes IS NULL OR actual_size_bytes > 0)
 );
 
 CREATE INDEX idx_lesson_materials_lesson_id
     ON lesson_materials (lesson_id);
+
+CREATE INDEX idx_lesson_materials_status
+    ON lesson_materials (status);
 
 CREATE TABLE user_role
 (

@@ -2,6 +2,8 @@ package ua.foxminded.university.info;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,9 +42,34 @@ public class LessonMaterial {
     @Column(name = "content_type", length = 100, nullable = false)
     private String contentType;
 
-    @Column(name = "size_bytes", nullable = false)
-    private long sizeBytes;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 32, nullable = false)
+    private LessonMaterialStatus status;
 
-    @Column(name = "uploaded_at", nullable = false)
+    @Column(name = "expected_size_bytes", nullable = false)
+    private long expectedSizeBytes;
+
+    @Column(name = "actual_size_bytes")
+    private Long actualSizeBytes;
+
+    @Column(name = "checksum_sha256", length = 128)
+    private String checksumSha256;
+
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
+
+    @Column(name = "uploaded_at")
     private Instant uploadedAt;
+
+    @Column(name = "processed_at")
+    private Instant processedAt;
+
+    @Column(name = "s3_version_id", length = 1024)
+    private String s3VersionId;
+
+    @Column(name = "s3_sequencer", length = 128)
+    private String s3Sequencer;
+
+    @Column(name = "failure_reason", length = 1000)
+    private String failureReason;
 }
