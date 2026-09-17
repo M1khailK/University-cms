@@ -51,6 +51,14 @@ export const routes: Routes = [
       ),
   },
   {
+  path: 'schedule',
+  canActivate: [authGuard],
+  loadComponent: () =>
+    import('./features/schedule/schedule.component').then(
+      (module) => module.ScheduleComponent,
+    ),
+},
+  {
     path: '**',
     redirectTo: 'login',
   },
