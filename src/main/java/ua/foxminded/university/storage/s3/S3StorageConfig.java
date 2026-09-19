@@ -5,18 +5,18 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ua.foxminded.university.customexceptions.StorageUnavailableException;
 import ua.foxminded.university.storage.UploadPresigner;
 
 import java.time.Clock;
 
 @Configuration
 @EnableConfigurationProperties(S3StorageProperties.class)
-@ConditionalOnProperty(
-        name = "spring.cloud.aws.s3.enabled",
-        havingValue = "true"
-)
 public class S3StorageConfig {
-
+    @ConditionalOnProperty(
+            name = "spring.cloud.aws.s3.enabled",
+            havingValue = "true"
+    )
     @Bean
     public UploadPresigner uploadPresigner(
             S3Operations s3Operations,
@@ -29,5 +29,19 @@ public class S3StorageConfig {
                 properties.uploadUrlTtl(),
                 clock
         );
+    }
+
+    @Bean
+    @ConditionalOnProperty(
+            name = "spring.cloud.aws.s3.enabled",
+            havingValue = "false",
+            matchIfMissing = true
+    )
+    public UploadPresigner unavailableUploadPresigner() {
+        return (objectKey, contentType) -> {
+            throw new StorageUnavailableException(
+                    "File storage is currently unavailable."
+            );
+        };
     }
 }

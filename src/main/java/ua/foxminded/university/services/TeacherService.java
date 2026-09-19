@@ -2,8 +2,8 @@ package ua.foxminded.university.services;
 
 import ua.foxminded.university.info.Teacher;
 
-public interface TeacherService extends EntityService<Teacher>, UserManagerService {
-
+public interface TeacherService
+        extends EntityService<Teacher>, UserManagerService<Teacher> {
     String getPasswordById(int id);
 
     Teacher createAdminAccount(String firstName, String lastName, String email);
