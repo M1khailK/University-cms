@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadException;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.LessonMaterial;
 import ua.foxminded.university.info.LessonMaterialStatus;
@@ -90,38 +91,38 @@ public class LessonMaterialServiceImpl implements LessonMaterialService {
             long expectedSizeBytes
     ) {
         if (authenticatedEmail == null || authenticatedEmail.isBlank()) {
-            throw new IllegalArgumentException(
+            throw new InvalidLessonMaterialUploadException(
                     "Authenticated email must not be blank."
             );
         }
 
         if (originalFilename == null || originalFilename.isBlank()) {
-            throw new IllegalArgumentException(
+            throw new InvalidLessonMaterialUploadException(
                     "Original filename must not be blank."
             );
         }
 
         if (originalFilename.length() > 255) {
-            throw new IllegalArgumentException(
+            throw new InvalidLessonMaterialUploadException(
                     "Original filename must not exceed 255 characters."
             );
         }
 
         if (contentType == null
                 || !PDF_CONTENT_TYPE.equalsIgnoreCase(contentType)) {
-            throw new IllegalArgumentException(
+            throw new InvalidLessonMaterialUploadException(
                     "Only PDF files are supported."
             );
         }
 
         if (expectedSizeBytes <= 0) {
-            throw new IllegalArgumentException(
+            throw new InvalidLessonMaterialUploadException(
                     "File size must be positive."
             );
         }
 
         if (expectedSizeBytes > MAX_FILE_SIZE_BYTES) {
-            throw new IllegalArgumentException(
+            throw new InvalidLessonMaterialUploadException(
                     "File size must not exceed 10 MB."
             );
         }

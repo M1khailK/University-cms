@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
+import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadException;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.LessonMaterial;
 import ua.foxminded.university.info.LessonMaterialStatus;
@@ -191,15 +192,21 @@ public class LessonMaterialServiceImplTest {
 
     @Test
     public void createUploadIntent_shouldRejectUpload_whenContentTypeIsNotPdf() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> lessonMaterialService.createUploadIntent(
-                        17,
-                        EMAIL,
-                        "lecture.txt",
-                        "text/plain",
-                        1024L
-                )
+        InvalidLessonMaterialUploadException exception =
+                assertThrows(
+                        InvalidLessonMaterialUploadException.class,
+                        () -> lessonMaterialService.createUploadIntent(
+                                17,
+                                EMAIL,
+                                "lecture.txt",
+                                "text/plain",
+                                1024L
+                        )
+                );
+
+        assertEquals(
+                "Only PDF files are supported.",
+                exception.getMessage()
         );
 
         verifyNoInteractions(
@@ -214,18 +221,22 @@ public class LessonMaterialServiceImplTest {
     public void createUploadIntent_shouldRejectUpload_whenFileIsTooLarge() {
         long elevenMegabytes =
                 11L * 1024 * 1024;
+        InvalidLessonMaterialUploadException exception =
+                assertThrows(
+                        InvalidLessonMaterialUploadException.class,
+                        () -> lessonMaterialService.createUploadIntent(
+                                17,
+                                EMAIL,
+                                "lecture.pdf",
+                                "application/pdf",
+                                elevenMegabytes
+                        )
+                );
 
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> lessonMaterialService.createUploadIntent(
-                        17,
-                        EMAIL,
-                        "lecture.pdf",
-                        "application/pdf",
-                        elevenMegabytes
-                )
+        assertEquals(
+                "File size must not exceed 10 MB.",
+                exception.getMessage()
         );
-
         verifyNoInteractions(
                 teacherService,
                 lessonService,
