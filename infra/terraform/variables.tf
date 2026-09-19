@@ -17,3 +17,9 @@ variable "lesson_materials_bucket_name" {
     error_message = "S3 bucket name must contain between 3 and 63 characters."
   }
 }
+
+  variable "lesson_materials_cors_allowed_origins" {
+    description = "Origins allowed to upload lesson materials directly to S3."
+    type        = list(string)
+    default     = ["http://localhost:4200"]
+  }

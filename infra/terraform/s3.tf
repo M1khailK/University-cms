@@ -36,3 +36,20 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "lesson_materials"
     }
   }
 }
+
+resource "aws_s3_bucket_cors_configuration" "lesson_materials" {
+  bucket = aws_s3_bucket.lesson_materials.id
+
+  cors_rule {
+    allowed_methods = ["PUT", "HEAD"]
+    allowed_origins = var.lesson_materials_cors_allowed_origins
+    allowed_headers = ["Content-Type"]
+
+    expose_headers = [
+      "ETag",
+      "x-amz-version-id"
+    ]
+
+    max_age_seconds = 300
+  }
+}

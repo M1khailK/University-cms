@@ -1,3 +1,7 @@
 aws_region = "eu-central-1"
 
 lesson_materials_bucket_name = "university-cms-lesson-materials-change-me"
+
+lesson_materials_cors_allowed_origins = [
+  "http://localhost:4200"
+]
