@@ -45,3 +45,43 @@ resource "aws_iam_role_policy" "backend_s3_upload" {
   role   = aws_iam_role.backend_local.id
   policy = data.aws_iam_policy_document.backend_s3_upload.json
 }
+
+data "aws_iam_policy_document" "backend_lesson_material_ingestion" {
+  statement {
+    sid    = "ReadUploadedLessonMaterials"
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.lesson_materials.arn}/lesson-materials/*"
+    ]
+  }
+
+  statement {
+    sid    = "ConsumeLessonMaterialEvents"
+    effect = "Allow"
+
+    actions = [
+      "sqs:ReceiveMessage",
+      "sqs:DeleteMessage",
+      "sqs:ChangeMessageVisibility",
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl"
+    ]
+
+    resources = [
+      aws_sqs_queue.lesson_material_ingestion.arn
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "backend_lesson_material_ingestion" {
+  name = "lesson-materials-ingestion"
+
+  role   = aws_iam_role.backend_local.id
+  policy = data.aws_iam_policy_document.backend_lesson_material_ingestion.json
+}
