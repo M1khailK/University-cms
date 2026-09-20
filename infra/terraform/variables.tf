@@ -18,8 +18,14 @@ variable "lesson_materials_bucket_name" {
   }
 }
 
-  variable "lesson_materials_cors_allowed_origins" {
-    description = "Origins allowed to upload lesson materials directly to S3."
-    type        = list(string)
-    default     = ["http://localhost:4200"]
-  }
+variable "lesson_materials_cors_allowed_origins" {
+  description = "Origins allowed to upload lesson materials directly to S3."
+  type        = list(string)
+  default     = ["http://localhost:4200"]
+}
+
+variable "terraform_operator_user_name" {
+  description = "IAM user allowed to assume the local backend role."
+  type        = string
+  default     = "university-cms-admin"
+}
