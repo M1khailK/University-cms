@@ -12,4 +12,6 @@ public interface LessonMaterialChunkRepository
     findAllByMaterialIdOrderByPageNumberAscChunkIndexAsc(
             Integer materialId
     );
+
+    void deleteAllByMaterialId(Integer materialId);
 }
