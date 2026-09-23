@@ -3,6 +3,7 @@ package ua.foxminded.university.services.ingestion.sqs;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import ua.foxminded.university.services.ingestion.LessonMaterialDocumentProcessor;
 import ua.foxminded.university.services.ingestion.LessonMaterialIngestionService;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
 
@@ -17,13 +18,16 @@ public class LessonMaterialSqsListener {
 
     private final LessonMaterialS3EventParser eventParser;
     private final LessonMaterialIngestionService ingestionService;
+    private final LessonMaterialDocumentProcessor documentProcessor;
 
     public LessonMaterialSqsListener(
             LessonMaterialS3EventParser eventParser,
-            LessonMaterialIngestionService ingestionService
+            LessonMaterialIngestionService ingestionService,
+            LessonMaterialDocumentProcessor documentProcessor
     ) {
         this.eventParser = eventParser;
         this.ingestionService = ingestionService;
+        this.documentProcessor = documentProcessor;
     }
 
     @SqsListener(
@@ -36,6 +40,7 @@ public class LessonMaterialSqsListener {
 
         for (LessonMaterialObjectCreatedEvent event : events) {
             ingestionService.processObjectCreated(event);
+            documentProcessor.process(event);
         }
     }
 }
