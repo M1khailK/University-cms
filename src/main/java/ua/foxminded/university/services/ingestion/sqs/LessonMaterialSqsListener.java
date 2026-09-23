@@ -1,8 +1,10 @@
-package ua.foxminded.university.services.ingestion;
+package ua.foxminded.university.services.ingestion.sqs;
 
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import ua.foxminded.university.services.ingestion.LessonMaterialIngestionService;
+import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
 
 import java.util.List;
 

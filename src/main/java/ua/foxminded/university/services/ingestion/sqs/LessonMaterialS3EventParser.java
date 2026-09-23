@@ -1,8 +1,9 @@
-package ua.foxminded.university.services.ingestion;
+package ua.foxminded.university.services.ingestion.sqs;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
+import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

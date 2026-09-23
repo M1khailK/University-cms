@@ -30,6 +30,7 @@
         <spring-cloud-aws.version>3.4.2</spring-cloud-aws.version>
         <argLine/>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+        <pdfbox.version>3.0.8</pdfbox.version>
     </properties>
 
     <dependencyManagement>
@@ -210,6 +211,11 @@
         <dependency>
             <groupId>io.awspring.cloud</groupId>
             <artifactId>spring-cloud-aws-starter-s3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>${pdfbox.version}</version>
         </dependency>
         <dependency>
             <groupId>io.awspring.cloud</groupId>

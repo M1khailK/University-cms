@@ -7,7 +7,7 @@ import ua.foxminded.university.info.LessonMaterial;
 import ua.foxminded.university.info.LessonMaterialStatus;
 import ua.foxminded.university.repository.LessonMaterialRepository;
 import ua.foxminded.university.services.ingestion.LessonMaterialIngestionService;
-import ua.foxminded.university.services.ingestion.LessonMaterialObjectCreatedEvent;
+import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
 import ua.foxminded.university.storage.ObjectMetadataReader;
 import ua.foxminded.university.storage.StoredObjectMetadata;
 

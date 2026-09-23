@@ -2,6 +2,8 @@ package ua.foxminded.university.services.ingestion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
+import ua.foxminded.university.services.ingestion.sqs.LessonMaterialS3EventParser;
 
 import java.util.List;
 
