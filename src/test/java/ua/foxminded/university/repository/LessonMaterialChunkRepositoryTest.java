@@ -19,7 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest(properties = {
         "spring.datasource.url="
-                + "jdbc:tc:postgresql:15:///lesson-material-chunks-test",
+                + "jdbc:tc:pgvector:0.8.6-pg17"
+                + ":///lesson-material-chunks-test",
         "spring.flyway.enabled=true"
 })
 @AutoConfigureTestDatabase(

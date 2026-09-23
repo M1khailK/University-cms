@@ -23,7 +23,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {
-        "spring.datasource.url=jdbc:tc:postgresql:15:///student-create-integration",
+        "spring.datasource.url="
+                + "jdbc:tc:pgvector:0.8.6-pg17"
+                + ":///student-create-integration",
         "spring.flyway.enabled=true"
 })
 @AutoConfigureMockMvc
