@@ -5,10 +5,15 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
-import ua.foxminded.university.customexceptions.AssistantUnavailableException;
+import ua.foxminded.university.customexceptions
+        .AssistantUnavailableException;
 import ua.foxminded.university.services.AssistantService;
-import ua.foxminded.university.services.assistant.AssistantToolContext;
-import ua.foxminded.university.services.assistant.UniversityAssistantTools;
+import ua.foxminded.university.services.assistant
+        .AssistantToolContext;
+import ua.foxminded.university.services.assistant
+        .LessonMaterialAssistantTools;
+import ua.foxminded.university.services.assistant
+        .UniversityAssistantTools;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,15 +26,15 @@ public class AssistantServiceImpl implements AssistantService {
 
     private static final String SYSTEM_PROMPT = """
             You are the University-CMS Assistant.
-            
+
             The current server date is %s.
-            
+
             You do not have direct access to University-CMS private data.
             Use only application tools explicitly provided to you.
-            
+
             When an appropriate tool is available, use it for university-specific
             information instead of inventing an answer.
-            
+
             For schedule requests:
             - If the user provides an explicit date or date range, use that period.
             - Resolve relative dates such as "today" and "tomorrow" using the
@@ -38,10 +43,18 @@ public class AssistantServiceImpl implements AssistantService {
               a period, do not invent a date range. Ask them to provide one.
             - A schedule request must not exceed 31 days.
             - Never invent dates that the user did not request.
-            
+
+            For questions about uploaded lesson materials:
+            - Use the lesson material search tool.
+            - Base the answer only on excerpts returned by the tool.
+            - Do not claim that an excerpt contains information that is absent.
+            - Mention the source filename and page number when useful.
+            - If no relevant excerpts are found, say that the available lesson
+              materials do not contain enough information to answer.
+
             If no appropriate tool is available, clearly state that you cannot
             access the requested University-CMS data.
-            
+
             Never invent university-specific information.
             Never claim that you performed an action in University-CMS unless an
             explicit application tool performed that action.
@@ -51,15 +64,33 @@ public class AssistantServiceImpl implements AssistantService {
             "ROLE_STUDENT",
             "ROLE_TEACHER"
     );
-    private final ObjectProvider<ChatClient.Builder> chatClientBuilderProvider;
+
+    private static final Set<String> MATERIAL_TOOL_ROLES = Set.of(
+            "ROLE_STUDENT",
+            "ROLE_TEACHER",
+            "ROLE_ADMIN"
+    );
+
+    private final ObjectProvider<ChatClient.Builder>
+            chatClientBuilderProvider;
+
     private final UniversityAssistantTools universityAssistantTools;
+    private final LessonMaterialAssistantTools lessonMaterialAssistantTools;
 
     public AssistantServiceImpl(
-            ObjectProvider<ChatClient.Builder> chatClientBuilderProvider,
-            UniversityAssistantTools universityAssistantTools
+            ObjectProvider<ChatClient.Builder>
+                    chatClientBuilderProvider,
+            UniversityAssistantTools universityAssistantTools,
+            LessonMaterialAssistantTools lessonMaterialAssistantTools
     ) {
-        this.chatClientBuilderProvider = chatClientBuilderProvider;
-        this.universityAssistantTools = universityAssistantTools;
+        this.chatClientBuilderProvider =
+                chatClientBuilderProvider;
+
+        this.universityAssistantTools =
+                universityAssistantTools;
+
+        this.lessonMaterialAssistantTools =
+                lessonMaterialAssistantTools;
     }
 
     @Override
@@ -88,15 +119,13 @@ public class AssistantServiceImpl implements AssistantService {
                     .user(message.strip());
 
             Optional<AssistantToolContext> assistantContext =
-                    resolveProfileToolContext(authentication);
+                    resolveAssistantToolContext(authentication);
 
             if (assistantContext.isPresent()) {
-                requestSpec = requestSpec
-                        .tools(universityAssistantTools)
-                        .toolContext(Map.of(
-                                UniversityAssistantTools.ASSISTANT_CONTEXT_KEY,
-                                assistantContext.get()
-                        ));
+                requestSpec = attachTools(
+                        requestSpec,
+                        assistantContext.get()
+                );
             }
 
             String answer = requestSpec
@@ -121,27 +150,50 @@ public class AssistantServiceImpl implements AssistantService {
         }
     }
 
-    private Optional<AssistantToolContext> resolveProfileToolContext(
+    private ChatClient.ChatClientRequestSpec attachTools(
+            ChatClient.ChatClientRequestSpec requestSpec,
+            AssistantToolContext context
+    ) {
+        if (PROFILE_TOOL_ROLES.contains(context.role())) {
+            requestSpec = requestSpec.tools(
+                    universityAssistantTools,
+                    lessonMaterialAssistantTools
+            );
+        } else {
+            requestSpec = requestSpec.tools(
+                    lessonMaterialAssistantTools
+            );
+        }
+
+        return requestSpec.toolContext(Map.of(
+                UniversityAssistantTools.ASSISTANT_CONTEXT_KEY,
+                context
+        ));
+    }
+
+    private Optional<AssistantToolContext>
+    resolveAssistantToolContext(
             Authentication authentication
     ) {
         if (authentication == null) {
             return Optional.empty();
         }
 
-        List<String> profileRoles = authentication.getAuthorities()
+        List<String> supportedRoles = authentication
+                .getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .filter(PROFILE_TOOL_ROLES::contains)
+                .filter(MATERIAL_TOOL_ROLES::contains)
                 .toList();
 
-        if (profileRoles.size() != 1) {
+        if (supportedRoles.size() != 1) {
             return Optional.empty();
         }
 
         return Optional.of(
                 new AssistantToolContext(
                         authentication.getName(),
-                        profileRoles.get(0)
+                        supportedRoles.getFirst()
                 )
         );
     }

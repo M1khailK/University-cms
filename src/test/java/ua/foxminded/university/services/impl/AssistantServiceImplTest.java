@@ -10,6 +10,7 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import ua.foxminded.university.customexceptions.AssistantUnavailableException;
 import ua.foxminded.university.services.assistant.AssistantToolContext;
+import ua.foxminded.university.services.assistant.LessonMaterialAssistantTools;
 import ua.foxminded.university.services.assistant.UniversityAssistantTools;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +24,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AssistantServiceImplTest {
+
+    @Mock
+    private LessonMaterialAssistantTools lessonMaterialAssistantTools;
 
     @Mock
     private UniversityAssistantTools universityAssistantTools;
@@ -43,18 +47,28 @@ class AssistantServiceImplTest {
     private ChatClient.CallResponseSpec responseSpec;
 
     @Test
-    void answer_shouldReturnResponse_whenChatClientIsAvailable() {
+    void answer_shouldExposeMaterialTool_whenUserIsAdmin() {
         configureChatClient();
 
         when(chatClient.prompt()).thenReturn(requestSpec);
         when(requestSpec.user("Hello")).thenReturn(requestSpec);
+
+        when(requestSpec.tools(
+                lessonMaterialAssistantTools
+        )).thenReturn(requestSpec);
+
+        when(requestSpec.toolContext(anyMap()))
+                .thenReturn(requestSpec);
+
         when(requestSpec.call()).thenReturn(responseSpec);
-        when(responseSpec.content()).thenReturn("Hello from assistant");
+        when(responseSpec.content())
+                .thenReturn("Hello from assistant");
 
         AssistantServiceImpl assistantService =
                 new AssistantServiceImpl(
                         chatClientBuilderProvider,
-                        universityAssistantTools
+                        universityAssistantTools,
+                        lessonMaterialAssistantTools
                 );
 
         String answer = assistantService.answer(
@@ -65,10 +79,24 @@ class AssistantServiceImplTest {
         assertEquals("Hello from assistant", answer);
 
         verify(requestSpec).user("Hello");
-        verify(requestSpec, never())
-                .tools(universityAssistantTools);
-        verify(requestSpec, never())
-                .toolContext(anyMap());
+
+        verify(requestSpec).tools(
+                lessonMaterialAssistantTools
+        );
+
+        verify(requestSpec).toolContext(
+                argThat(context ->
+                        new AssistantToolContext(
+                                "admin@university.com",
+                                "ROLE_ADMIN"
+                        ).equals(
+                                context.get(
+                                        UniversityAssistantTools
+                                                .ASSISTANT_CONTEXT_KEY
+                                )
+                        )
+                )
+        );
     }
 
     @Test
@@ -78,8 +106,10 @@ class AssistantServiceImplTest {
         when(chatClient.prompt()).thenReturn(requestSpec);
         when(requestSpec.user("What is my schedule?"))
                 .thenReturn(requestSpec);
-        when(requestSpec.tools(universityAssistantTools))
-                .thenReturn(requestSpec);
+        when(requestSpec.tools(
+                universityAssistantTools,
+                lessonMaterialAssistantTools
+        )).thenReturn(requestSpec);
         when(requestSpec.toolContext(anyMap()))
                 .thenReturn(requestSpec);
         when(requestSpec.call()).thenReturn(responseSpec);
@@ -89,7 +119,8 @@ class AssistantServiceImplTest {
         AssistantServiceImpl assistantService =
                 new AssistantServiceImpl(
                         chatClientBuilderProvider,
-                        universityAssistantTools
+                        universityAssistantTools,
+                        lessonMaterialAssistantTools
                 );
 
         Authentication authentication =
@@ -106,8 +137,10 @@ class AssistantServiceImplTest {
 
         assertEquals("Teacher schedule", answer);
 
-        verify(requestSpec)
-                .tools(universityAssistantTools);
+        verify(requestSpec).tools(
+                universityAssistantTools,
+                lessonMaterialAssistantTools
+        );
 
         verify(requestSpec)
                 .toolContext(
@@ -132,8 +165,10 @@ class AssistantServiceImplTest {
         when(chatClient.prompt()).thenReturn(requestSpec);
         when(requestSpec.user("What is my profile?"))
                 .thenReturn(requestSpec);
-        when(requestSpec.tools(universityAssistantTools))
-                .thenReturn(requestSpec);
+        when(requestSpec.tools(
+                universityAssistantTools,
+                lessonMaterialAssistantTools
+        )).thenReturn(requestSpec);
         when(requestSpec.toolContext(anyMap()))
                 .thenReturn(requestSpec);
         when(requestSpec.call()).thenReturn(responseSpec);
@@ -143,7 +178,8 @@ class AssistantServiceImplTest {
         AssistantServiceImpl assistantService =
                 new AssistantServiceImpl(
                         chatClientBuilderProvider,
-                        universityAssistantTools
+                        universityAssistantTools,
+                        lessonMaterialAssistantTools
                 );
 
         Authentication authentication =
@@ -160,8 +196,10 @@ class AssistantServiceImplTest {
 
         assertEquals("Your name is Alice.", answer);
 
-        verify(requestSpec)
-                .tools(universityAssistantTools);
+        verify(requestSpec).tools(
+                universityAssistantTools,
+                lessonMaterialAssistantTools
+        );
 
         verify(requestSpec)
                 .toolContext(
@@ -193,7 +231,8 @@ class AssistantServiceImplTest {
         AssistantServiceImpl assistantService =
                 new AssistantServiceImpl(
                         chatClientBuilderProvider,
-                        universityAssistantTools
+                        universityAssistantTools,
+                        lessonMaterialAssistantTools
                 );
 
         Authentication authentication =
@@ -216,6 +255,15 @@ class AssistantServiceImplTest {
 
         verify(requestSpec, never())
                 .toolContext(anyMap());
+
+        verify(requestSpec, never())
+                .tools(lessonMaterialAssistantTools);
+
+        verify(requestSpec, never())
+                .tools(
+                        universityAssistantTools,
+                        lessonMaterialAssistantTools
+                );
     }
 
     @Test
@@ -226,7 +274,8 @@ class AssistantServiceImplTest {
         AssistantServiceImpl assistantService =
                 new AssistantServiceImpl(
                         chatClientBuilderProvider,
-                        universityAssistantTools
+                        universityAssistantTools,
+                        lessonMaterialAssistantTools
                 );
 
         AssistantUnavailableException exception = assertThrows(
@@ -256,7 +305,8 @@ class AssistantServiceImplTest {
         AssistantServiceImpl assistantService =
                 new AssistantServiceImpl(
                         chatClientBuilderProvider,
-                        universityAssistantTools
+                        universityAssistantTools,
+                        lessonMaterialAssistantTools
                 );
 
         AssistantUnavailableException exception = assertThrows(
@@ -280,13 +330,22 @@ class AssistantServiceImplTest {
 
         when(chatClient.prompt()).thenReturn(requestSpec);
         when(requestSpec.user("Hello")).thenReturn(requestSpec);
+
+        when(requestSpec.tools(
+                lessonMaterialAssistantTools
+        )).thenReturn(requestSpec);
+
+        when(requestSpec.toolContext(anyMap()))
+                .thenReturn(requestSpec);
+
         when(requestSpec.call()).thenReturn(responseSpec);
         when(responseSpec.content()).thenReturn("   ");
 
         AssistantServiceImpl assistantService =
                 new AssistantServiceImpl(
                         chatClientBuilderProvider,
-                        universityAssistantTools
+                        universityAssistantTools,
+                        lessonMaterialAssistantTools
                 );
 
         AssistantUnavailableException exception = assertThrows(
