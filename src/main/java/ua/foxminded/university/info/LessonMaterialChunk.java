@@ -12,6 +12,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Array;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "lesson_material_chunks")
@@ -37,4 +40,12 @@ public class LessonMaterialChunk {
 
     @Column(name = "chunk_text", nullable = false, columnDefinition = "text")
     private String text;
+
+    @JdbcTypeCode(SqlTypes.VECTOR)
+    @Array(length = 768)
+    @Column(
+            name = "embedding",
+            columnDefinition = "vector(768)"
+    )
+    private float[] embedding;
 }

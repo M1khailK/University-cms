@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -27,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         replace = AutoConfigureTestDatabase.Replace.NONE
 )
 class LessonMaterialChunkRepositoryTest {
+
+    private static final int EMBEDDING_DIMENSIONS = 768;
 
     @Autowired
     private LessonRepository lessonRepository;
@@ -63,9 +66,27 @@ class LessonMaterialChunkRepositoryTest {
         material = materialRepository.saveAndFlush(material);
 
         chunkRepository.saveAllAndFlush(List.of(
-                createChunk(material, 3, 1, "Third page, second chunk"),
-                createChunk(material, 1, 0, "First page"),
-                createChunk(material, 3, 0, "Third page, first chunk")
+                createChunk(
+                        material,
+                        3,
+                        1,
+                        "Third page, second chunk",
+                        embedding(0.3f)
+                ),
+                createChunk(
+                        material,
+                        1,
+                        0,
+                        "First page",
+                        embedding(0.1f)
+                ),
+                createChunk(
+                        material,
+                        3,
+                        0,
+                        "Third page, first chunk",
+                        embedding(0.2f)
+                )
         ));
 
         List<LessonMaterialChunk> actual =
@@ -99,6 +120,24 @@ class LessonMaterialChunkRepositoryTest {
                         .toList()
         );
 
+        assertArrayEquals(
+                embedding(0.1f),
+                actual.get(0).getEmbedding(),
+                0.000001f
+        );
+
+        assertArrayEquals(
+                embedding(0.2f),
+                actual.get(1).getEmbedding(),
+                0.000001f
+        );
+
+        assertArrayEquals(
+                embedding(0.3f),
+                actual.get(2).getEmbedding(),
+                0.000001f
+        );
+
         for (LessonMaterialChunk chunk : actual) {
             assertNotNull(chunk.getId());
             assertEquals(
@@ -112,13 +151,26 @@ class LessonMaterialChunkRepositoryTest {
             LessonMaterial material,
             int pageNumber,
             int chunkIndex,
-            String text
+            String text,
+            float[] embedding
     ) {
         LessonMaterialChunk chunk = new LessonMaterialChunk();
         chunk.setMaterial(material);
         chunk.setPageNumber(pageNumber);
         chunk.setChunkIndex(chunkIndex);
         chunk.setText(text);
+        chunk.setEmbedding(embedding);
         return chunk;
+    }
+
+    private float[] embedding(float marker) {
+        float[] embedding =
+                new float[EMBEDDING_DIMENSIONS];
+
+        embedding[0] = marker;
+        embedding[EMBEDDING_DIMENSIONS - 1] =
+                marker + 0.01f;
+
+        return embedding;
     }
 }
