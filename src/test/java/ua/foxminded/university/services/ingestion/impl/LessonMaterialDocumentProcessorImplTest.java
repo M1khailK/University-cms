@@ -8,10 +8,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.foxminded.university.customexceptions.InvalidPdfContentException;
 import ua.foxminded.university.customexceptions.StorageUnavailableException;
+import ua.foxminded.university.services.ingestion.LessonMaterialEmbeddingGenerator;
 import ua.foxminded.university.services.ingestion.LessonMaterialProcessingStateService;
 import ua.foxminded.university.services.ingestion.LessonMaterialTextChunker;
 import ua.foxminded.university.services.ingestion.PdfTextExtractor;
 import ua.foxminded.university.services.ingestion.model.ExtractedPdfPage;
+import ua.foxminded.university.services.ingestion.model.LessonMaterialEmbeddedChunk;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialProcessingTarget;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialTextChunk;
@@ -61,6 +63,9 @@ class LessonMaterialDocumentProcessorImplTest {
             new byte[]{1, 2, 3};
 
     @Mock
+    private LessonMaterialEmbeddingGenerator embeddingGenerator;
+
+    @Mock
     private LessonMaterialProcessingStateService stateService;
 
     @Mock
@@ -80,7 +85,8 @@ class LessonMaterialDocumentProcessorImplTest {
                 stateService,
                 objectContentReader,
                 pdfTextExtractor,
-                textChunker
+                textChunker,
+                embeddingGenerator
         );
     }
 
@@ -102,6 +108,14 @@ class LessonMaterialDocumentProcessorImplTest {
                 )
         );
 
+        List<LessonMaterialEmbeddedChunk> embeddedChunks =
+                List.of(
+                        new LessonMaterialEmbeddedChunk(
+                                chunks.get(0),
+                                new float[]{0.1f, 0.2f, 0.3f}
+                        )
+                );
+
         when(stateService.startProcessing(EVENT))
                 .thenReturn(Optional.of(TARGET));
 
@@ -114,13 +128,17 @@ class LessonMaterialDocumentProcessorImplTest {
         when(textChunker.chunk(MATERIAL_ID, pages))
                 .thenReturn(chunks);
 
+        when(embeddingGenerator.generate(chunks))
+                .thenReturn(embeddedChunks);
+
         processor.process(EVENT);
 
         InOrder order = inOrder(
                 stateService,
                 objectContentReader,
                 pdfTextExtractor,
-                textChunker
+                textChunker,
+                embeddingGenerator
         );
 
         order.verify(stateService).startProcessing(EVENT);
@@ -133,8 +151,14 @@ class LessonMaterialDocumentProcessorImplTest {
         order.verify(textChunker)
                 .chunk(MATERIAL_ID, pages);
 
+        order.verify(embeddingGenerator)
+                .generate(chunks);
+
         order.verify(stateService)
-                .completeProcessing(MATERIAL_ID, chunks);
+                .completeProcessing(
+                        MATERIAL_ID,
+                        embeddedChunks
+                );
     }
 
     @Test
@@ -150,7 +174,8 @@ class LessonMaterialDocumentProcessorImplTest {
         verifyNoInteractions(
                 objectContentReader,
                 pdfTextExtractor,
-                textChunker
+                textChunker,
+                embeddingGenerator
         );
     }
 
@@ -180,7 +205,10 @@ class LessonMaterialDocumentProcessorImplTest {
         verify(stateService, never())
                 .completeProcessing(anyInt(), anyList());
 
-        verifyNoInteractions(textChunker);
+        verifyNoInteractions(
+                textChunker,
+                embeddingGenerator
+        );
     }
 
     @Test
@@ -211,7 +239,60 @@ class LessonMaterialDocumentProcessorImplTest {
 
         verifyNoInteractions(
                 pdfTextExtractor,
-                textChunker
+                textChunker,
+                embeddingGenerator
         );
+    }
+
+    @Test
+    void process_shouldPropagateTemporaryEmbeddingFailure() {
+        List<ExtractedPdfPage> pages = List.of(
+                new ExtractedPdfPage(
+                        1,
+                        "Transactions and persistence"
+                )
+        );
+
+        List<LessonMaterialTextChunk> chunks = List.of(
+                new LessonMaterialTextChunk(
+                        MATERIAL_ID,
+                        1,
+                        0,
+                        "Transactions and persistence"
+                )
+        );
+
+        IllegalStateException failure =
+                new IllegalStateException(
+                        "Embedding provider is temporarily unavailable."
+                );
+
+        when(stateService.startProcessing(EVENT))
+                .thenReturn(Optional.of(TARGET));
+
+        when(objectContentReader.read(OBJECT_KEY, VERSION_ID))
+                .thenReturn(PDF_BYTES);
+
+        when(pdfTextExtractor.extract(PDF_BYTES))
+                .thenReturn(pages);
+
+        when(textChunker.chunk(MATERIAL_ID, pages))
+                .thenReturn(chunks);
+
+        when(embeddingGenerator.generate(chunks))
+                .thenThrow(failure);
+
+        IllegalStateException actual = assertThrows(
+                IllegalStateException.class,
+                () -> processor.process(EVENT)
+        );
+
+        assertSame(failure, actual);
+
+        verify(stateService, never())
+                .completeProcessing(anyInt(), anyList());
+
+        verify(stateService, never())
+                .failProcessing(anyInt(), anyString());
     }
 }

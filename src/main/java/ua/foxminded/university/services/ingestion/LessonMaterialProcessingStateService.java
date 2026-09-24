@@ -1,8 +1,8 @@
 package ua.foxminded.university.services.ingestion;
 
+import ua.foxminded.university.services.ingestion.model.LessonMaterialEmbeddedChunk;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialProcessingTarget;
-import ua.foxminded.university.services.ingestion.model.LessonMaterialTextChunk;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +15,7 @@ public interface LessonMaterialProcessingStateService {
 
     void completeProcessing(
             int materialId,
-            List<LessonMaterialTextChunk> chunks
+            List<LessonMaterialEmbeddedChunk> chunks
     );
 
     void failProcessing(

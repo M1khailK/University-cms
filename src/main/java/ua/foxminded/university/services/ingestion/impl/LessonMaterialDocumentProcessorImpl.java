@@ -1,13 +1,16 @@
 package ua.foxminded.university.services.ingestion.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.customexceptions.InvalidPdfContentException;
 import ua.foxminded.university.services.ingestion.LessonMaterialDocumentProcessor;
+import ua.foxminded.university.services.ingestion.LessonMaterialEmbeddingGenerator;
 import ua.foxminded.university.services.ingestion.LessonMaterialProcessingStateService;
 import ua.foxminded.university.services.ingestion.LessonMaterialTextChunker;
 import ua.foxminded.university.services.ingestion.PdfTextExtractor;
 import ua.foxminded.university.services.ingestion.model.ExtractedPdfPage;
+import ua.foxminded.university.services.ingestion.model.LessonMaterialEmbeddedChunk;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialProcessingTarget;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialTextChunk;
@@ -18,6 +21,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(
+        name = "spring.ai.model.embedding.text",
+        havingValue = "google-genai"
+)
 public class LessonMaterialDocumentProcessorImpl
         implements LessonMaterialDocumentProcessor {
 
@@ -28,6 +35,7 @@ public class LessonMaterialDocumentProcessorImpl
     private final ObjectContentReader objectContentReader;
     private final PdfTextExtractor pdfTextExtractor;
     private final LessonMaterialTextChunker textChunker;
+    private final LessonMaterialEmbeddingGenerator embeddingGenerator;
 
     @Override
     public void process(LessonMaterialObjectCreatedEvent event) {
@@ -56,9 +64,12 @@ public class LessonMaterialDocumentProcessorImpl
                             pages
                     );
 
+            List<LessonMaterialEmbeddedChunk> embeddedChunks =
+                    embeddingGenerator.generate(chunks);
+
             stateService.completeProcessing(
                     target.materialId(),
-                    chunks
+                    embeddedChunks
             );
         } catch (InvalidPdfContentException exception) {
             stateService.failProcessing(

@@ -9,6 +9,7 @@ import ua.foxminded.university.info.LessonMaterialStatus;
 import ua.foxminded.university.repository.LessonMaterialChunkRepository;
 import ua.foxminded.university.repository.LessonMaterialRepository;
 import ua.foxminded.university.services.ingestion.LessonMaterialProcessingStateService;
+import ua.foxminded.university.services.ingestion.model.LessonMaterialEmbeddedChunk;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialProcessingTarget;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialTextChunk;
@@ -84,7 +85,7 @@ public class LessonMaterialProcessingStateServiceImpl
     @Transactional
     public void completeProcessing(
             int materialId,
-            List<LessonMaterialTextChunk> chunks
+            List<LessonMaterialEmbeddedChunk> chunks
     ) {
         validateChunks(materialId, chunks);
 
@@ -150,7 +151,7 @@ public class LessonMaterialProcessingStateServiceImpl
 
     private void validateChunks(
             int materialId,
-            List<LessonMaterialTextChunk> chunks
+            List<LessonMaterialEmbeddedChunk> chunks
     ) {
         if (materialId < 1) {
             throw new IllegalArgumentException(
@@ -160,22 +161,25 @@ public class LessonMaterialProcessingStateServiceImpl
 
         Objects.requireNonNull(
                 chunks,
-                "Lesson material chunks must not be null."
+                "Lesson material embedded chunks must not be null."
         );
 
         if (chunks.isEmpty()) {
             throw new IllegalArgumentException(
-                    "Lesson material chunks must not be empty."
+                    "Lesson material embedded chunks must not be empty."
             );
         }
 
-        for (LessonMaterialTextChunk chunk : chunks) {
+        for (LessonMaterialEmbeddedChunk embeddedChunk : chunks) {
             Objects.requireNonNull(
-                    chunk,
-                    "Lesson material chunk must not be null."
+                    embeddedChunk,
+                    "Lesson material embedded chunk must not be null."
             );
 
-            if (chunk.materialId() != materialId) {
+            LessonMaterialTextChunk textChunk =
+                    embeddedChunk.chunk();
+
+            if (textChunk.materialId() != materialId) {
                 throw new IllegalArgumentException(
                         "Chunk belongs to another lesson material."
                 );
@@ -200,13 +204,16 @@ public class LessonMaterialProcessingStateServiceImpl
 
     private LessonMaterialChunk toEntity(
             LessonMaterial material,
-            LessonMaterialTextChunk source
+            LessonMaterialEmbeddedChunk source
     ) {
+        LessonMaterialTextChunk textChunk = source.chunk();
+
         LessonMaterialChunk entity = new LessonMaterialChunk();
         entity.setMaterial(material);
-        entity.setPageNumber(source.pageNumber());
-        entity.setChunkIndex(source.chunkIndex());
-        entity.setText(source.text());
+        entity.setPageNumber(textChunk.pageNumber());
+        entity.setChunkIndex(textChunk.chunkIndex());
+        entity.setText(textChunk.text());
+        entity.setEmbedding(source.embedding());
         return entity;
     }
 

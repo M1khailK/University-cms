@@ -13,6 +13,7 @@ import ua.foxminded.university.info.LessonMaterialChunk;
 import ua.foxminded.university.info.LessonMaterialStatus;
 import ua.foxminded.university.repository.LessonMaterialChunkRepository;
 import ua.foxminded.university.repository.LessonMaterialRepository;
+import ua.foxminded.university.services.ingestion.model.LessonMaterialEmbeddedChunk;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialObjectCreatedEvent;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialProcessingTarget;
 import ua.foxminded.university.services.ingestion.model.LessonMaterialTextChunk;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -153,18 +155,18 @@ class LessonMaterialProcessingStateServiceImplTest {
         when(lessonMaterialRepository.findByIdForUpdate(MATERIAL_ID))
                 .thenReturn(Optional.of(material));
 
-        List<LessonMaterialTextChunk> chunks = List.of(
-                new LessonMaterialTextChunk(
-                        MATERIAL_ID,
+        List<LessonMaterialEmbeddedChunk> chunks = List.of(
+                embeddedChunk(
                         1,
                         0,
-                        "First chunk"
+                        "First chunk",
+                        0.1f
                 ),
-                new LessonMaterialTextChunk(
-                        MATERIAL_ID,
+                embeddedChunk(
                         2,
                         0,
-                        "Second chunk"
+                        "Second chunk",
+                        0.2f
                 )
         );
 
@@ -200,10 +202,22 @@ class LessonMaterialProcessingStateServiceImplTest {
         assertEquals(0, savedChunks.get(0).getChunkIndex());
         assertEquals("First chunk", savedChunks.get(0).getText());
 
+        assertArrayEquals(
+                new float[]{0.1f, 0.11f, 0.12f},
+                savedChunks.get(0).getEmbedding(),
+                0.000001f
+        );
+
         assertSame(material, savedChunks.get(1).getMaterial());
         assertEquals(2, savedChunks.get(1).getPageNumber());
         assertEquals(0, savedChunks.get(1).getChunkIndex());
         assertEquals("Second chunk", savedChunks.get(1).getText());
+
+        assertArrayEquals(
+                new float[]{0.2f, 0.21f, 0.22f},
+                savedChunks.get(1).getEmbedding(),
+                0.000001f
+        );
     }
 
     @Test
@@ -254,6 +268,30 @@ class LessonMaterialProcessingStateServiceImplTest {
                 1024L,
                 VERSION_ID,
                 "sequencer-10"
+        );
+    }
+
+    private LessonMaterialEmbeddedChunk embeddedChunk(
+            int pageNumber,
+            int chunkIndex,
+            String text,
+            float marker
+    ) {
+        LessonMaterialTextChunk textChunk =
+                new LessonMaterialTextChunk(
+                        MATERIAL_ID,
+                        pageNumber,
+                        chunkIndex,
+                        text
+                );
+
+        return new LessonMaterialEmbeddedChunk(
+                textChunk,
+                new float[]{
+                        marker,
+                        marker + 0.01f,
+                        marker + 0.02f
+                }
         );
     }
 }
