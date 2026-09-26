@@ -20,8 +20,10 @@ import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
 import ua.foxminded.university.customexceptions.GradeNotFoundException;
 import ua.foxminded.university.customexceptions.GroupNotFoundException;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
+import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.customexceptions.LessonNotFoundException;
+import ua.foxminded.university.customexceptions.StorageUnavailableException;
 import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
@@ -246,6 +248,34 @@ public class ApiExceptionHandler {
         );
 
         problemDetail.setTitle("AI assistant unavailable");
+
+        return problemDetail;
+    }
+
+    @ExceptionHandler(InvalidLessonMaterialUploadException.class)
+    public ProblemDetail handleInvalidLessonMaterialUpload(
+            InvalidLessonMaterialUploadException exception
+    ) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
+
+        problemDetail.setTitle("Invalid lesson material upload");
+
+        return problemDetail;
+    }
+
+    @ExceptionHandler(StorageUnavailableException.class)
+    public ProblemDetail handleStorageUnavailable(
+            StorageUnavailableException exception
+    ) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                exception.getMessage()
+        );
+
+        problemDetail.setTitle("File storage unavailable");
 
         return problemDetail;
     }

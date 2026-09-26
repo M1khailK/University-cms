@@ -1,4 +1,4 @@
-TRUNCATE TABLE users, groups, subjects, teachers, students, lessons, user_role;
+TRUNCATE TABLE lesson_materials, users, groups, subjects, teachers, students, lessons, user_role;
 ALTER SEQUENCE user_seq RESTART WITH 1;
 INSERT INTO users (user_id, first_name, last_name, email, password)
 VALUES (nextval('user_seq'), 'Alex', 'First', 'alex.1@example.com', 'password'),
