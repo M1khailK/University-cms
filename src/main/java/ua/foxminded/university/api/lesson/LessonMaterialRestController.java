@@ -43,8 +43,10 @@ public class LessonMaterialRestController {
         return new LessonMaterialUploadIntentResponse(
                 uploadIntent.materialId(),
                 uploadIntent.uploadUrl().toString(),
+                uploadIntent.uploadMethod(),
                 uploadIntent.expiresAt(),
-                uploadIntent.contentType()
+                uploadIntent.contentType(),
+                uploadIntent.formFields()
         );
     }
 }

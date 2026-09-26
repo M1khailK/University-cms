@@ -4,6 +4,7 @@ public interface UploadPresigner {
 
     PresignedUpload createUpload(
             String objectKey,
-            String contentType
+            String contentType,
+            long expectedSizeBytes
     );
 }

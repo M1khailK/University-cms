@@ -1,10 +1,12 @@
 package ua.foxminded.university.storage.s3;
 
-import io.awspring.cloud.s3.S3Operations;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
 import software.amazon.awssdk.services.s3.S3Client;
 import ua.foxminded.university.customexceptions.StorageUnavailableException;
 import ua.foxminded.university.storage.ObjectContentReader;
@@ -52,12 +54,16 @@ public class S3StorageConfig {
             havingValue = "true"
     )
     public UploadPresigner uploadPresigner(
-            S3Operations s3Operations,
+            ObjectMapper objectMapper,
+            AwsCredentialsProvider credentialsProvider,
+            AwsRegionProvider regionProvider,
             S3StorageProperties properties,
             Clock clock
     ) {
         return new S3UploadPresigner(
-                s3Operations,
+                objectMapper,
+                credentialsProvider,
+                regionProvider,
                 properties.bucket(),
                 properties.uploadUrlTtl(),
                 clock
@@ -71,7 +77,7 @@ public class S3StorageConfig {
             matchIfMissing = true
     )
     public UploadPresigner unavailableUploadPresigner() {
-        return (objectKey, contentType) -> {
+        return (objectKey, contentType, expectedSizeBytes) -> {
             throw new StorageUnavailableException(
                     "File storage is currently unavailable."
             );

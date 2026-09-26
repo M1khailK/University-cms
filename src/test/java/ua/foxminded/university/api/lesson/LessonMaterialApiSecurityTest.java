@@ -10,17 +10,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
-import ua.foxminded.university.services.LessonMaterialService;
-import ua.foxminded.university.services.LessonMaterialUploadIntent;
 import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadException;
 import ua.foxminded.university.customexceptions.StorageUnavailableException;
+import ua.foxminded.university.services.LessonMaterialService;
+import ua.foxminded.university.services.LessonMaterialUploadIntent;
 
-import static org.mockito.Mockito.verifyNoInteractions;
 import javax.sql.DataSource;
 import java.net.URI;
 import java.time.Instant;
+import java.util.Map;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,8 +53,17 @@ class LessonMaterialApiSecurityTest {
                         URI.create(
                                 "https://example.com/signed-upload"
                         ).toURL(),
+                        "POST",
                         Instant.parse("2026-09-19T12:10:00Z"),
-                        "application/pdf"
+                        "application/pdf",
+                        Map.of(
+                                "key",
+                                "lesson-materials/17/material-id",
+                                "policy",
+                                "encoded-policy",
+                                "x-amz-signature",
+                                "signature"
+                        )
                 );
 
         when(lessonMaterialService.createUploadIntent(
@@ -83,6 +93,12 @@ class LessonMaterialApiSecurityTest {
                 .andExpect(jsonPath("$.materialId").value(42))
                 .andExpect(jsonPath("$.uploadUrl")
                         .value("https://example.com/signed-upload"))
+                .andExpect(jsonPath("$.uploadMethod")
+                        .value("POST"))
+                .andExpect(jsonPath("$.formFields.policy")
+                        .value("encoded-policy"))
+                .andExpect(jsonPath("$.formFields.x-amz-signature")
+                        .value("signature"))
                 .andExpect(jsonPath("$.contentType")
                         .value("application/pdf"));
 
@@ -149,12 +165,12 @@ class LessonMaterialApiSecurityTest {
                                         .roles("TEACHER"))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
-                                    {
-                                      "originalFilename": "",
-                                      "contentType": "application/pdf",
-                                      "expectedSizeBytes": 0
-                                    }
-                                    """)
+                                        {
+                                          "originalFilename": "",
+                                          "contentType": "application/pdf",
+                                          "expectedSizeBytes": 0
+                                        }
+                                        """)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title")
@@ -187,12 +203,12 @@ class LessonMaterialApiSecurityTest {
                                         .roles("TEACHER"))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
-                                    {
-                                      "originalFilename": "lecture.txt",
-                                      "contentType": "text/plain",
-                                      "expectedSizeBytes": 1024
-                                    }
-                                    """)
+                                        {
+                                          "originalFilename": "lecture.txt",
+                                          "contentType": "text/plain",
+                                          "expectedSizeBytes": 1024
+                                        }
+                                        """)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title")

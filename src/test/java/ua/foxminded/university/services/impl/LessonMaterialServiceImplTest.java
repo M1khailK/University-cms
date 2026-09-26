@@ -24,12 +24,14 @@ import java.net.URL;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -102,12 +104,22 @@ public class LessonMaterialServiceImplTest {
 
         when(uploadPresigner.createUpload(
                 anyString(),
-                anyString()
+                anyString(),
+                anyLong()
         )).thenReturn(
                 new PresignedUpload(
                         signedUrl,
+                        "POST",
                         expiresAt,
-                        "application/pdf"
+                        "application/pdf",
+                        Map.of(
+                                "key",
+                                "lesson-materials/17/material-id",
+                                "policy",
+                                "encoded-policy",
+                                "x-amz-signature",
+                                "signature"
+                        )
                 )
         );
 
@@ -148,7 +160,8 @@ public class LessonMaterialServiceImplTest {
 
         verify(uploadPresigner).createUpload(
                 saved.getObjectKey(),
-                "application/pdf"
+                "application/pdf",
+                1024L
         );
 
         assertEquals(42, result.materialId());

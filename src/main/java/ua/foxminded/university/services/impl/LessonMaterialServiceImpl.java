@@ -73,14 +73,17 @@ public class LessonMaterialServiceImpl implements LessonMaterialService {
         PresignedUpload presignedUpload =
                 uploadPresigner.createUpload(
                         objectKey,
-                        PDF_CONTENT_TYPE
+                        PDF_CONTENT_TYPE,
+                        expectedSizeBytes
                 );
 
         return new LessonMaterialUploadIntent(
                 saved.getId(),
                 presignedUpload.url(),
+                presignedUpload.method(),
                 presignedUpload.expiresAt(),
-                presignedUpload.contentType()
+                presignedUpload.contentType(),
+                presignedUpload.formFields()
         );
     }
 

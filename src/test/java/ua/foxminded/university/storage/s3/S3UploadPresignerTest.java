@@ -1,25 +1,25 @@
 package ua.foxminded.university.storage.s3;
 
-import io.awspring.cloud.s3.S3Operations;
-import org.junit.jupiter.api.Assertions;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import ua.foxminded.university.storage.PresignedUpload;
 
-import java.net.URI;
-import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Base64;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(MockitoExtension.class)
-public class S3UploadPresignerTest {
+class S3UploadPresignerTest {
 
     private static final String BUCKET =
             "university-cms-materials";
@@ -30,64 +30,154 @@ public class S3UploadPresignerTest {
     private static final String CONTENT_TYPE =
             "application/pdf";
 
+    private static final long EXPECTED_SIZE_BYTES = 1_024L;
+
     private static final Duration TTL =
             Duration.ofMinutes(10);
 
     private static final Instant NOW =
             Instant.parse("2026-09-17T17:00:00Z");
 
-    @Mock
-    private S3Operations s3Operations;
+    private final ObjectMapper objectMapper =
+            new ObjectMapper();
 
     @Test
-    public void createUpload_shouldReturnSignedUploadData()
+    void createUpload_shouldCreatePostPolicyWithExactSize()
             throws Exception {
 
-        URL signedUrl = URI.create(
-                "https://example.s3.amazonaws.com/signed-upload"
-        ).toURL();
-
-        when(s3Operations.createSignedPutURL(
-                BUCKET,
-                OBJECT_KEY,
-                TTL,
-                null,
-                CONTENT_TYPE
-        )).thenReturn(signedUrl);
-
-        Clock clock =
-                Clock.fixed(NOW, ZoneOffset.UTC);
+        AwsSessionCredentials credentials =
+                AwsSessionCredentials.create(
+                        "test-access-key",
+                        "test-secret-key",
+                        "test-session-token"
+                );
 
         S3UploadPresigner presigner =
                 new S3UploadPresigner(
-                        s3Operations,
+                        objectMapper,
+                        StaticCredentialsProvider.create(
+                                credentials
+                        ),
+                        () -> Region.EU_CENTRAL_1,
                         BUCKET,
                         TTL,
-                        clock
+                        Clock.fixed(NOW, ZoneOffset.UTC)
                 );
 
         PresignedUpload actual =
                 presigner.createUpload(
                         OBJECT_KEY,
-                        CONTENT_TYPE
+                        CONTENT_TYPE,
+                        EXPECTED_SIZE_BYTES
                 );
 
-        Assertions.assertEquals(signedUrl, actual.url());
-        Assertions.assertEquals(
-                NOW.plus(TTL),
-                actual.expiresAt()
-        );
-        Assertions.assertEquals(
-                CONTENT_TYPE,
-                actual.contentType()
+        assertEquals(
+                "https://university-cms-materials"
+                        + ".s3.eu-central-1.amazonaws.com/",
+                actual.url().toString()
         );
 
-        verify(s3Operations).createSignedPutURL(
-                BUCKET,
+        assertEquals("POST", actual.method());
+        assertEquals(NOW.plus(TTL), actual.expiresAt());
+        assertEquals(CONTENT_TYPE, actual.contentType());
+
+        assertEquals(
                 OBJECT_KEY,
-                TTL,
-                null,
-                CONTENT_TYPE
+                actual.formFields().get("key")
         );
+
+        assertEquals(
+                CONTENT_TYPE,
+                actual.formFields().get("Content-Type")
+        );
+
+        assertEquals(
+                "AWS4-HMAC-SHA256",
+                actual.formFields().get("x-amz-algorithm")
+        );
+
+        assertEquals(
+                "test-session-token",
+                actual.formFields().get(
+                        "x-amz-security-token"
+                )
+        );
+
+        assertTrue(
+                actual.formFields()
+                        .get("x-amz-signature")
+                        .matches("[0-9a-f]{64}")
+        );
+
+        String decodedPolicy = new String(
+                Base64.getDecoder().decode(
+                        actual.formFields().get("policy")
+                ),
+                StandardCharsets.UTF_8
+        );
+
+        JsonNode policy =
+                objectMapper.readTree(decodedPolicy);
+
+        assertEquals(
+                "2026-09-17T17:10:00Z",
+                policy.path("expiration").asText()
+        );
+
+        assertTrue(
+                containsExactSizeCondition(
+                        policy.path("conditions"),
+                        EXPECTED_SIZE_BYTES
+                )
+        );
+    }
+
+    @Test
+    void createUpload_shouldRejectNonPositiveSize() {
+        S3UploadPresigner presigner =
+                new S3UploadPresigner(
+                        objectMapper,
+                        StaticCredentialsProvider.create(
+                                AwsSessionCredentials.create(
+                                        "test-access-key",
+                                        "test-secret-key",
+                                        "test-session-token"
+                                )
+                        ),
+                        () -> Region.EU_CENTRAL_1,
+                        BUCKET,
+                        TTL,
+                        Clock.fixed(NOW, ZoneOffset.UTC)
+                );
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> presigner.createUpload(
+                        OBJECT_KEY,
+                        CONTENT_TYPE,
+                        0L
+                )
+        );
+    }
+
+    private boolean containsExactSizeCondition(
+            JsonNode conditions,
+            long expectedSizeBytes
+    ) {
+        for (JsonNode condition : conditions) {
+            if (condition.isArray()
+                    && condition.size() == 3
+                    && "content-length-range".equals(
+                    condition.get(0).asText()
+            )
+                    && condition.get(1).asLong()
+                    == expectedSizeBytes
+                    && condition.get(2).asLong()
+                    == expectedSizeBytes) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
