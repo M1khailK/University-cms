@@ -11,6 +11,7 @@ public interface LessonMaterialChunkSearchRepository {
     List<LessonMaterialChunkSearchResult> findNearest(
             Collection<Integer> lessonIds,
             float[] queryEmbedding,
+            double maxDistance,
             int limit
     );
 }

@@ -124,7 +124,8 @@ class LessonMaterialChunkSearchRepositoryTest {
                 searchRepository.findNearest(
                         List.of(allowedLesson.getId()),
                         vector(1.0f, 0.0f),
-                        2
+                        0.30,
+                        3
                 );
 
         assertEquals(2, actual.size());

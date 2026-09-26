@@ -2,7 +2,8 @@ package ua.foxminded.university.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam
+        .NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ua.foxminded.university.repository
         .LessonMaterialChunkSearchRepository;
@@ -37,6 +38,10 @@ public class LessonMaterialChunkSearchRepositoryImpl
               ON material.material_id = chunk.material_id
             WHERE material.status = 'READY'
               AND chunk.embedding IS NOT NULL
+              AND (
+                    chunk.embedding
+                        <=> CAST(:queryEmbedding AS vector)
+                  ) <= :maxDistance
               AND material.lesson_id IN (:lessonIds)
             ORDER BY chunk.embedding
                          <=> CAST(:queryEmbedding AS vector),
@@ -50,6 +55,7 @@ public class LessonMaterialChunkSearchRepositoryImpl
     public List<LessonMaterialChunkSearchResult> findNearest(
             Collection<Integer> lessonIds,
             float[] queryEmbedding,
+            double maxDistance,
             int limit
     ) {
         Objects.requireNonNull(
@@ -58,6 +64,7 @@ public class LessonMaterialChunkSearchRepositoryImpl
         );
 
         validateQueryEmbedding(queryEmbedding);
+        validateMaxDistance(maxDistance);
         validateLimit(limit);
 
         if (lessonIds.isEmpty()) {
@@ -76,6 +83,10 @@ public class LessonMaterialChunkSearchRepositoryImpl
                         .addValue(
                                 "queryEmbedding",
                                 toVectorLiteral(queryEmbedding)
+                        )
+                        .addValue(
+                                "maxDistance",
+                                maxDistance
                         )
                         .addValue(
                                 "resultLimit",
@@ -137,6 +148,17 @@ public class LessonMaterialChunkSearchRepositoryImpl
                         "Query embedding must contain only finite values."
                 );
             }
+        }
+    }
+
+    private void validateMaxDistance(double maxDistance) {
+        if (!Double.isFinite(maxDistance)
+                || maxDistance < 0.0
+                || maxDistance > 2.0) {
+            throw new IllegalArgumentException(
+                    "Maximum cosine distance must be "
+                            + "between 0.0 and 2.0."
+            );
         }
     }
 

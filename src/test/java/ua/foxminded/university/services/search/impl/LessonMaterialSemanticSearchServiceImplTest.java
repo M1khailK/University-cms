@@ -13,6 +13,7 @@ import ua.foxminded.university.repository.model
         .LessonMaterialChunkSearchResult;
 import ua.foxminded.university.services
         .LessonMaterialAccessService;
+import ua.foxminded.university.services.search.config.LessonMaterialSearchProperties;
 import ua.foxminded.university.services.search.model
         .LessonMaterialSearchResult;
 
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class LessonMaterialSemanticSearchServiceImplTest {
 
+    private static final double MAX_DISTANCE = 0.45;
     private static final int EXPECTED_DIMENSIONS = 3;
 
     @Mock
@@ -47,6 +49,9 @@ class LessonMaterialSemanticSearchServiceImplTest {
                         accessService,
                         searchRepository,
                         embeddingModel,
+                        new LessonMaterialSearchProperties(
+                                MAX_DISTANCE
+                        ),
                         EXPECTED_DIMENSIONS
                 );
     }
@@ -84,6 +89,7 @@ class LessonMaterialSemanticSearchServiceImplTest {
         when(searchRepository.findNearest(
                 accessibleLessonIds,
                 queryEmbedding,
+                MAX_DISTANCE,
                 5
         )).thenReturn(List.of(repositoryResult));
 
@@ -128,6 +134,7 @@ class LessonMaterialSemanticSearchServiceImplTest {
         order.verify(searchRepository).findNearest(
                 accessibleLessonIds,
                 queryEmbedding,
+                MAX_DISTANCE,
                 5
         );
     }

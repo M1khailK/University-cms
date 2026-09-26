@@ -13,6 +13,7 @@ import ua.foxminded.university.services
         .LessonMaterialAccessService;
 import ua.foxminded.university.services.search
         .LessonMaterialSemanticSearchService;
+import ua.foxminded.university.services.search.config.LessonMaterialSearchProperties;
 import ua.foxminded.university.services.search.model
         .LessonMaterialSearchResult;
 
@@ -30,6 +31,7 @@ public class LessonMaterialSemanticSearchServiceImpl
     private static final int MAX_QUERY_LENGTH = 2_000;
     private static final int MAX_RESULT_LIMIT = 20;
 
+    private final LessonMaterialSearchProperties searchProperties;
     private final LessonMaterialAccessService accessService;
     private final LessonMaterialChunkSearchRepository searchRepository;
     private final EmbeddingModel embeddingModel;
@@ -39,6 +41,7 @@ public class LessonMaterialSemanticSearchServiceImpl
             LessonMaterialAccessService accessService,
             LessonMaterialChunkSearchRepository searchRepository,
             EmbeddingModel embeddingModel,
+            LessonMaterialSearchProperties searchProperties,
             @Value(
                     "${spring.ai.google.genai.embedding."
                             + "text.options.dimensions:768}"
@@ -53,6 +56,11 @@ public class LessonMaterialSemanticSearchServiceImpl
         this.searchRepository = Objects.requireNonNull(
                 searchRepository,
                 "Lesson material search repository must not be null."
+        );
+
+        this.searchProperties = Objects.requireNonNull(
+                searchProperties,
+                "Lesson material search properties must not be null."
         );
 
         this.embeddingModel = Objects.requireNonNull(
@@ -99,6 +107,7 @@ public class LessonMaterialSemanticSearchServiceImpl
         return searchRepository.findNearest(
                         accessibleLessonIds,
                         queryEmbedding,
+                        searchProperties.maxDistance(),
                         limit
                 )
                 .stream()
