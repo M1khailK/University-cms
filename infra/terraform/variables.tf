@@ -29,3 +29,20 @@ variable "terraform_operator_user_name" {
   type        = string
   default     = "university-cms-admin"
 }
+
+variable "lesson_material_noncurrent_version_retention_days" {
+  description = "Number of days to retain noncurrent lesson material object versions."
+  type        = number
+  default     = 1
+
+  validation {
+    condition = (
+      var.lesson_material_noncurrent_version_retention_days >= 1
+      && floor(
+        var.lesson_material_noncurrent_version_retention_days
+      ) == var.lesson_material_noncurrent_version_retention_days
+    )
+
+    error_message = "Noncurrent version retention must be a positive whole number of days."
+  }
+}

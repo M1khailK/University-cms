@@ -27,6 +27,31 @@ resource "aws_s3_bucket_versioning" "lesson_materials" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "lesson_materials" {
+  bucket = aws_s3_bucket.lesson_materials.id
+
+  depends_on = [
+    aws_s3_bucket_versioning.lesson_materials
+  ]
+
+  rule {
+    id     = "lesson-material-version-retention"
+    status = "Enabled"
+
+    filter {
+      prefix = "lesson-materials/"
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = var.lesson_material_noncurrent_version_retention_days
+    }
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 1
+    }
+  }
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "lesson_materials" {
   bucket = aws_s3_bucket.lesson_materials.id
 
