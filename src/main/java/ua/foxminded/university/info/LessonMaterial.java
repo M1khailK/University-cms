@@ -61,6 +61,9 @@ public class LessonMaterial {
     @Column(name = "uploaded_at")
     private Instant uploadedAt;
 
+    @Column(name = "processing_started_at")
+    private Instant processingStartedAt;
+
     @Column(name = "processed_at")
     private Instant processedAt;
 

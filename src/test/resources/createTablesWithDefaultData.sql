@@ -62,8 +62,9 @@ CREATE TABLE lesson_materials
     status            VARCHAR(32)              NOT NULL,
     checksum_sha256   VARCHAR(128),
     created_at        TIMESTAMP WITH TIME ZONE NOT NULL,
-    uploaded_at       TIMESTAMP WITH TIME ZONE,
-    processed_at      TIMESTAMP WITH TIME ZONE,
+    uploaded_at          TIMESTAMP WITH TIME ZONE,
+    processing_started_at TIMESTAMP WITH TIME ZONE,
+    processed_at         TIMESTAMP WITH TIME ZONE,
     s3_version_id     VARCHAR(1024),
     s3_sequencer      VARCHAR(128),
     failure_reason    VARCHAR(1000),
@@ -86,7 +87,20 @@ CREATE TABLE lesson_materials
         CHECK (expected_size_bytes > 0),
 
     CONSTRAINT chk_lesson_material_actual_size
-        CHECK (actual_size_bytes IS NULL OR actual_size_bytes > 0)
+        CHECK (actual_size_bytes IS NULL OR actual_size_bytes > 0),
+
+    CONSTRAINT chk_lesson_material_processing_started_at
+        CHECK (
+            (
+                status = 'PROCESSING'
+                    AND processing_started_at IS NOT NULL
+                )
+                OR
+            (
+                status <> 'PROCESSING'
+                    AND processing_started_at IS NULL
+                )
+            )
 );
 
 CREATE INDEX idx_lesson_materials_lesson_id

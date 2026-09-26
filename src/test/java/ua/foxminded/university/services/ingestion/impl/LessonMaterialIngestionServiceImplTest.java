@@ -66,7 +66,7 @@ class LessonMaterialIngestionServiceImplTest {
         LessonMaterial material = pendingMaterial();
         LessonMaterialObjectCreatedEvent event = objectCreatedEvent();
 
-        when(lessonMaterialRepository.findByObjectKey(OBJECT_KEY))
+        when(lessonMaterialRepository.findByObjectKeyForUpdate(OBJECT_KEY))
                 .thenReturn(Optional.of(material));
 
         when(objectMetadataReader.read(OBJECT_KEY, VERSION_ID))
@@ -109,7 +109,7 @@ class LessonMaterialIngestionServiceImplTest {
         material.setActualSizeBytes(EXPECTED_SIZE_BYTES);
         material.setUploadedAt(originalUploadedAt);
 
-        when(lessonMaterialRepository.findByObjectKey(OBJECT_KEY))
+        when(lessonMaterialRepository.findByObjectKeyForUpdate(OBJECT_KEY))
                 .thenReturn(Optional.of(material));
 
         ingestionService.processObjectCreated(objectCreatedEvent());
@@ -128,7 +128,7 @@ class LessonMaterialIngestionServiceImplTest {
     void processObjectCreated_shouldMarkMaterialFailed_whenSizeDoesNotMatch() {
         LessonMaterial material = pendingMaterial();
 
-        when(lessonMaterialRepository.findByObjectKey(OBJECT_KEY))
+        when(lessonMaterialRepository.findByObjectKeyForUpdate(OBJECT_KEY))
                 .thenReturn(Optional.of(material));
 
         when(objectMetadataReader.read(OBJECT_KEY, VERSION_ID))
@@ -156,7 +156,7 @@ class LessonMaterialIngestionServiceImplTest {
     void processObjectCreated_shouldMarkMaterialFailed_whenVersionDoesNotMatch() {
         LessonMaterial material = pendingMaterial();
 
-        when(lessonMaterialRepository.findByObjectKey(OBJECT_KEY))
+        when(lessonMaterialRepository.findByObjectKeyForUpdate(OBJECT_KEY))
                 .thenReturn(Optional.of(material));
 
         when(objectMetadataReader.read(OBJECT_KEY, VERSION_ID))
@@ -182,7 +182,7 @@ class LessonMaterialIngestionServiceImplTest {
         IllegalStateException storageFailure =
                 new IllegalStateException("S3 temporarily unavailable");
 
-        when(lessonMaterialRepository.findByObjectKey(OBJECT_KEY))
+        when(lessonMaterialRepository.findByObjectKeyForUpdate(OBJECT_KEY))
                 .thenReturn(Optional.of(material));
 
         when(objectMetadataReader.read(OBJECT_KEY, VERSION_ID))

@@ -8,6 +8,7 @@ import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.foxminded.university.customexceptions.LessonMaterialProcessingInProgressException;
 import ua.foxminded.university.info.LessonMaterial;
 import ua.foxminded.university.info.LessonMaterialChunk;
 import ua.foxminded.university.info.LessonMaterialStatus;
@@ -76,7 +77,7 @@ class LessonMaterialProcessingStateServiceImplTest {
         LessonMaterial material =
                 materialWithStatus(LessonMaterialStatus.UPLOADED);
 
-        when(lessonMaterialRepository.findByObjectKey(OBJECT_KEY))
+        when(lessonMaterialRepository.findByObjectKeyForUpdate(OBJECT_KEY))
                 .thenReturn(Optional.of(material));
 
         Optional<LessonMaterialProcessingTarget> actual =
@@ -95,8 +96,93 @@ class LessonMaterialProcessingStateServiceImplTest {
                 LessonMaterialStatus.PROCESSING,
                 material.getStatus()
         );
+        assertEquals(
+                NOW,
+                material.getProcessingStartedAt()
+        );
         assertNull(material.getProcessedAt());
         assertNull(material.getFailureReason());
+    }
+
+    @Test
+    void startProcessing_shouldRejectConcurrentAttempt_whenLeaseIsActive() {
+        LessonMaterial material =
+                materialWithStatus(LessonMaterialStatus.PROCESSING);
+
+        Instant originalProcessingStartedAt =
+                NOW.minusSeconds(60);
+
+        material.setProcessingStartedAt(
+                originalProcessingStartedAt
+        );
+
+        when(lessonMaterialRepository
+                .findByObjectKeyForUpdate(OBJECT_KEY))
+                .thenReturn(Optional.of(material));
+
+        assertThrows(
+                LessonMaterialProcessingInProgressException.class,
+                () -> stateService.startProcessing(
+                        objectCreatedEvent()
+                )
+        );
+
+        assertEquals(
+                LessonMaterialStatus.PROCESSING,
+                material.getStatus()
+        );
+
+        assertEquals(
+                originalProcessingStartedAt,
+                material.getProcessingStartedAt()
+        );
+
+        verifyNoInteractions(chunkRepository);
+    }
+
+    @Test
+    void startProcessing_shouldTakeOver_whenLeaseHasExpired() {
+        LessonMaterial material =
+                materialWithStatus(LessonMaterialStatus.PROCESSING);
+
+        material.setProcessingStartedAt(
+                NOW.minusSeconds(601)
+        );
+
+        when(lessonMaterialRepository
+                .findByObjectKeyForUpdate(OBJECT_KEY))
+                .thenReturn(Optional.of(material));
+
+        Optional<LessonMaterialProcessingTarget> actual =
+                stateService.startProcessing(
+                        objectCreatedEvent()
+                );
+
+        assertTrue(actual.isPresent());
+
+        assertEquals(
+                new LessonMaterialProcessingTarget(
+                        MATERIAL_ID,
+                        OBJECT_KEY,
+                        VERSION_ID
+                ),
+                actual.orElseThrow()
+        );
+
+        assertEquals(
+                LessonMaterialStatus.PROCESSING,
+                material.getStatus()
+        );
+
+        assertEquals(
+                NOW,
+                material.getProcessingStartedAt()
+        );
+
+        assertNull(material.getProcessedAt());
+        assertNull(material.getFailureReason());
+
+        verifyNoInteractions(chunkRepository);
     }
 
     @Test
@@ -106,7 +192,7 @@ class LessonMaterialProcessingStateServiceImplTest {
 
         material.setProcessedAt(NOW);
 
-        when(lessonMaterialRepository.findByObjectKey(OBJECT_KEY))
+        when(lessonMaterialRepository.findByObjectKeyForUpdate(OBJECT_KEY))
                 .thenReturn(Optional.of(material));
 
         Optional<LessonMaterialProcessingTarget> actual =
@@ -129,7 +215,7 @@ class LessonMaterialProcessingStateServiceImplTest {
 
         material.setS3VersionId("another-version");
 
-        when(lessonMaterialRepository.findByObjectKey(OBJECT_KEY))
+        when(lessonMaterialRepository.findByObjectKeyForUpdate(OBJECT_KEY))
                 .thenReturn(Optional.of(material));
 
         assertThrows(
@@ -170,12 +256,16 @@ class LessonMaterialProcessingStateServiceImplTest {
                 )
         );
 
+        material.setProcessingStartedAt(
+                NOW.minusSeconds(30)
+        );
         stateService.completeProcessing(MATERIAL_ID, chunks);
 
         assertEquals(
                 LessonMaterialStatus.READY,
                 material.getStatus()
         );
+        assertNull(material.getProcessingStartedAt());
         assertEquals(NOW, material.getProcessedAt());
         assertNull(material.getFailureReason());
 
@@ -228,6 +318,10 @@ class LessonMaterialProcessingStateServiceImplTest {
         when(lessonMaterialRepository.findByIdForUpdate(MATERIAL_ID))
                 .thenReturn(Optional.of(material));
 
+        material.setProcessingStartedAt(
+                NOW.minusSeconds(30)
+        );
+
         stateService.failProcessing(
                 MATERIAL_ID,
                 "PDF contains no extractable text."
@@ -237,6 +331,8 @@ class LessonMaterialProcessingStateServiceImplTest {
                 LessonMaterialStatus.FAILED,
                 material.getStatus()
         );
+
+        assertNull(material.getProcessingStartedAt());
         assertNull(material.getProcessedAt());
         assertEquals(
                 "PDF contains no extractable text.",

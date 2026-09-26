@@ -32,7 +32,7 @@ public class LessonMaterialIngestionServiceImpl
             LessonMaterialObjectCreatedEvent event
     ) {
         LessonMaterial material = lessonMaterialRepository
-                .findByObjectKey(event.objectKey())
+                .findByObjectKeyForUpdate(event.objectKey())
                 .orElseThrow(() -> new IllegalStateException(
                         "Lesson material not found for object key: "
                                 + event.objectKey()

@@ -17,7 +17,15 @@ public interface LessonMaterialRepository
             Integer lessonId
     );
 
-    Optional<LessonMaterial> findByObjectKey(String objectKey);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+        select material
+        from LessonMaterial material
+        where material.objectKey = :objectKey
+        """)
+    Optional<LessonMaterial> findByObjectKeyForUpdate(
+            @Param("objectKey") String objectKey
+    );
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""

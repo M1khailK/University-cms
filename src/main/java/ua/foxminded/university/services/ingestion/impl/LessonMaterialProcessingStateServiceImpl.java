@@ -3,6 +3,7 @@ package ua.foxminded.university.services.ingestion.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.foxminded.university.customexceptions.LessonMaterialProcessingInProgressException;
 import ua.foxminded.university.info.LessonMaterial;
 import ua.foxminded.university.info.LessonMaterialChunk;
 import ua.foxminded.university.info.LessonMaterialStatus;
@@ -15,6 +16,7 @@ import ua.foxminded.university.services.ingestion.model.LessonMaterialProcessing
 import ua.foxminded.university.services.ingestion.model.LessonMaterialTextChunk;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +28,8 @@ public class LessonMaterialProcessingStateServiceImpl
         implements LessonMaterialProcessingStateService {
 
     private static final int MAX_FAILURE_REASON_LENGTH = 1_000;
+    private static final Duration PROCESSING_LEASE =
+            Duration.ofMinutes(10);
 
     private final LessonMaterialRepository lessonMaterialRepository;
     private final LessonMaterialChunkRepository chunkRepository;
@@ -42,7 +46,7 @@ public class LessonMaterialProcessingStateServiceImpl
         );
 
         LessonMaterial material = lessonMaterialRepository
-                .findByObjectKey(event.objectKey())
+                .findByObjectKeyForUpdate(event.objectKey())
                 .orElseThrow(() -> new IllegalStateException(
                         "Lesson material not found for object key: "
                                 + event.objectKey()
@@ -61,6 +65,16 @@ public class LessonMaterialProcessingStateServiceImpl
             return Optional.empty();
         }
 
+        Instant now = Instant.now(clock);
+
+        if (material.getStatus() == LessonMaterialStatus.PROCESSING
+                && hasActiveProcessingLease(material, now)) {
+            throw new LessonMaterialProcessingInProgressException(
+                    "Lesson material is already being processed: "
+                            + material.getId()
+            );
+        }
+
         if (material.getStatus() != LessonMaterialStatus.UPLOADED
                 && material.getStatus()
                 != LessonMaterialStatus.PROCESSING) {
@@ -71,6 +85,7 @@ public class LessonMaterialProcessingStateServiceImpl
         }
 
         material.setStatus(LessonMaterialStatus.PROCESSING);
+        material.setProcessingStartedAt(now);
         material.setProcessedAt(null);
         material.setFailureReason(null);
 
@@ -105,8 +120,8 @@ public class LessonMaterialProcessingStateServiceImpl
                 .toList();
 
         chunkRepository.saveAll(entities);
-
         material.setStatus(LessonMaterialStatus.READY);
+        material.setProcessingStartedAt(null);
         material.setProcessedAt(Instant.now(clock));
         material.setFailureReason(null);
     }
@@ -131,6 +146,7 @@ public class LessonMaterialProcessingStateServiceImpl
         chunkRepository.flush();
 
         material.setStatus(LessonMaterialStatus.FAILED);
+        material.setProcessingStartedAt(null);
         material.setProcessedAt(null);
         material.setFailureReason(normalizedReason);
     }
@@ -185,6 +201,23 @@ public class LessonMaterialProcessingStateServiceImpl
                 );
             }
         }
+    }
+
+    private boolean hasActiveProcessingLease(
+            LessonMaterial material,
+            Instant now
+    ) {
+        Instant processingStartedAt =
+                material.getProcessingStartedAt();
+
+        if (processingStartedAt == null) {
+            return false;
+        }
+
+        Instant leaseExpiration =
+                processingStartedAt.plus(PROCESSING_LEASE);
+
+        return leaseExpiration.isAfter(now);
     }
 
     private void requireProcessingStatus(LessonMaterial material) {
