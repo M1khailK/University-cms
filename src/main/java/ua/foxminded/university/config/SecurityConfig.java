@@ -132,6 +132,12 @@ public class SecurityConfig {
                         )
                         .hasRole("TEACHER")
 
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/lessons/{lessonId}/materials/{materialId}"
+                        )
+                        .hasRole("TEACHER")
+
                         .requestMatchers(HttpMethod.GET, "/api/v1/schedules/me")
                         .hasAnyRole("STUDENT", "TEACHER")
 

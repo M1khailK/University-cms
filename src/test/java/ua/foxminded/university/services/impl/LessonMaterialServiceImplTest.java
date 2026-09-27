@@ -8,11 +8,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadException;
+import ua.foxminded.university.customexceptions.LessonMaterialNotFoundException;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.LessonMaterial;
 import ua.foxminded.university.info.LessonMaterialStatus;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.LessonMaterialRepository;
+import ua.foxminded.university.services.LessonMaterialStatusDetails;
 import ua.foxminded.university.services.LessonMaterialUploadIntent;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
@@ -25,6 +27,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -258,6 +261,106 @@ public class LessonMaterialServiceImplTest {
         );
     }
 
+    @Test
+    public void getMaterialStatus_shouldReturnDetails_whenTeacherOwnsLesson() {
+        Teacher teacher = createTeacher(7);
+        Lesson lesson = createLesson(17, teacher);
+        LessonMaterial material = createMaterial(42, lesson);
+
+        when(lessonMaterialRepository.findByIdAndLessonId(42, 17))
+                .thenReturn(Optional.of(material));
+
+        when(teacherService.getByEmail(EMAIL))
+                .thenReturn(teacher);
+
+        LessonMaterialStatusDetails result =
+                lessonMaterialService.getMaterialStatus(
+                        17,
+                        42,
+                        EMAIL
+                );
+
+        assertEquals(42, result.materialId());
+        assertEquals(17, result.lessonId());
+        assertEquals("lecture.pdf", result.originalFilename());
+        assertEquals("application/pdf", result.contentType());
+        assertEquals(
+                LessonMaterialStatus.PROCESSING,
+                result.status()
+        );
+        assertEquals(2048L, result.expectedSizeBytes());
+        assertEquals(2048L, result.actualSizeBytes());
+        assertEquals(NOW.minusSeconds(60), result.createdAt());
+        assertEquals(NOW.minusSeconds(50), result.uploadedAt());
+        assertEquals(
+                NOW.minusSeconds(40),
+                result.processingStartedAt()
+        );
+        assertNull(result.processedAt());
+        assertNull(result.failureReason());
+    }
+
+    @Test
+    public void getMaterialStatus_shouldReturnNotFound_whenMaterialDoesNotExist() {
+        when(lessonMaterialRepository.findByIdAndLessonId(42, 17))
+                .thenReturn(Optional.empty());
+
+        LessonMaterialNotFoundException exception =
+                assertThrows(
+                        LessonMaterialNotFoundException.class,
+                        () -> lessonMaterialService.getMaterialStatus(
+                                17,
+                                42,
+                                EMAIL
+                        )
+                );
+
+        assertEquals(
+                "Lesson material was not found by id: 42",
+                exception.getMessage()
+        );
+
+        verifyNoInteractions(
+                teacherService,
+                lessonService,
+                uploadPresigner
+        );
+    }
+
+    @Test
+    public void getMaterialStatus_shouldReturnNotFound_whenTeacherDoesNotOwnLesson() {
+        Teacher authenticatedTeacher = createTeacher(7);
+        Teacher lessonTeacher = createTeacher(8);
+        Lesson lesson = createLesson(17, lessonTeacher);
+        LessonMaterial material = createMaterial(42, lesson);
+
+        when(lessonMaterialRepository.findByIdAndLessonId(42, 17))
+                .thenReturn(Optional.of(material));
+
+        when(teacherService.getByEmail(EMAIL))
+                .thenReturn(authenticatedTeacher);
+
+        LessonMaterialNotFoundException exception =
+                assertThrows(
+                        LessonMaterialNotFoundException.class,
+                        () -> lessonMaterialService.getMaterialStatus(
+                                17,
+                                42,
+                                EMAIL
+                        )
+                );
+
+        assertEquals(
+                "Lesson material was not found by id: 42",
+                exception.getMessage()
+        );
+
+        verifyNoInteractions(
+                lessonService,
+                uploadPresigner
+        );
+    }
+
     private Teacher createTeacher(int id) {
         Teacher teacher = new Teacher();
         teacher.setId(id);
@@ -274,5 +377,27 @@ public class LessonMaterialServiceImplTest {
         lesson.setId(id);
         lesson.setTeacher(teacher);
         return lesson;
+    }
+
+    private LessonMaterial createMaterial(
+            int id,
+            Lesson lesson
+    ) {
+        LessonMaterial material = new LessonMaterial();
+        material.setId(id);
+        material.setLesson(lesson);
+        material.setObjectKey(
+                "lesson-materials/" + lesson.getId() + "/material-id"
+        );
+        material.setOriginalFilename("lecture.pdf");
+        material.setContentType("application/pdf");
+        material.setStatus(LessonMaterialStatus.PROCESSING);
+        material.setExpectedSizeBytes(2048L);
+        material.setActualSizeBytes(2048L);
+        material.setCreatedAt(NOW.minusSeconds(60));
+        material.setUploadedAt(NOW.minusSeconds(50));
+        material.setProcessingStartedAt(NOW.minusSeconds(40));
+
+        return material;
     }
 }

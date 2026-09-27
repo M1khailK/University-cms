@@ -5,12 +5,14 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadException;
+import ua.foxminded.university.customexceptions.LessonMaterialNotFoundException;
 import ua.foxminded.university.info.Lesson;
 import ua.foxminded.university.info.LessonMaterial;
 import ua.foxminded.university.info.LessonMaterialStatus;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.repository.LessonMaterialRepository;
 import ua.foxminded.university.services.LessonMaterialService;
+import ua.foxminded.university.services.LessonMaterialStatusDetails;
 import ua.foxminded.university.services.LessonMaterialUploadIntent;
 import ua.foxminded.university.services.LessonService;
 import ua.foxminded.university.services.TeacherService;
@@ -87,6 +89,45 @@ public class LessonMaterialServiceImpl implements LessonMaterialService {
         );
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public LessonMaterialStatusDetails getMaterialStatus(
+            int lessonId,
+            int materialId,
+            String authenticatedEmail
+    ) {
+        LessonMaterial material = lessonMaterialRepository
+                .findByIdAndLessonId(materialId, lessonId)
+                .orElseThrow(
+                        () -> new LessonMaterialNotFoundException(materialId)
+                );
+
+        Teacher authenticatedTeacher =
+                teacherService.getByEmail(authenticatedEmail);
+
+        if (isNotLessonOwner(
+                authenticatedTeacher,
+                material.getLesson()
+        )) {
+            throw new LessonMaterialNotFoundException(materialId);
+        }
+
+        return new LessonMaterialStatusDetails(
+                material.getId(),
+                material.getLesson().getId(),
+                material.getOriginalFilename(),
+                material.getContentType(),
+                material.getStatus(),
+                material.getExpectedSizeBytes(),
+                material.getActualSizeBytes(),
+                material.getCreatedAt(),
+                material.getUploadedAt(),
+                material.getProcessingStartedAt(),
+                material.getProcessedAt(),
+                material.getFailureReason()
+        );
+    }
+
     private void validateUploadRequest(
             String authenticatedEmail,
             String originalFilename,
@@ -135,17 +176,24 @@ public class LessonMaterialServiceImpl implements LessonMaterialService {
             Teacher authenticatedTeacher,
             Lesson lesson
     ) {
-        Teacher lessonTeacher = lesson.getTeacher();
-
-        if (lessonTeacher == null
-                || !Objects.equals(
-                authenticatedTeacher.getId(),
-                lessonTeacher.getId()
-        )) {
+        if (isNotLessonOwner(authenticatedTeacher, lesson)) {
             throw new AccessDeniedException(
                     "You are not allowed to upload materials for this lesson."
             );
         }
+    }
+
+    private boolean isNotLessonOwner(
+            Teacher authenticatedTeacher,
+            Lesson lesson
+    ) {
+        Teacher lessonTeacher = lesson.getTeacher();
+
+        return lessonTeacher == null
+                || !Objects.equals(
+                authenticatedTeacher.getId(),
+                lessonTeacher.getId()
+        );
     }
 
     private String createObjectKey(int lessonId) {
