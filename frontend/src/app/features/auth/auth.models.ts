@@ -8,3 +8,9 @@ export interface TokenResponse {
   tokenType: string;
   expiresIn: number;
 }
+export type UserAuthority = 'ROLE_ADMIN' | 'ROLE_TEACHER' | 'ROLE_STUDENT';
+
+export interface AuthenticatedUser {
+  email: string;
+  authorities: readonly UserAuthority[];
+}

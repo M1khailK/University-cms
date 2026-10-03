@@ -11,8 +11,11 @@ import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.config.JwtConfig;
 import ua.foxminded.university.config.SecurityConfig;
 import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadException;
+import ua.foxminded.university.customexceptions.LessonMaterialNotFoundException;
 import ua.foxminded.university.customexceptions.StorageUnavailableException;
+import ua.foxminded.university.info.LessonMaterialStatus;
 import ua.foxminded.university.services.LessonMaterialService;
+import ua.foxminded.university.services.LessonMaterialStatusDetails;
 import ua.foxminded.university.services.LessonMaterialUploadIntent;
 
 import javax.sql.DataSource;
@@ -24,6 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -247,6 +251,103 @@ class LessonMaterialApiSecurityTest {
                         .value("File storage unavailable"))
                 .andExpect(jsonPath("$.detail")
                         .value("File storage is currently unavailable."));
+    }
+
+    @Test
+    void materialStatus_shouldAllowOwningTeacher() throws Exception {
+        LessonMaterialStatusDetails details =
+                new LessonMaterialStatusDetails(
+                        42,
+                        17,
+                        "lecture.pdf",
+                        "application/pdf",
+                        LessonMaterialStatus.READY,
+                        2048L,
+                        2048L,
+                        Instant.parse("2026-09-19T12:00:00Z"),
+                        Instant.parse("2026-09-19T12:01:00Z"),
+                        Instant.parse("2026-09-19T12:02:00Z"),
+                        Instant.parse("2026-09-19T12:03:00Z"),
+                        null
+                );
+
+        when(lessonMaterialService.getMaterialStatus(
+                17,
+                42,
+                "teacher@university.com"
+        )).thenReturn(details);
+
+        mockMvc.perform(
+                        get("/api/v1/lessons/17/materials/42")
+                                .with(user("teacher@university.com")
+                                        .roles("TEACHER"))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.materialId").value(42))
+                .andExpect(jsonPath("$.lessonId").value(17))
+                .andExpect(jsonPath("$.originalFilename")
+                        .value("lecture.pdf"))
+                .andExpect(jsonPath("$.contentType")
+                        .value("application/pdf"))
+                .andExpect(jsonPath("$.status").value("READY"))
+                .andExpect(jsonPath("$.expectedSizeBytes").value(2048))
+                .andExpect(jsonPath("$.actualSizeBytes").value(2048))
+                .andExpect(jsonPath("$.objectKey").doesNotExist())
+                .andExpect(jsonPath("$.checksumSha256").doesNotExist())
+                .andExpect(jsonPath("$.s3VersionId").doesNotExist())
+                .andExpect(jsonPath("$.s3Sequencer").doesNotExist());
+
+        verify(lessonMaterialService).getMaterialStatus(
+                17,
+                42,
+                "teacher@university.com"
+        );
+    }
+
+    @Test
+    void materialStatus_shouldForbidStudent() throws Exception {
+        mockMvc.perform(
+                        get("/api/v1/lessons/17/materials/42")
+                                .with(user("student@university.com")
+                                        .roles("STUDENT"))
+                )
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(lessonMaterialService);
+    }
+
+    @Test
+    void materialStatus_shouldReturnUnauthorized_whenAnonymous()
+            throws Exception {
+
+        mockMvc.perform(
+                        get("/api/v1/lessons/17/materials/42")
+                )
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(lessonMaterialService);
+    }
+
+    @Test
+    void materialStatus_shouldReturnNotFound_whenMaterialIsUnavailable()
+            throws Exception {
+
+        when(lessonMaterialService.getMaterialStatus(
+                17,
+                42,
+                "teacher@university.com"
+        )).thenThrow(new LessonMaterialNotFoundException(42));
+
+        mockMvc.perform(
+                        get("/api/v1/lessons/17/materials/42")
+                                .with(user("teacher@university.com")
+                                        .roles("TEACHER"))
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title")
+                        .value("Lesson material not found"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Lesson material was not found by id: 42"));
     }
 
     private String validRequest() {

@@ -11,6 +11,12 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly tokenStorage = inject(TokenStorageService);
   readonly isAuthenticated = this.tokenStorage.isAuthenticated;
+  readonly authenticatedUser = this.tokenStorage.authenticatedUser;
+
+  readonly isAdmin = this.tokenStorage.isAdmin;
+  readonly isTeacher = this.tokenStorage.isTeacher;
+  readonly isStudent = this.tokenStorage.isStudent;
+  
   login(request: LoginRequest): Observable<TokenResponse> {
     return this.http
       .post<TokenResponse>('/api/v1/auth/login', request)

@@ -13,6 +13,11 @@ import java.util.Optional;
 public interface LessonMaterialRepository
         extends JpaRepository<LessonMaterial, Integer> {
 
+    Optional<LessonMaterial> findByIdAndLessonId(
+            Integer materialId,
+            Integer lessonId
+    );
+
     List<LessonMaterial> findAllByLessonIdOrderByUploadedAtDesc(
             Integer lessonId
     );

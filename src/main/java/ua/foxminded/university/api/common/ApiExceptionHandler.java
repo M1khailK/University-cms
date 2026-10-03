@@ -22,6 +22,7 @@ import ua.foxminded.university.customexceptions.GroupNotFoundException;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
+import ua.foxminded.university.customexceptions.LessonMaterialNotFoundException;
 import ua.foxminded.university.customexceptions.LessonNotFoundException;
 import ua.foxminded.university.customexceptions.StorageUnavailableException;
 import ua.foxminded.university.customexceptions.StudentNotFoundException;
@@ -57,6 +58,21 @@ public class ApiExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setTitle("Lesson not found");
         problemDetail.setDetail(exception.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(LessonMaterialNotFoundException.class)
+    public ProblemDetail handleLessonMaterialNotFound(
+            LessonMaterialNotFoundException exception
+    ) {
+        ProblemDetail problemDetail =
+                ProblemDetail.forStatusAndDetail(
+                        HttpStatus.NOT_FOUND,
+                        exception.getMessage()
+                );
+
+        problemDetail.setTitle("Lesson material not found");
+
         return problemDetail;
     }
 

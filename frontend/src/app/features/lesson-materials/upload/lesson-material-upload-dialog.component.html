@@ -1,0 +1,116 @@
+<header class="dialog-header">
+  <p class="eyebrow">Lesson material</p>
+  <h2 mat-dialog-title>Upload a PDF</h2>
+
+  <p class="lesson-name">{{ lesson.name }}</p>
+
+  <div class="lesson-meta">
+    <span>{{ lesson.subjectName }}</span>
+    <span>{{ lesson.groupName }}</span>
+    <span>{{ lesson.date }}</span>
+  </div>
+</header>
+
+<mat-dialog-content>
+  @if (!isBusy() && stage() !== 'ready') {
+    <section class="file-picker">
+      <input
+        #fileInput
+        hidden
+        type="file"
+        accept=".pdf,application/pdf"
+        (change)="selectFile($event)"
+      />
+
+      <div>
+        <strong>Select the lesson PDF</strong>
+        <p>PDF only · maximum size 10 MB</p>
+      </div>
+
+      <button mat-stroked-button type="button" (click)="fileInput.click()">Choose PDF</button>
+    </section>
+  }
+
+  @if (selectedFile(); as file) {
+    <section class="selected-file">
+      <div class="file-badge">PDF</div>
+
+      <div class="file-details">
+        <strong>{{ file.name }}</strong>
+        <span>{{ formatBytes(file.size) }}</span>
+      </div>
+
+      @if (!isBusy() && stage() !== 'ready') {
+        <button mat-button type="button" (click)="clearSelection()">Remove</button>
+      }
+    </section>
+  }
+
+  @if (stage() === 'requesting') {
+    <section class="status-panel">
+      <p class="status-label">Preparing secure upload…</p>
+      <mat-progress-bar mode="indeterminate" />
+    </section>
+  }
+
+  @if (stage() === 'uploading') {
+    <section class="status-panel">
+      <div class="status-row">
+        <p class="status-label">Uploading to secure storage</p>
+        <strong>{{ uploadProgress() }}%</strong>
+      </div>
+
+      <mat-progress-bar mode="determinate" [value]="uploadProgress()" />
+    </section>
+  }
+
+  @if (stage() === 'processing') {
+    <section class="status-panel processing">
+      <p class="status-label">Processing your material</p>
+
+      <mat-progress-bar mode="indeterminate" />
+
+      <p class="status-copy">Extracting text and preparing the document for semantic search.</p>
+
+      @if (materialStatus(); as status) {
+        <span class="status-chip">{{ status.status }}</span>
+      }
+    </section>
+  }
+
+  @if (stage() === 'ready') {
+    <section class="result-panel success">
+      <span class="result-mark">✓</span>
+
+      <div>
+        <strong>Material is ready</strong>
+        <p>The PDF is available to the university assistant.</p>
+      </div>
+    </section>
+  }
+
+  @if (errorMessage(); as message) {
+    <section class="result-panel failure">
+      <span class="result-mark">!</span>
+
+      <div>
+        <strong>
+          {{ stage() === 'failed' ? 'Processing failed' : 'Upload failed' }}
+        </strong>
+        <p>{{ message }}</p>
+      </div>
+    </section>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button" [disabled]="isBusy()">
+    {{ stage() === 'ready' ? 'Done' : 'Close' }}
+  </button>
+
+  @if (canUpload()) {
+    <button mat-flat-button type="button" (click)="startUpload()">
+      {{ stage() === 'idle' ? 'Upload PDF' : 'Try again' }}
+    </button>
+  }
+</mat-dialog-actions>

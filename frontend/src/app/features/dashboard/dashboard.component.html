@@ -1,0 +1,81 @@
+<section class="dashboard">
+  <header class="hero">
+    <div>
+      <span class="role-badge">{{ roleLabel() }}</span>
+
+      <h1>Welcome back, {{ displayName() }}</h1>
+
+      <p>Everything you need for today’s academic work, collected in one place.</p>
+    </div>
+
+    <div class="hero-mark" aria-hidden="true">U</div>
+  </header>
+
+  <section class="section-heading">
+    <div>
+      <p class="eyebrow">Quick access</p>
+      <h2>Continue your work</h2>
+    </div>
+  </section>
+
+  <div class="action-grid">
+    @if (isAdmin()) {
+      <a class="action-card" routerLink="/students">
+        <span class="action-icon">S</span>
+        <span>
+          <strong>Manage students</strong>
+          <small> Create, update and manage student records. </small>
+        </span>
+        <span class="arrow">→</span>
+      </a>
+    }
+
+    @if (isTeacher() || isStudent()) {
+      <a class="action-card" routerLink="/schedule">
+        <span class="action-icon">▦</span>
+        <span>
+          <strong>Open my schedule</strong>
+          <small> View lessons and upcoming academic activity. </small>
+        </span>
+        <span class="arrow">→</span>
+      </a>
+    }
+
+    <a class="action-card" routerLink="/assistant">
+      <span class="action-icon">✦</span>
+      <span>
+        <strong>Ask the AI assistant</strong>
+        <small> Find answers across your accessible university data. </small>
+      </span>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <section class="platform-card">
+    <div>
+      <p class="eyebrow">University CMS</p>
+      <h2>A secure academic workspace</h2>
+      <p>
+        Your role controls which records, lessons and learning materials are available throughout
+        the application.
+      </p>
+    </div>
+
+    <div class="feature-list">
+      <div>
+        <span>01</span>
+        <strong>Role-aware access</strong>
+      </div>
+
+      <div>
+        <span>02</span>
+        <strong>Live academic data</strong>
+      </div>
+
+      <div>
+        <span>03</span>
+        <strong>AI-assisted learning</strong>
+      </div>
+    </div>
+  </section>
+</section>

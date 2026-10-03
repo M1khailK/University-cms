@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +9,9 @@ import { MatTableModule } from '@angular/material/table';
 import { finalize } from 'rxjs';
 import { ScheduleLessonResponse } from './schedule.models';
 import { ScheduleService } from './schedule.service';
-
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AuthService } from '../auth/auth.service';
+import { LessonMaterialUploadDialogComponent } from '../lesson-materials/upload/lesson-material-upload-dialog.component';
 @Component({
   selector: 'app-schedule',
   imports: [
@@ -19,19 +21,27 @@ import { ScheduleService } from './schedule.service';
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
+    MatDialogModule,
   ],
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.scss',
 })
 export class ScheduleComponent {
   private readonly scheduleService = inject(ScheduleService);
+  private readonly authService = inject(AuthService);
+  private readonly dialog = inject(MatDialog);
 
+  protected readonly isTeacher = this.authService.isTeacher;
   protected readonly lessons = signal<ScheduleLessonResponse[]>([]);
   protected readonly loading = signal(false);
   protected readonly loaded = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
-  protected readonly displayedColumns = ['date', 'time', 'subject', 'group', 'teacher'];
+  protected readonly displayedColumns = computed(() => {
+    const columns = ['date', 'time', 'lesson', 'subject', 'group', 'teacher'];
+
+    return this.isTeacher() ? [...columns, 'materials'] : columns;
+  });
 
   protected readonly form = new FormGroup({
     from: new FormControl('', {
@@ -56,7 +66,7 @@ export class ScheduleComponent {
       this.lessons.set([]);
       return;
     }
-    
+
     this.loaded.set(false);
     this.loading.set(true);
     this.errorMessage.set(null);
@@ -75,6 +85,16 @@ export class ScheduleComponent {
           this.errorMessage.set(this.getErrorMessage(error));
         },
       });
+  }
+
+  protected openMaterialUpload(lesson: ScheduleLessonResponse): void {
+    this.dialog.open(LessonMaterialUploadDialogComponent, {
+      data: lesson,
+      width: '34rem',
+      maxWidth: 'calc(100vw - 2rem)',
+      disableClose: true,
+      autoFocus: false,
+    });
   }
 
   private getErrorMessage(error: unknown): string {
