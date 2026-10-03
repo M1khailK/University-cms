@@ -1,0 +1,184 @@
+:host {
+  display: block;
+}
+
+.dialog-header {
+  padding: 1.5rem 1.5rem 0;
+}
+
+.eyebrow {
+  margin: 0 0 0.25rem;
+  color: var(--mat-sys-primary);
+  font: var(--mat-sys-label-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin: 0;
+}
+
+.lesson-name {
+  margin: 0.75rem 0 0.5rem;
+  font: var(--mat-sys-title-medium);
+}
+
+.lesson-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.lesson-meta span {
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container);
+}
+
+mat-dialog-content {
+  min-width: min(30rem, calc(100vw - 4rem));
+  padding-top: 1.25rem;
+}
+
+.file-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px dashed var(--mat-sys-outline);
+  border-radius: 1rem;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.file-picker p,
+.result-panel p,
+.status-copy {
+  margin: 0.25rem 0 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-top: 1rem;
+  padding: 0.875rem;
+  border-radius: 0.875rem;
+  background: var(--mat-sys-surface-container);
+}
+
+.file-badge {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: 0.75rem;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-weight: 700;
+}
+
+.file-details {
+  display: grid;
+  flex: 1;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.file-details strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-details span {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.status-panel,
+.result-panel {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.875rem;
+}
+
+.status-panel {
+  background: var(--mat-sys-surface-container-low);
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.status-label {
+  margin: 0 0 0.75rem;
+  font-weight: 600;
+}
+
+.status-copy {
+  margin-top: 0.75rem;
+}
+
+.status-chip {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+  font: var(--mat-sys-label-medium);
+}
+
+.result-panel {
+  display: flex;
+  gap: 0.875rem;
+  align-items: flex-start;
+}
+
+.result-mark {
+  display: grid;
+  flex: 0 0 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.success {
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.success .result-mark {
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+}
+
+.failure {
+  background: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
+}
+
+.failure .result-mark {
+  background: var(--mat-sys-error);
+  color: var(--mat-sys-on-error);
+}
+
+@media (max-width: 600px) {
+  .dialog-header {
+    padding-inline: 1rem;
+  }
+
+  mat-dialog-content {
+    min-width: 0;
+  }
+
+  .file-picker {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
