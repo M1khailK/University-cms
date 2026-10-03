@@ -106,3 +106,22 @@ a {
     display: none;
   }
 }
+.guest-header nav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.guest-navigation-link {
+  padding: 0.65rem 0.9rem;
+  border-radius: 999px;
+  color: var(--mat-sys-on-surface-variant);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.guest-navigation-link:hover,
+.guest-navigation-link.active {
+  color: var(--mat-sys-primary);
+  background: var(--mat-sys-primary-container);
+}

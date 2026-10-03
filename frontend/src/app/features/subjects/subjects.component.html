@@ -1,0 +1,109 @@
+<section class="subjects-page">
+  <header class="catalog-hero">
+    <div>
+      <p class="eyebrow">Academic catalog</p>
+      <h1>University subjects</h1>
+      <p>Explore the disciplines currently available across the university.</p>
+    </div>
+
+    <div class="catalog-count">
+      <strong>{{ subjects().length }}</strong>
+      <span>subjects</span>
+    </div>
+  </header>
+
+  <section class="catalog-toolbar">
+    <label class="search-field">
+      <span>Search subjects</span>
+      <input
+        type="search"
+        placeholder="Start typing a subject name…"
+        [value]="query()"
+        (input)="updateQuery($event)"
+      />
+    </label>
+
+    @if (isAdmin()) {
+      <button mat-flat-button type="button" [disabled]="saving()" (click)="openCreateDialog()">
+        {{ saving() ? 'Saving…' : 'Add subject' }}
+      </button>
+    }
+  </section>
+
+  @if (actionError()) {
+    <p class="message error" role="alert">
+      {{ actionError() }}
+    </p>
+  }
+
+  @if (loading()) {
+    <section class="state-card">
+      <strong>Loading subject catalog…</strong>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="state-card error" role="alert">
+      <strong>Catalog unavailable</strong>
+      <p>{{ errorMessage() }}</p>
+    </section>
+  } @else if (filteredSubjects().length === 0) {
+    <section class="state-card">
+      <strong>No subjects found</strong>
+      <p>Try a different search phrase.</p>
+    </section>
+  } @else {
+    <div class="subjects-grid">
+      @for (subject of filteredSubjects(); track subject.id) {
+        <article class="subject-card">
+          <div class="subject-mark">
+            {{ subject.name.charAt(0).toUpperCase() }}
+          </div>
+
+          <div class="subject-copy">
+            <h2>{{ subject.name }}</h2>
+          </div>
+
+          @if (isAdmin()) {
+            <div class="subject-actions">
+              @if (confirmingDeleteId() === subject.id) {
+                <span>Delete this subject?</span>
+
+                <button mat-button type="button" (click)="cancelDelete()">Cancel</button>
+
+                <button
+                  mat-button
+                  type="button"
+                  [disabled]="deletingSubjectId() === subject.id"
+                  (click)="deleteSubject(subject)"
+                >
+                  {{ deletingSubjectId() === subject.id ? 'Deleting…' : 'Confirm' }}
+                </button>
+              } @else {
+                <button
+                  mat-button
+                  type="button"
+                  [disabled]="saving()"
+                  (click)="openEditDialog(subject)"
+                >
+                  Edit
+                </button>
+
+                <button mat-button type="button" (click)="requestDelete(subject.id)">Delete</button>
+              }
+            </div>
+          }
+        </article>
+      }
+    </div>
+  }
+
+  @if (!isAuthenticated()) {
+    <section class="guest-note">
+      <div>
+        <strong>Already part of the university?</strong>
+        <p>Sign in to access your role-specific workspace.</p>
+      </div>
+
+      <a mat-flat-button routerLink="/login">Sign in</a>
+    </section>
+  }
+</section>
