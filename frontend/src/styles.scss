@@ -1,12 +1,8 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
 html {
   height: 100%;
+
   @include mat.theme(
     (
       color: (
@@ -19,21 +15,94 @@ html {
   );
 }
 
-body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
-  height: 100%;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
-/* You can add global styles to this file, and also import other style files */
+
+body {
+  min-width: 20rem;
+  min-height: 100%;
+  margin: 0;
+  color-scheme: light;
+  color: var(--mat-sys-on-surface);
+  background: radial-gradient(circle at 85% 0%, rgb(193 205 255 / 35%), transparent 28rem), #f5f7fc;
+  font: var(--mat-sys-body-medium);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  color: var(--mat-sys-on-primary);
+  background: var(--mat-sys-primary);
+}
+.guest-shell {
+  min-height: 100vh;
+}
+
+.guest-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 4.75rem;
+  padding: 0 2rem;
+  border-bottom: 1px solid rgb(25 35 65 / 8%);
+  background: rgb(248 249 253 / 86%);
+  backdrop-filter: blur(16px);
+}
+
+.guest-brand {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  color: var(--mat-sys-on-surface);
+  text-decoration: none;
+}
+
+.guest-brand > span:last-child {
+  display: grid;
+}
+
+.guest-brand small {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.guest-sign-in {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0 1.15rem;
+  border-radius: 999px;
+  color: var(--mat-sys-on-primary);
+  background: var(--mat-sys-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.guest-sign-in:hover {
+  box-shadow: 0 0.5rem 1.5rem rgb(39 67 160 / 22%);
+}
+
+@media (max-width: 600px) {
+  .guest-header {
+    padding-inline: 1rem;
+  }
+
+  .guest-brand small {
+    display: none;
+  }
+}
