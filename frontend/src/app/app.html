@@ -22,7 +22,10 @@
           <span class="nav-icon" aria-hidden="true">⌂</span>
           Overview
         </a>
-
+        <a routerLink="/subjects" routerLinkActive="active" (click)="closeMenu()">
+          <span class="nav-icon" aria-hidden="true">B</span>
+          Subjects
+        </a>
         @if (isAdmin()) {
           <a routerLink="/students" routerLinkActive="active" (click)="closeMenu()">
             <span class="nav-icon" aria-hidden="true">S</span>
@@ -108,7 +111,9 @@
           <small>Academic workspace</small>
         </span>
       </a>
-
+      <a class="guest-navigation-link" routerLink="/subjects" routerLinkActive="active">
+        Subjects
+      </a>
       <nav aria-label="Guest navigation">
         <a class="guest-sign-in" routerLink="/login" routerLinkActive="active"> Sign in </a>
       </nav>

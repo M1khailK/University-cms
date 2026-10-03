@@ -1,0 +1,42 @@
+<header class="dialog-header">
+  <p class="eyebrow">Academic catalog</p>
+  <h2 mat-dialog-title>
+    {{ editing ? 'Edit subject' : 'Create subject' }}
+  </h2>
+
+  <p>
+    {{
+      editing
+        ? 'Update the subject displayed across the university.'
+        : 'Add a new subject to the university catalog.'
+    }}
+  </p>
+</header>
+
+<mat-dialog-content>
+  <form id="subject-form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline">
+      <mat-label>Subject name</mat-label>
+
+      <input matInput formControlName="name" maxlength="50" autocomplete="off" />
+
+      <mat-hint align="end"> {{ form.controls.name.value.length }}/50 </mat-hint>
+
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>Subject name is required.</mat-error>
+      }
+
+      @if (form.controls.name.hasError('maxlength')) {
+        <mat-error> Subject name must not exceed 50 characters. </mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancel</button>
+
+  <button mat-flat-button type="submit" form="subject-form">
+    {{ editing ? 'Save changes' : 'Create subject' }}
+  </button>
+</mat-dialog-actions>

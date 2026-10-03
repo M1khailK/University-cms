@@ -51,13 +51,16 @@ export const routes: Routes = [
       ),
   },
   {
-  path: 'schedule',
-  canActivate: [authGuard],
-  loadComponent: () =>
-    import('./features/schedule/schedule.component').then(
-      (module) => module.ScheduleComponent,
-    ),
-},
+    path: 'schedule',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/schedule/schedule.component').then((module) => module.ScheduleComponent),
+  },
+  {
+    path: 'subjects',
+    loadComponent: () =>
+      import('./features/subjects/subjects.component').then((module) => module.SubjectsComponent),
+  },
   {
     path: '**',
     redirectTo: 'login',

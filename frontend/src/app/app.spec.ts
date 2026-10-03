@@ -98,6 +98,8 @@ describe('App', () => {
 
     expect(compiled.querySelector('.guest-header')).not.toBeNull();
 
+    expect(compiled.querySelector('.guest-navigation-link')?.textContent).toContain('Subjects');
+
     expect(compiled.querySelector('.guest-sign-in')?.textContent).toContain('Sign in');
 
     expect(compiled.querySelector('.sidebar')).toBeNull();
