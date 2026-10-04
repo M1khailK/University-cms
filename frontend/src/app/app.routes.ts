@@ -62,6 +62,11 @@ export const routes: Routes = [
       import('./features/subjects/subjects.component').then((module) => module.SubjectsComponent),
   },
   {
+    path: 'groups',
+    loadComponent: () =>
+      import('./features/groups/groups.component').then((module) => module.GroupsComponent),
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },

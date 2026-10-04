@@ -1,0 +1,71 @@
+<section class="groups-page">
+  <header class="catalog-hero">
+    <div>
+      <p class="eyebrow">Student community</p>
+      <h1>University groups</h1>
+      <p>Explore the student groups currently registered at the university.</p>
+    </div>
+
+    <div class="catalog-count">
+      <strong>{{ groups().length }}</strong>
+      <span>groups</span>
+    </div>
+  </header>
+
+  <section class="catalog-toolbar">
+    <label class="search-field">
+      <span>Search groups</span>
+
+      <input
+        type="search"
+        placeholder="Start typing a group name…"
+        [value]="query()"
+        (input)="updateQuery($event)"
+      />
+    </label>
+  </section>
+
+  @if (loading()) {
+    <section class="state-card">
+      <strong>Loading group catalog…</strong>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="state-card error" role="alert">
+      <strong>Catalog unavailable</strong>
+      <p>{{ errorMessage() }}</p>
+
+      <button mat-button type="button" (click)="loadGroups()">Try again</button>
+    </section>
+  } @else if (filteredGroups().length === 0) {
+    <section class="state-card">
+      <strong>No groups found</strong>
+      <p>Try a different search phrase.</p>
+    </section>
+  } @else {
+    <div class="groups-grid">
+      @for (group of filteredGroups(); track group.id) {
+        <article class="group-card">
+          <div class="group-mark">
+            {{ group.name.charAt(0).toUpperCase() }}
+          </div>
+
+          <div class="group-copy">
+            <h2>{{ group.name }}</h2>
+            <p>University student group</p>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  @if (!isAuthenticated()) {
+    <section class="guest-note">
+      <div>
+        <strong>Already part of the university?</strong>
+        <p>Sign in to access your role-specific workspace.</p>
+      </div>
+
+      <a mat-flat-button routerLink="/login">Sign in</a>
+    </section>
+  }
+</section>
