@@ -62,6 +62,14 @@ export const routes: Routes = [
       import('./features/subjects/subjects.component').then((module) => module.SubjectsComponent),
   },
   {
+    path: 'groups/:id/students',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/groups/students/group-students.component').then(
+        (module) => module.GroupStudentsComponent,
+      ),
+  },
+  {
     path: 'groups',
     loadComponent: () =>
       import('./features/groups/groups.component').then((module) => module.GroupsComponent),

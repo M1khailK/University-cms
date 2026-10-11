@@ -105,6 +105,7 @@ describe('GroupsComponent', () => {
     expect(content).toContain('Sign in');
     expect(content).not.toContain('Add group');
     expect(content).not.toContain('Edit');
+    expect(content).not.toContain('Students');
   });
 
   it('should show an error state when groups cannot be loaded', () => {

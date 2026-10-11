@@ -86,6 +86,14 @@
                   {{ deletingGroupId() === group.id ? 'Deleting…' : 'Confirm' }}
                 </button>
               } @else {
+                <a
+                  mat-button
+                  [routerLink]="['/groups', group.id, 'students']"
+                  [class.disabled-link]="saving() || deletingGroupId() !== null"
+                  [attr.aria-disabled]="saving() || deletingGroupId() !== null"
+                >
+                  Students
+                </a>
                 <button
                   mat-button
                   type="button"
