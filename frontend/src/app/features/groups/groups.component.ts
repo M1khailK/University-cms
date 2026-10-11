@@ -164,10 +164,7 @@ export class GroupsComponent implements OnInit {
     if (error.status === 404) {
       return 'The group no longer exists.';
     }
-    if (error.status === 409) {
-      return 'The group cannot be deleted while it has assigned students.';
-    }
-    if (error.status === 400) {
+    if (error.status === 400 && action !== 'delete') {
       return 'Check the group name and try again.';
     }
 

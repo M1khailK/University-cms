@@ -108,6 +108,26 @@ describe('GroupsComponent', () => {
     expect(content).not.toContain('Students');
   });
 
+  it('should expose group roster links to administrators', () => {
+    isAuthenticated.set(true);
+    isAdmin.set(true);
+
+    const fixture = TestBed.createComponent(GroupsComponent);
+
+    fixture.detectChanges();
+
+    const rosterLinks = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLAnchorElement>(
+        '.group-actions a',
+      ),
+    );
+
+    expect(rosterLinks).toHaveLength(2);
+    expect(rosterLinks[0].textContent).toContain('Students');
+    expect(rosterLinks[0].getAttribute('href')).toBe('/groups/1/students');
+    expect(rosterLinks[0].getAttribute('aria-disabled')).toBeNull();
+  });
+
   it('should show an error state when groups cannot be loaded', () => {
     groupServiceMock.getGroups.mockReturnValue(throwError(() => new Error('Backend unavailable')));
 
