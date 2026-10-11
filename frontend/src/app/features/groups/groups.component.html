@@ -65,14 +65,45 @@
 
           @if (isAdmin()) {
             <div class="group-actions">
-              <button
-                mat-button
-                type="button"
-                [disabled]="saving()"
-                (click)="openEditDialog(group)"
-              >
-                Edit
-              </button>
+              @if (confirmingDeleteId() === group.id) {
+                <span>Delete this group?</span>
+
+                <button
+                  mat-button
+                  type="button"
+                  [disabled]="deletingGroupId() === group.id"
+                  (click)="cancelDelete()"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  mat-button
+                  type="button"
+                  [disabled]="deletingGroupId() === group.id"
+                  (click)="deleteGroup(group)"
+                >
+                  {{ deletingGroupId() === group.id ? 'Deleting…' : 'Confirm' }}
+                </button>
+              } @else {
+                <button
+                  mat-button
+                  type="button"
+                  [disabled]="saving() || deletingGroupId() !== null"
+                  (click)="openEditDialog(group)"
+                >
+                  Edit
+                </button>
+
+                <button
+                  mat-button
+                  type="button"
+                  [disabled]="saving() || deletingGroupId() !== null"
+                  (click)="requestDelete(group.id)"
+                >
+                  Delete
+                </button>
+              }
             </div>
           }
         </article>

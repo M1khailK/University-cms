@@ -29,6 +29,7 @@ describe('GroupsComponent', () => {
     getGroups: vi.fn(),
     createGroup: vi.fn(),
     updateGroup: vi.fn(),
+    deleteGroup: vi.fn(),
   };
 
   const dialogMock = {
@@ -41,6 +42,7 @@ describe('GroupsComponent', () => {
     groupServiceMock.getGroups.mockReset();
     groupServiceMock.createGroup.mockReset();
     groupServiceMock.updateGroup.mockReset();
+    groupServiceMock.deleteGroup.mockReset();
     dialogMock.open.mockReset();
 
     groupServiceMock.getGroups.mockReturnValue(of(initialGroups));
@@ -210,6 +212,54 @@ describe('GroupsComponent', () => {
       },
     ]);
     expect(fixture.componentInstance['saving']()).toBe(false);
+  });
+  it('should delete a confirmed group', () => {
+    isAuthenticated.set(true);
+    isAdmin.set(true);
+
+    groupServiceMock.deleteGroup.mockReturnValue(of(undefined));
+
+    const fixture = TestBed.createComponent(GroupsComponent);
+
+    fixture.detectChanges();
+
+    const group = fixture.componentInstance['groups']()[0];
+
+    fixture.componentInstance['requestDelete'](group.id);
+    fixture.detectChanges();
+
+    const confirmationContent = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(confirmationContent).toContain('Delete this group?');
+    expect(fixture.componentInstance['confirmingDeleteId']()).toBe(group.id);
+
+    fixture.componentInstance['deleteGroup'](group);
+
+    expect(groupServiceMock.deleteGroup).toHaveBeenCalledWith(group.id);
+    expect(fixture.componentInstance['groups']()).not.toContainEqual(group);
+    expect(fixture.componentInstance['deletingGroupId']()).toBeNull();
+    expect(fixture.componentInstance['confirmingDeleteId']()).toBeNull();
+  });
+
+  it('should cancel group deletion without calling the service', () => {
+    isAuthenticated.set(true);
+    isAdmin.set(true);
+
+    const fixture = TestBed.createComponent(GroupsComponent);
+
+    fixture.detectChanges();
+
+    const group = fixture.componentInstance['groups']()[0];
+
+    fixture.componentInstance['requestDelete'](group.id);
+
+    expect(fixture.componentInstance['confirmingDeleteId']()).toBe(group.id);
+
+    fixture.componentInstance['cancelDelete']();
+
+    expect(fixture.componentInstance['confirmingDeleteId']()).toBeNull();
+    expect(groupServiceMock.deleteGroup).not.toHaveBeenCalled();
+    expect(fixture.componentInstance['groups']()).toContainEqual(group);
   });
 });
 

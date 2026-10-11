@@ -27,6 +27,8 @@ export class GroupsComponent implements OnInit {
   protected readonly query = signal('');
   protected readonly loading = signal(false);
   protected readonly saving = signal(false);
+  protected readonly deletingGroupId = signal<number | null>(null);
+  protected readonly confirmingDeleteId = signal<number | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly actionError = signal<string | null>(null);
 
@@ -75,7 +77,40 @@ export class GroupsComponent implements OnInit {
   protected openEditDialog(group: GroupResponse): void {
     this.openFormDialog(group);
   }
+  protected requestDelete(groupId: number): void {
+    this.actionError.set(null);
+    this.confirmingDeleteId.set(groupId);
+  }
 
+  protected cancelDelete(): void {
+    this.confirmingDeleteId.set(null);
+  }
+
+  protected deleteGroup(group: GroupResponse): void {
+    if (this.deletingGroupId() !== null) {
+      return;
+    }
+
+    this.actionError.set(null);
+    this.deletingGroupId.set(group.id);
+
+    this.groupService
+      .deleteGroup(group.id)
+      .pipe(
+        finalize(() => {
+          this.deletingGroupId.set(null);
+          this.confirmingDeleteId.set(null);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.groups.update((groups) => groups.filter((candidate) => candidate.id !== group.id));
+        },
+        error: (error: unknown) => {
+          this.actionError.set(this.getActionErrorMessage(error, 'delete'));
+        },
+      });
+  }
   private openFormDialog(group: GroupResponse | null): void {
     this.actionError.set(null);
 
@@ -119,19 +154,19 @@ export class GroupsComponent implements OnInit {
     return [...groups].sort((left, right) => left.name.localeCompare(right.name));
   }
 
-  private getActionErrorMessage(error: unknown, action: 'create' | 'update'): string {
+  private getActionErrorMessage(error: unknown, action: 'create' | 'update' | 'delete'): string {
     if (!(error instanceof HttpErrorResponse)) {
       return `Failed to ${action} group.`;
     }
-
     if (error.status === 403) {
       return 'Administrator permissions are required.';
     }
-
     if (error.status === 404) {
       return 'The group no longer exists.';
     }
-
+    if (error.status === 409) {
+      return 'The group cannot be deleted while it has assigned students.';
+    }
     if (error.status === 400) {
       return 'Check the group name and try again.';
     }

@@ -159,12 +159,22 @@
   justify-content: space-between;
   gap: 1rem;
 }
+
 .group-actions {
   display: flex;
   grid-column: 1 / -1;
+  align-items: center;
   justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
   padding-top: 0.75rem;
   border-top: 1px solid var(--mat-sys-outline-variant);
+
+  span {
+    margin-right: auto;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
 }
 
 .message {
