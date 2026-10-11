@@ -23,8 +23,17 @@
         (input)="updateQuery($event)"
       />
     </label>
+    @if (isAdmin()) {
+      <button mat-flat-button type="button" [disabled]="saving()" (click)="openCreateDialog()">
+        {{ saving() ? 'Saving…' : 'Add group' }}
+      </button>
+    }
   </section>
-
+  @if (actionError()) {
+    <p class="message error" role="alert">
+      {{ actionError() }}
+    </p>
+  }
   @if (loading()) {
     <section class="state-card">
       <strong>Loading group catalog…</strong>
@@ -53,6 +62,19 @@
             <h2>{{ group.name }}</h2>
             <p>University student group</p>
           </div>
+
+          @if (isAdmin()) {
+            <div class="group-actions">
+              <button
+                mat-button
+                type="button"
+                [disabled]="saving()"
+                (click)="openEditDialog(group)"
+              >
+                Edit
+              </button>
+            </div>
+          }
         </article>
       }
     </div>

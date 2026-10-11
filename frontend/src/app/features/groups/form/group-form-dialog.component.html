@@ -1,0 +1,43 @@
+<header class="dialog-header">
+  <p class="eyebrow">Student community</p>
+
+  <h2 mat-dialog-title>
+    {{ editing ? 'Edit group' : 'Create group' }}
+  </h2>
+
+  <p>
+    {{
+      editing
+        ? 'Update the group displayed across the university.'
+        : 'Add a new student group to the university catalog.'
+    }}
+  </p>
+</header>
+
+<mat-dialog-content>
+  <form id="group-form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline">
+      <mat-label>Group name</mat-label>
+
+      <input matInput formControlName="name" maxlength="50" autocomplete="off" />
+
+      <mat-hint align="end">{{ form.controls.name.value.length }}/50</mat-hint>
+
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>Group name is required.</mat-error>
+      }
+
+      @if (form.controls.name.hasError('maxlength')) {
+        <mat-error>Group name must not exceed 50 characters.</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancel</button>
+
+  <button mat-flat-button type="submit" form="group-form">
+    {{ editing ? 'Save changes' : 'Create group' }}
+  </button>
+</mat-dialog-actions>

@@ -1,9 +1,11 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { AuthService } from '../auth/auth.service';
+import { GroupFormDialogComponent } from './form/group-form-dialog.component';
 import { GroupResponse } from './group.models';
 import { GroupService } from './group.service';
 import { GroupsComponent } from './groups.component';
@@ -21,17 +23,32 @@ describe('GroupsComponent', () => {
   ];
 
   const isAuthenticated = signal(false);
+  const isAdmin = signal(false);
 
   const groupServiceMock = {
     getGroups: vi.fn(),
+    createGroup: vi.fn(),
+    updateGroup: vi.fn(),
   };
 
+  const dialogMock = {
+    open: vi.fn(),
+  };
   beforeEach(async () => {
     isAuthenticated.set(false);
-    groupServiceMock.getGroups.mockReset();
-    groupServiceMock.getGroups.mockReturnValue(of(initialGroups));
+    isAdmin.set(false);
 
-    await TestBed.configureTestingModule({
+    groupServiceMock.getGroups.mockReset();
+    groupServiceMock.createGroup.mockReset();
+    groupServiceMock.updateGroup.mockReset();
+    dialogMock.open.mockReset();
+
+    groupServiceMock.getGroups.mockReturnValue(of(initialGroups));
+    dialogMock.open.mockReturnValue({
+      afterClosed: () => of(undefined),
+    });
+
+    TestBed.configureTestingModule({
       imports: [GroupsComponent],
       providers: [
         provideRouter([]),
@@ -43,12 +60,18 @@ describe('GroupsComponent', () => {
           provide: AuthService,
           useValue: {
             isAuthenticated,
+            isAdmin,
           },
         },
       ],
-    }).compileComponents();
-  });
+    });
 
+    TestBed.overrideProvider(MatDialog, {
+      useValue: dialogMock,
+    });
+
+    await TestBed.compileComponents();
+  });
   it('should load, sort and filter public groups', () => {
     const fixture = TestBed.createComponent(GroupsComponent);
 
@@ -78,6 +101,8 @@ describe('GroupsComponent', () => {
 
     expect(content).toContain('University groups');
     expect(content).toContain('Sign in');
+    expect(content).not.toContain('Add group');
+    expect(content).not.toContain('Edit');
   });
 
   it('should show an error state when groups cannot be loaded', () => {
@@ -92,6 +117,99 @@ describe('GroupsComponent', () => {
     expect(content).toContain('Catalog unavailable');
     expect(content).toContain('The group catalog could not be loaded.');
     expect(content).toContain('Try again');
+  });
+
+  it('should create a group from the administrator dialog result', () => {
+    isAuthenticated.set(true);
+    isAdmin.set(true);
+
+    const request = {
+      name: 'Java-03',
+    };
+
+    const createdGroup: GroupResponse = {
+      id: 3,
+      name: 'Java-03',
+    };
+
+    dialogMock.open.mockReturnValue({
+      afterClosed: () => of(request),
+    });
+    groupServiceMock.createGroup.mockReturnValue(of(createdGroup));
+
+    const fixture = TestBed.createComponent(GroupsComponent);
+
+    fixture.detectChanges();
+    fixture.componentInstance['openCreateDialog']();
+
+    expect(dialogMock.open).toHaveBeenCalledWith(
+      GroupFormDialogComponent,
+      expect.objectContaining({
+        data: {
+          group: null,
+        },
+      }),
+    );
+    expect(groupServiceMock.createGroup).toHaveBeenCalledWith(request);
+    expect(fixture.componentInstance['groups']()).toEqual([
+      {
+        id: 1,
+        name: 'Java-01',
+      },
+      {
+        id: 2,
+        name: 'Java-02',
+      },
+      createdGroup,
+    ]);
+    expect(fixture.componentInstance['saving']()).toBe(false);
+  });
+
+  it('should update a group from the administrator dialog result', () => {
+    isAuthenticated.set(true);
+    isAdmin.set(true);
+
+    const groupToEdit: GroupResponse = {
+      id: 1,
+      name: 'Java-01',
+    };
+
+    const request = {
+      name: 'Advanced Java',
+    };
+
+    const updatedGroup: GroupResponse = {
+      id: 1,
+      name: 'Advanced Java',
+    };
+
+    dialogMock.open.mockReturnValue({
+      afterClosed: () => of(request),
+    });
+    groupServiceMock.updateGroup.mockReturnValue(of(updatedGroup));
+
+    const fixture = TestBed.createComponent(GroupsComponent);
+
+    fixture.detectChanges();
+    fixture.componentInstance['openEditDialog'](groupToEdit);
+
+    expect(dialogMock.open).toHaveBeenCalledWith(
+      GroupFormDialogComponent,
+      expect.objectContaining({
+        data: {
+          group: groupToEdit,
+        },
+      }),
+    );
+    expect(groupServiceMock.updateGroup).toHaveBeenCalledWith(1, request);
+    expect(fixture.componentInstance['groups']()).toEqual([
+      updatedGroup,
+      {
+        id: 2,
+        name: 'Java-02',
+      },
+    ]);
+    expect(fixture.componentInstance['saving']()).toBe(false);
   });
 });
 

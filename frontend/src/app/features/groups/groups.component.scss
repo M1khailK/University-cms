@@ -159,7 +159,19 @@
   justify-content: space-between;
   gap: 1rem;
 }
+.group-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--mat-sys-outline-variant);
+}
 
+.message {
+  margin: 0;
+  padding: 0.875rem 1rem;
+  border-radius: 0.875rem;
+}
 @media (max-width: 600px) {
   .catalog-hero,
   .catalog-toolbar,
