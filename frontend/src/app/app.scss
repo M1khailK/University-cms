@@ -7,6 +7,7 @@
   display: grid;
   grid-template-columns: 17.5rem minmax(0, 1fr);
   min-height: 100vh;
+  overflow-x: clip;
 }
 
 .sidebar {
@@ -159,6 +160,8 @@
 }
 
 .workspace {
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
 }
 
@@ -174,6 +177,10 @@
   border-bottom: 1px solid rgb(25 35 65 / 8%);
   background: rgb(248 249 253 / 88%);
   backdrop-filter: blur(16px);
+}
+
+.topbar > div:not(.topbar-user) {
+  min-width: 0;
 }
 
 .topbar-eyebrow {
@@ -199,6 +206,7 @@
 
 .menu-toggle {
   display: none;
+  flex: 0 0 2.5rem;
   width: 2.5rem;
   height: 2.5rem;
   padding: 0.625rem;
@@ -216,7 +224,8 @@
 }
 
 .app-content {
-  width: min(100% - 3rem, 90rem);
+  width: min(calc(100% - 3rem), 90rem);
+  max-width: 100%;
   margin: 0 auto;
   padding: 2rem 0 3rem;
   box-sizing: border-box;
@@ -272,7 +281,7 @@
   }
 
   .app-content {
-    width: min(100% - 2rem, 90rem);
+    width: min(calc(100% - 2rem), 90rem);
     padding-top: 1.25rem;
   }
 }

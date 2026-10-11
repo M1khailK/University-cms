@@ -69,7 +69,8 @@ describe('App', () => {
     expect(navigationText).toContain('My schedule');
     expect(navigationText).toContain('AI assistant');
     expect(navigationText).not.toContain('Students');
-
+    expect(navigationText).toContain('Subjects');
+    expect(navigationText).toContain('Groups');
     expect(compiled.querySelector('.topbar-user')?.textContent).toContain('Teacher');
   });
 
@@ -97,10 +98,11 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(compiled.querySelector('.guest-header')).not.toBeNull();
+    const guestNavigationText = compiled.querySelector('.guest-header nav')?.textContent ?? '';
 
-    expect(compiled.querySelector('.guest-navigation-link')?.textContent).toContain('Subjects');
-
-    expect(compiled.querySelector('.guest-sign-in')?.textContent).toContain('Sign in');
+    expect(guestNavigationText).toContain('Subjects');
+    expect(guestNavigationText).toContain('Groups');
+    expect(guestNavigationText).toContain('Sign in');
 
     expect(compiled.querySelector('.sidebar')).toBeNull();
   });

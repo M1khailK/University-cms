@@ -1,0 +1,52 @@
+<section class="group-students-page">
+  <a class="back-link" mat-button routerLink="/groups">Back to groups</a>
+
+  @if (loading()) {
+    <section class="state-card">
+      <strong>Loading group students…</strong>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="state-card error" role="alert">
+      <strong>Students unavailable</strong>
+      <p>{{ errorMessage() }}</p>
+    </section>
+  } @else if (group(); as selectedGroup) {
+    <header class="roster-hero">
+      <div>
+        <p class="eyebrow">Group roster</p>
+        <h1>{{ selectedGroup.name }}</h1>
+        <p>Students currently assigned to this university group.</p>
+      </div>
+
+      <div class="roster-count">
+        <strong>{{ students().length }}</strong>
+        <span>students</span>
+      </div>
+    </header>
+
+    @if (students().length === 0) {
+      <section class="state-card">
+        <strong>No students assigned</strong>
+        <p>This group does not have any students yet.</p>
+      </section>
+    } @else {
+      <div class="students-grid">
+        @for (student of students(); track student.id) {
+          <article class="student-card">
+            <div class="student-mark" aria-hidden="true">
+              {{ student.firstName.charAt(0).toUpperCase()
+              }}{{ student.lastName.charAt(0).toUpperCase() }}
+            </div>
+
+            <div class="student-copy">
+              <h2>{{ student.firstName }} {{ student.lastName }}</h2>
+              <a class="student-email" [href]="'mailto:' + student.email">
+                {{ student.email }}
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  }
+</section>
