@@ -35,6 +35,11 @@
             <span class="nav-icon" aria-hidden="true">S</span>
             Students
           </a>
+          
+          <a routerLink="/teachers" routerLinkActive="active" (click)="closeMenu()">
+            <span class="nav-icon" aria-hidden="true">T</span>
+            Teachers
+          </a>
         }
 
         @if (isTeacher() || isStudent()) {

@@ -21,6 +21,12 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'teachers',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/teachers/teachers.component').then((module) => module.TeachersComponent),
+  },
+  {
     path: 'students',
     canActivate: [authGuard],
     loadComponent: () =>
