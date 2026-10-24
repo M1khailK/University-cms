@@ -2,7 +2,8 @@ package ua.foxminded.university.services.impl;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,20 @@ import ua.foxminded.university.services.EmailSenderService;
 import java.nio.charset.StandardCharsets;
 
 @Service
-@RequiredArgsConstructor
 public class EmailSenderServiceImpl implements EmailSenderService {
 
     private static final String SUBJECT = "User password";
 
     private final JavaMailSender mailSender;
+    private final String fromEmail;
+
+    public EmailSenderServiceImpl(
+            JavaMailSender mailSender,
+            @Value("${spring.mail.username:}") String fromEmail) {
+
+        this.mailSender = mailSender;
+        this.fromEmail = fromEmail;
+    }
 
     @Override
     public void sendRegistrationEmail(User user, CharSequence password) {
@@ -39,11 +48,12 @@ public class EmailSenderServiceImpl implements EmailSenderService {
             );
 
             helper.setTo(toEmail);
-            helper.setSubject(subject);
+            helper.setFrom(fromEmail);
             helper.setText(html, true);
+            helper.setSubject(subject);
 
             mailSender.send(mimeMessage);
-        } catch (MessagingException exception) {
+        } catch (MessagingException | MailException exception) {
             throw new MailSenderServiceException("Error sending email", exception);
         }
     }

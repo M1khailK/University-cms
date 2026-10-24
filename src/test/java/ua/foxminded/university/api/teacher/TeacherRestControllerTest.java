@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.teacher.mapper.TeacherMapperImpl;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
+import ua.foxminded.university.customexceptions.MailSenderServiceException;
 import ua.foxminded.university.customexceptions.TeacherNotFoundException;
 import ua.foxminded.university.info.Teacher;
 import ua.foxminded.university.services.TeacherService;
@@ -120,6 +121,35 @@ class TeacherRestControllerTest {
                   "email": "invalid-email"
                 }
                 """)).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void teacherRestController_shouldReturnServiceUnavailable_whenRegistrationEmailCannotBeSent()
+            throws Exception {
+
+        when(teacherService.createTeacherAccount(
+                eq("Alice"),
+                eq("Brown"),
+                eq("alice.brown@example.com")
+        )).thenThrow(new MailSenderServiceException(
+                "Error sending email",
+                new RuntimeException("Mail service unavailable")
+        ));
+
+        mockMvc.perform(post("/api/v1/teachers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Alice",
+                                  "lastName": "Brown",
+                                  "email": "alice.brown@example.com"
+                                }
+                                """))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Email service unavailable"))
+                .andExpect(jsonPath("$.detail")
+                        .value("Registration email service is temporarily unavailable"));
     }
 
     @Test
