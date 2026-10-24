@@ -3,10 +3,11 @@ import { MatTableModule } from '@angular/material/table';
 import { finalize } from 'rxjs';
 import { TeacherResponse } from './teacher.models';
 import { TeacherService } from './teacher.service';
-
+import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-teachers',
-  imports: [MatTableModule],
+  imports: [MatButtonModule, MatTableModule, RouterLink],
   templateUrl: './teachers.component.html',
   styleUrl: './teachers.component.scss',
 })

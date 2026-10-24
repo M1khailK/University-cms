@@ -27,6 +27,14 @@ export const routes: Routes = [
       import('./features/teachers/teachers.component').then((module) => module.TeachersComponent),
   },
   {
+    path: 'teachers/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/teachers/create/teacher-create.component').then(
+        (module) => module.TeacherCreateComponent,
+      ),
+  },
+  {
     path: 'students',
     canActivate: [authGuard],
     loadComponent: () =>

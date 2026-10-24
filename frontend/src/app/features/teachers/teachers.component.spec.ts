@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import { TeacherResponse } from './teacher.models';
 import { TeacherService } from './teacher.service';
@@ -17,7 +18,7 @@ describe('TeachersComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [TeachersComponent],
-      providers: [{ provide: TeacherService, useValue: teacherService }],
+      providers: [provideRouter([]), { provide: TeacherService, useValue: teacherService }],
     }).compileComponents();
   });
 
