@@ -35,6 +35,12 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'teachers/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/teachers/edit/teacher-edit.component').then((m) => m.TeacherEditComponent),
+  },
+  {
     path: 'students',
     canActivate: [authGuard],
     loadComponent: () =>

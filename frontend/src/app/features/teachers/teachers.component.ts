@@ -5,6 +5,7 @@ import { TeacherResponse } from './teacher.models';
 import { TeacherService } from './teacher.service';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
+
 @Component({
   selector: 'app-teachers',
   imports: [MatButtonModule, MatTableModule, RouterLink],
@@ -14,7 +15,7 @@ import { RouterLink } from '@angular/router';
 export class TeachersComponent implements OnInit {
   private readonly teacherService = inject(TeacherService);
 
-  protected readonly displayedColumns = ['firstName', 'lastName', 'email'];
+  protected readonly displayedColumns = ['firstName', 'lastName', 'email', 'actions'];
   protected readonly teachers = signal<TeacherResponse[]>([]);
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);

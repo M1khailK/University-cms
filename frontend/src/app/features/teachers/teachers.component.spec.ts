@@ -43,6 +43,25 @@ describe('TeachersComponent', () => {
     expect(content).toContain('Smith');
     expect(content).toContain('bob.smith@example.com');
   });
+  it('should render edit link for teacher', () => {
+    teacherService.getTeachers.mockReturnValue(
+      of([
+        {
+          id: 7,
+          firstName: 'John',
+          lastName: 'Smith',
+          email: 'john.smith@example.com',
+        },
+      ]),
+    );
+
+    fixture = TestBed.createComponent(TeachersComponent);
+    fixture.detectChanges();
+
+    const editLink = fixture.nativeElement.querySelector('a[href="/teachers/7/edit"]');
+
+    expect(editLink).not.toBeNull();
+  });
 
   it('should show empty state when no teachers exist', () => {
     teacherService.getTeachers.mockReturnValue(of([]));
