@@ -71,7 +71,12 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     @Transactional
-    public Teacher updateTeacherProfile(int id, String firstName, String lastName, String email) {
+    public Teacher updateTeacherProfile(
+            int id,
+            String firstName,
+            String lastName,
+            String email
+    ) {
         Teacher teacher = getById(id);
 
         teacher.setFirstName(firstName);
@@ -79,9 +84,12 @@ public class TeacherServiceImpl implements TeacherService {
         teacher.setEmail(email);
 
         try {
-            return teacherRepository.save(teacher);
+            teacherRepository.flush();
+            return teacher;
         } catch (DataIntegrityViolationException exception) {
-            throw new DuplicateEmailException("Email already exists. Please choose a different email.");
+            throw new DuplicateEmailException(
+                    "Email already exists. Please choose a different email."
+            );
         }
     }
 
