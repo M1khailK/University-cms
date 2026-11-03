@@ -1,5 +1,7 @@
 <h1>Lessons</h1>
 
+<a mat-flat-button routerLink="/lessons/new"> Add lesson </a>
+
 @if (loading()) {
   <p>Loading lessons...</p>
 } @else if (errorMessage()) {

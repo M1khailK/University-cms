@@ -101,6 +101,20 @@ export const routes: Routes = [
       import('./features/lessons/lessons.component').then((module) => module.LessonsComponent),
   },
   {
+    path: 'lessons/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/lessons/create/lesson-create.component').then(
+        (module) => module.LessonCreateComponent,
+      ),
+  },
+  {
+    path: 'lessons',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/lessons/lessons.component').then((module) => module.LessonsComponent),
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },

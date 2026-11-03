@@ -1,5 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { LessonResponse } from './lesson.models';
@@ -7,7 +9,7 @@ import { LessonService } from './lesson.service';
 
 @Component({
   selector: 'app-lessons',
-  imports: [MatTableModule],
+  imports: [MatButtonModule, MatTableModule, RouterLink],
   templateUrl: './lessons.component.html',
   styleUrl: './lessons.component.scss',
 })
