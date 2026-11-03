@@ -95,6 +95,12 @@ export const routes: Routes = [
       import('./features/groups/groups.component').then((module) => module.GroupsComponent),
   },
   {
+    path: 'lessons',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/lessons/lessons.component').then((module) => module.LessonsComponent),
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },
