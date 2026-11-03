@@ -5,11 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ua.foxminded.university.config.service.ServicesTestConfig;
 import ua.foxminded.university.config.service.ServicesTestMocks;
+import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.dto.User;
 import ua.foxminded.university.info.Teacher;
@@ -30,6 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -143,17 +146,8 @@ public class TeacherServiceImplTest {
                 "TEACHER"
         );
 
-        Teacher updatedTeacher = new Teacher(
-                1,
-                "Robert",
-                "Johnson",
-                "robert.johnson@example.com",
-                "encoded-password",
-                "TEACHER"
-        );
-
-        when(teacherRepository.findByIdAndRole(1, "TEACHER")).thenReturn(Optional.of(existingTeacher));
-        when(teacherRepository.save(existingTeacher)).thenReturn(updatedTeacher);
+        when(teacherRepository.findByIdAndRole(1, "TEACHER"))
+                .thenReturn(Optional.of(existingTeacher));
 
         Teacher actual = teacherService.updateTeacherProfile(
                 1,
@@ -170,14 +164,39 @@ public class TeacherServiceImplTest {
         assertEquals("TEACHER", actual.getRole());
 
         verify(teacherRepository).findByIdAndRole(1, "TEACHER");
-        verify(teacherRepository).save(argThat(teacher ->
-                teacher.getId().equals(1)
-                        && "Robert".equals(teacher.getFirstName())
-                        && "Johnson".equals(teacher.getLastName())
-                        && "robert.johnson@example.com".equals(teacher.getEmail())
-                        && "encoded-password".equals(teacher.getPassword())
-                        && "TEACHER".equals(teacher.getRole())
-        ));
+        verify(teacherRepository).flush();
+    }
+
+    @Test
+    public void teacherService_shouldThrowDuplicateEmailException_whenUpdatedEmailAlreadyExists() {
+        Teacher existingTeacher = new Teacher(
+                1,
+                "Bob",
+                "Smith",
+                "bob.smith@example.com",
+                "encoded-password",
+                "TEACHER"
+        );
+
+        when(teacherRepository.findByIdAndRole(1, "TEACHER"))
+                .thenReturn(Optional.of(existingTeacher));
+
+        doThrow(new     DataIntegrityViolationException("duplicate email"))
+                .when(teacherRepository)
+                .flush();
+
+        Assertions.assertThrows(
+                DuplicateEmailException.class,
+                () -> teacherService.updateTeacherProfile(
+                        1,
+                        "Bob",
+                        "Smith",
+                        "existing@example.com"
+                )
+        );
+
+        verify(teacherRepository).findByIdAndRole(1, "TEACHER");
+        verify(teacherRepository).flush();
     }
 
     @Test

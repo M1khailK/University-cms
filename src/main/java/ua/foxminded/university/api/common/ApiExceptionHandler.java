@@ -24,6 +24,7 @@ import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadExcep
 import ua.foxminded.university.customexceptions.InvalidOldPasswordException;
 import ua.foxminded.university.customexceptions.LessonMaterialNotFoundException;
 import ua.foxminded.university.customexceptions.LessonNotFoundException;
+import ua.foxminded.university.customexceptions.MailSenderServiceException;
 import ua.foxminded.university.customexceptions.StorageUnavailableException;
 import ua.foxminded.university.customexceptions.StudentNotFoundException;
 import ua.foxminded.university.customexceptions.SubjectNotFoundException;
@@ -292,6 +293,20 @@ public class ApiExceptionHandler {
         );
 
         problemDetail.setTitle("File storage unavailable");
+
+        return problemDetail;
+    }
+
+    @ExceptionHandler(MailSenderServiceException.class)
+    public ProblemDetail handleMailSenderUnavailable(
+            MailSenderServiceException exception
+    ) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                "Registration email service is temporarily unavailable"
+        );
+
+        problemDetail.setTitle("Email service unavailable");
 
         return problemDetail;
     }

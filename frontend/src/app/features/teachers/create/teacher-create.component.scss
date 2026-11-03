@@ -1,0 +1,18 @@
+.teacher-create {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.teacher-form {
+  display: grid;
+  gap: 16px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.error-message {
+  margin: 0;
+}

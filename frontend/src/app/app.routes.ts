@@ -21,6 +21,26 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'teachers',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/teachers/teachers.component').then((module) => module.TeachersComponent),
+  },
+  {
+    path: 'teachers/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/teachers/create/teacher-create.component').then(
+        (module) => module.TeacherCreateComponent,
+      ),
+  },
+  {
+    path: 'teachers/:id/edit',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/teachers/edit/teacher-edit.component').then((m) => m.TeacherEditComponent),
+  },
+  {
     path: 'students',
     canActivate: [authGuard],
     loadComponent: () =>
