@@ -24,7 +24,9 @@
 
     <ng-container matColumnDef="time">
       <th mat-header-cell *matHeaderCellDef>Time</th>
-      <td mat-cell *matCellDef="let lesson">{{ lesson.startTime }} – {{ lesson.endTime }}</td>
+      <td mat-cell *matCellDef="let lesson">
+        {{ lesson.startTime.slice(0, 5) }} – {{ lesson.endTime.slice(0, 5) }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="subject">

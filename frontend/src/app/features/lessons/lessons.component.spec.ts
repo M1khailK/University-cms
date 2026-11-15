@@ -57,8 +57,10 @@ describe('LessonsComponent', () => {
 
     expect(content).toContain('Java Basics');
     expect(content).toContain('2026-11-04');
-    expect(content).toContain('15:30:00');
-    expect(content).toContain('16:30:00');
+    expect(content).toContain('15:30');
+    expect(content).toContain('16:30');
+    expect(content).not.toContain('15:30:00');
+    expect(content).not.toContain('16:30:00');
     expect(content).toContain('Java');
     expect(content).toContain('AA-01');
     expect(content).toContain('Bob');
