@@ -18,6 +18,7 @@ import ua.foxminded.university.customexceptions.AttendanceAccessDeniedException;
 import ua.foxminded.university.customexceptions.DuplicateEmailException;
 import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
 import ua.foxminded.university.customexceptions.GradeNotFoundException;
+import ua.foxminded.university.customexceptions.GradeStudentGroupMismatchException;
 import ua.foxminded.university.customexceptions.GroupNotFoundException;
 import ua.foxminded.university.customexceptions.InvalidDateRangeException;
 import ua.foxminded.university.customexceptions.InvalidLessonMaterialUploadException;
@@ -307,6 +308,19 @@ public class ApiExceptionHandler {
         );
 
         problemDetail.setTitle("Email service unavailable");
+
+        return problemDetail;
+    }
+
+    @ExceptionHandler(GradeStudentGroupMismatchException.class)
+    public ProblemDetail handleGradeStudentGroupMismatch(
+            GradeStudentGroupMismatchException exception
+    ) {
+        ProblemDetail problemDetail =
+                ProblemDetail.forStatus(HttpStatus.CONFLICT);
+
+        problemDetail.setTitle("Grade assignment conflict");
+        problemDetail.setDetail(exception.getMessage());
 
         return problemDetail;
     }

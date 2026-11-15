@@ -13,6 +13,7 @@ import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.grade.mapper.GradeMapper;
 import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
 import ua.foxminded.university.customexceptions.GradeNotFoundException;
+import ua.foxminded.university.customexceptions.GradeStudentGroupMismatchException;
 import ua.foxminded.university.info.Grade;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
@@ -223,5 +224,38 @@ class GradeRestControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.title").value("Grade not found"));
+    }
+
+    @Test
+    void gradeRestController_shouldReturnConflict_whenStudentIsFromAnotherGroup()
+            throws Exception {
+        when(gradeService.createGrade(
+                eq(1),
+                eq(100),
+                eq(5),
+                eq("teacher@example.com")
+        )).thenThrow(
+                new GradeStudentGroupMismatchException(1, 100)
+        );
+
+        mockMvc.perform(post("/api/v1/grades")
+                        .principal(new UsernamePasswordAuthenticationToken(
+                                "teacher@example.com",
+                                "password"
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "studentId": 1,
+                                  "lessonId": 100,
+                                  "value": 5
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.title")
+                        .value("Grade assignment conflict"));
     }
 }
