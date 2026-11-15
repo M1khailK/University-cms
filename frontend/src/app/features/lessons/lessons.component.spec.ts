@@ -1,6 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of, Subject, throwError } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { provideRouter } from '@angular/router';
+import { of, Subject, throwError } from 'rxjs';
+
 import { LessonResponse } from './lesson.models';
 import { LessonService } from './lesson.service';
 import { LessonsComponent } from './lessons.component';
@@ -10,6 +13,11 @@ describe('LessonsComponent', () => {
 
   let lessonService: {
     getLessons: ReturnType<typeof vi.fn>;
+    deleteLesson: ReturnType<typeof vi.fn>;
+  };
+
+  const dialog = {
+    open: vi.fn(),
   };
 
   const lesson: LessonResponse = {
@@ -31,11 +39,12 @@ describe('LessonsComponent', () => {
   beforeEach(async () => {
     lessonService = {
       getLessons: vi.fn(),
+      deleteLesson: vi.fn(),
     };
 
     lessonService.getLessons.mockReturnValue(of([lesson]));
 
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [LessonsComponent],
       providers: [
         provideRouter([]),
@@ -44,7 +53,13 @@ describe('LessonsComponent', () => {
           useValue: lessonService,
         },
       ],
-    }).compileComponents();
+    });
+
+    TestBed.overrideProvider(MatDialog, {
+      useValue: dialog,
+    });
+
+    await TestBed.compileComponents();
   });
 
   it('should load and show lessons', () => {
@@ -107,5 +122,80 @@ describe('LessonsComponent', () => {
     ) as HTMLAnchorElement | null;
 
     expect(editLink).not.toBeNull();
+  });
+
+  it('should not delete lesson when confirmation is cancelled', () => {
+    dialog.open.mockReturnValue({
+      afterClosed: () => of(false),
+    });
+
+    fixture = TestBed.createComponent(LessonsComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance['deleteLesson'](lesson);
+
+    expect(lessonService.deleteLesson).not.toHaveBeenCalled();
+  });
+
+  it('should delete lesson and reload lessons after confirmation', () => {
+    dialog.open.mockReturnValue({
+      afterClosed: () => of(true),
+    });
+
+    lessonService.deleteLesson.mockReturnValue(of(undefined));
+
+    fixture = TestBed.createComponent(LessonsComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance['deleteLesson'](lesson);
+
+    expect(lessonService.deleteLesson).toHaveBeenCalledWith(1);
+    expect(lessonService.getLessons).toHaveBeenCalledTimes(2);
+  });
+
+  it('should show forbidden error when lesson cannot be deleted', () => {
+    dialog.open.mockReturnValue({
+      afterClosed: () => of(true),
+    });
+
+    lessonService.deleteLesson.mockReturnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 403,
+          }),
+      ),
+    );
+
+    fixture = TestBed.createComponent(LessonsComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance['deleteLesson'](lesson);
+
+    expect(fixture.componentInstance['actionError']()).toBe(
+      'You are not allowed to delete lessons.',
+    );
+  });
+
+  it('should show not found error when lesson does not exist', () => {
+    dialog.open.mockReturnValue({
+      afterClosed: () => of(true),
+    });
+
+    lessonService.deleteLesson.mockReturnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status: 404,
+          }),
+      ),
+    );
+
+    fixture = TestBed.createComponent(LessonsComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance['deleteLesson'](lesson);
+
+    expect(fixture.componentInstance['actionError']()).toBe('Lesson was not found.');
   });
 });
