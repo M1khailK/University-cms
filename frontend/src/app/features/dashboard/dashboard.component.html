@@ -5,7 +5,7 @@
 
       <h1>Welcome back, {{ displayName() }}</h1>
 
-      <p>Everything you need for today’s academic work, collected in one place.</p>
+      <p>Everything you need for today's academic work, collected in one place.</p>
     </div>
 
     <div class="hero-mark" aria-hidden="true">U</div>
@@ -21,33 +21,67 @@
   <div class="action-grid">
     @if (isAdmin()) {
       <a class="action-card" routerLink="/students">
-        <span class="action-icon">S</span>
+        <span class="action-icon" aria-hidden="true">S</span>
+
         <span>
           <strong>Manage students</strong>
           <small> Create, update and manage student records. </small>
         </span>
-        <span class="arrow">→</span>
+
+        <span class="arrow" aria-hidden="true">→</span>
       </a>
     }
 
     @if (isTeacher() || isStudent()) {
       <a class="action-card" routerLink="/schedule">
-        <span class="action-icon">▦</span>
+        <span class="action-icon" aria-hidden="true">▦</span>
+
         <span>
           <strong>Open my schedule</strong>
           <small> View lessons and upcoming academic activity. </small>
         </span>
-        <span class="arrow">→</span>
+
+        <span class="arrow" aria-hidden="true">→</span>
       </a>
     }
 
+    <a class="action-card" routerLink="/grades">
+      <span class="action-icon" aria-hidden="true">A</span>
+
+      <span>
+        <strong>
+          @if (isStudent()) {
+            View my grades
+          } @else if (isTeacher()) {
+            Manage grades
+          } @else {
+            Review grades
+          }
+        </strong>
+
+        <small>
+          @if (isStudent()) {
+            Review your academic results and lesson grades.
+          } @else if (isTeacher()) {
+            Create and manage grades for your lessons.
+          } @else {
+            Review academic results across the university.
+          }
+        </small>
+      </span>
+
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+
     <a class="action-card" routerLink="/assistant">
-      <span class="action-icon">✦</span>
+      <span class="action-icon" aria-hidden="true">✦</span>
+
       <span>
         <strong>Ask the AI assistant</strong>
         <small> Find answers across your accessible university data. </small>
       </span>
-      <span class="arrow">→</span>
+
+      <span class="arrow" aria-hidden="true">→</span>
     </a>
   </div>
 
@@ -55,9 +89,10 @@
     <div>
       <p class="eyebrow">University CMS</p>
       <h2>A secure academic workspace</h2>
+
       <p>
-        Your role controls which records, lessons and learning materials are available throughout
-        the application.
+        Your role controls which records, lessons, grades and learning materials are available
+        throughout the application.
       </p>
     </div>
 
@@ -74,6 +109,11 @@
 
       <div>
         <span>03</span>
+        <strong>Grade management</strong>
+      </div>
+
+      <div>
+        <span>04</span>
         <strong>AI-assisted learning</strong>
       </div>
     </div>

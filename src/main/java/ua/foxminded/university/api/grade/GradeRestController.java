@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ua.foxminded.university.api.grade.dto.GradeCreateRequest;
+import ua.foxminded.university.api.grade.dto.GradeOptionsResponse;
 import ua.foxminded.university.api.grade.dto.GradeResponse;
 import ua.foxminded.university.api.grade.mapper.GradeMapper;
 import ua.foxminded.university.services.GradeService;
@@ -31,13 +32,36 @@ public class GradeRestController {
     private final GradeMapper gradeMapper;
 
     @GetMapping
-    public List<GradeResponse> getGrades() {
-        return gradeMapper.toResponses(gradeService.getAllGrades());
+    public List<GradeResponse> getGrades(
+            Authentication authentication
+    ) {
+        if (isAdmin(authentication)) {
+            return gradeMapper.toResponses(
+                    gradeService.getAllGrades()
+            );
+        }
+
+        return gradeMapper.toResponses(
+                gradeService.getGradesByTeacherEmail(
+                        authentication.getName()
+                )
+        );
     }
 
     @GetMapping("/me")
     public List<GradeResponse> getMyGrades(Authentication authentication) {
         return gradeMapper.toResponses(gradeService.getGradesByEmail(authentication.getName()));
+    }
+
+    @GetMapping("/options")
+    public GradeOptionsResponse getGradeCreationOptions(
+            Authentication authentication
+    ) {
+        return gradeMapper.toOptionsResponse(
+                gradeService.getGradeCreationLessons(
+                        authentication.getName()
+                )
+        );
     }
 
     @PostMapping
@@ -67,5 +91,14 @@ public class GradeRestController {
         gradeService.deleteGrade(id, authentication.getName());
 
         return ResponseEntity.noContent().build();
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        return authentication
+                .getAuthorities()
+                .stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ADMIN")
+                );
     }
 }

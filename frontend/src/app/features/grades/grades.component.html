@@ -1,0 +1,172 @@
+<section class="grades-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Academic performance</p>
+      <h1>{{ isStudent() ? 'My grades' : 'Grades' }}</h1>
+
+      <p class="page-description">
+        @if (isStudent()) {
+          Review your results across completed lessons.
+        } @else if (isTeacher()) {
+          Review and manage grades for your lessons.
+        } @else {
+          Review academic results across the university.
+        }
+      </p>
+    </div>
+
+    @if (isTeacher()) {
+      <a class="primary-action" mat-flat-button routerLink="/grades/new">
+        <span aria-hidden="true">+</span>
+        Add grade
+      </a>
+    }
+  </header>
+
+  @if (actionError()) {
+    <div class="alert error-alert" role="alert">
+      <span aria-hidden="true">!</span>
+      {{ actionError() }}
+    </div>
+  }
+
+  <section class="content-card">
+    @if (loading()) {
+      <div class="state-view">
+        <span class="state-icon loading-icon" aria-hidden="true">G</span>
+        <h2>Loading grades...</h2>
+        <p>Your gradebook is being prepared.</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="state-view">
+        <span class="state-icon error-icon" aria-hidden="true">!</span>
+        <h2>Unable to load grades</h2>
+        <p class="error-message" role="alert">
+          {{ errorMessage() }}
+        </p>
+      </div>
+    } @else if (grades().length === 0) {
+      <div class="state-view empty-state">
+        <span class="state-icon" aria-hidden="true">A+</span>
+        <h2>No grades found.</h2>
+
+        <p>
+          @if (isTeacher()) {
+            Grades created for your lessons will appear here.
+          } @else if (isStudent()) {
+            Your results will appear here after they are published.
+          } @else {
+            There are no recorded grades yet.
+          }
+        </p>
+
+        @if (isTeacher()) {
+          <a class="empty-action" mat-stroked-button routerLink="/grades/new">
+            Create first grade
+          </a>
+        }
+      </div>
+    } @else {
+      <div class="table-heading">
+        <div>
+          <p class="eyebrow">Gradebook</p>
+          <h2>
+            {{ grades().length }}
+            {{ grades().length === 1 ? 'record' : 'records' }}
+          </h2>
+        </div>
+
+        <span class="view-badge">
+          {{ isStudent() ? 'Personal results' : isTeacher() ? 'Your lessons' : 'All grades' }}
+        </span>
+      </div>
+
+      <div class="table-scroll">
+        <table mat-table [dataSource]="grades()">
+          <ng-container matColumnDef="student">
+            <th mat-header-cell *matHeaderCellDef>Student</th>
+
+            <td mat-cell *matCellDef="let grade">
+              <div class="student-cell">
+                <span class="student-avatar" aria-hidden="true">
+                  {{ grade.studentFirstName.slice(0, 1) }}
+                  {{ grade.studentLastName.slice(0, 1) }}
+                </span>
+
+                <span class="student-copy">
+                  <strong>
+                    {{ grade.studentFirstName }}
+                    {{ grade.studentLastName }}
+                  </strong>
+
+                  <small>{{ grade.studentEmail }}</small>
+                </span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="lesson">
+            <th mat-header-cell *matHeaderCellDef>Lesson</th>
+
+            <td mat-cell *matCellDef="let grade">
+              <strong>{{ grade.lessonName }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let grade">
+              {{ grade.lessonDate }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="time">
+            <th mat-header-cell *matHeaderCellDef>Time</th>
+
+            <td mat-cell *matCellDef="let grade">
+              <span class="time-value">
+                {{ grade.lessonStartTime.slice(0, 5) }}
+                –
+                {{ grade.lessonEndTime.slice(0, 5) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="value">
+            <th mat-header-cell *matHeaderCellDef>Grade</th>
+
+            <td mat-cell *matCellDef="let grade">
+              <span
+                class="grade-value"
+                [class.high-grade]="grade.value >= 4"
+                [class.low-grade]="grade.value <= 2"
+              >
+                {{ grade.value }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+
+            <td mat-cell *matCellDef="let grade">
+              <button
+                class="delete-button"
+                mat-button
+                type="button"
+                [disabled]="deletingGradeId() === grade.id"
+                (click)="deleteGrade(grade)"
+              >
+                {{ deletingGradeId() === grade.id ? 'Deleting...' : 'Delete' }}
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+
+          <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
+        </table>
+      </div>
+    }
+  </section>
+</section>

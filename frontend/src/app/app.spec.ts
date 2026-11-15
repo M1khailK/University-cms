@@ -67,6 +67,8 @@ describe('App', () => {
     expect(compiled.querySelector('.brand')?.textContent).toContain('University');
 
     expect(navigationText).toContain('My schedule');
+    expect(navigationText).toContain('Grades');
+    expect(navigationText).not.toContain('My grades');
     expect(navigationText).toContain('AI assistant');
     expect(navigationText).not.toContain('Students');
     expect(navigationText).toContain('Subjects');
@@ -105,5 +107,24 @@ describe('App', () => {
     expect(guestNavigationText).toContain('Sign in');
 
     expect(compiled.querySelector('.sidebar')).toBeNull();
+  });
+  it('should render personal grades navigation for a student', () => {
+    authenticatedUser.set({
+      email: 'student@university.com',
+      authorities: ['ROLE_STUDENT'],
+    });
+
+    isTeacher.set(false);
+    isStudent.set(true);
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    const gradesLink = fixture.nativeElement.querySelector(
+      'a[href="/grades"]',
+    ) as HTMLAnchorElement | null;
+
+    expect(gradesLink).not.toBeNull();
+    expect(gradesLink?.textContent).toContain('My grades');
   });
 });

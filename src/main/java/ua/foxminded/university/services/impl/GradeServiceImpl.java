@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
 import ua.foxminded.university.customexceptions.GradeNotFoundException;
+import ua.foxminded.university.customexceptions.GradeStudentGroupMismatchException;
 import ua.foxminded.university.info.Grade;
 import ua.foxminded.university.info.Lesson;
+import ua.foxminded.university.info.Student;
 import ua.foxminded.university.repository.GradeRepository;
 import ua.foxminded.university.services.GradeService;
 import ua.foxminded.university.services.LessonService;
@@ -42,9 +44,13 @@ public class GradeServiceImpl implements GradeService {
         Lesson lesson = lessonService.getById(lessonId);
         assertTeacherOwnsLesson(lesson, teacherEmail);
 
+        Student student = studentService.getById(studentId);
+
+        assertStudentBelongsToLessonGroup(student, lesson);
+
         Grade grade = new Grade(
                 null,
-                studentService.getById(studentId),
+                student,
                 lesson,
                 value
         );
@@ -63,6 +69,21 @@ public class GradeServiceImpl implements GradeService {
         gradeRepository.delete(grade);
     }
 
+    @Override
+    @Transactional
+    public List<Lesson> getGradeCreationLessons(String teacherEmail) {
+        return lessonService
+                .getAllByTeacherEmailWithGroupStudents(teacherEmail);
+    }
+
+    @Override
+    public List<Grade> getGradesByTeacherEmail(
+            String teacherEmail
+    ) {
+        return gradeRepository
+                .findAllByLessonTeacherEmail(teacherEmail);
+    }
+
     private void assertTeacherOwnsLesson(Lesson lesson, String teacherEmail) {
         int teacherId = userService.getUserIdByEmail(teacherEmail);
 
@@ -71,4 +92,20 @@ public class GradeServiceImpl implements GradeService {
         }
     }
 
+    private void assertStudentBelongsToLessonGroup(
+            Student student,
+            Lesson lesson
+    ) {
+        if (student.getGroup() == null
+                || lesson.getGroup() == null
+                || !Objects.equals(
+                student.getGroup().getId(),
+                lesson.getGroup().getId()
+        )) {
+            throw new GradeStudentGroupMismatchException(
+                    student.getId(),
+                    lesson.getId()
+            );
+        }
+    }
 }

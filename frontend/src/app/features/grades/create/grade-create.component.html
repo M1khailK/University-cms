@@ -1,0 +1,75 @@
+<h1>Create grade</h1>
+
+@if (errorMessage()) {
+  <p class="error-message" role="alert">
+    {{ errorMessage() }}
+  </p>
+}
+
+@if (optionsLoading()) {
+  <p>Loading grade options...</p>
+} @else if (lessons().length === 0) {
+  @if (!errorMessage()) {
+    <p>No lessons are available for grading.</p>
+  }
+} @else {
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field>
+      <mat-label>Lesson</mat-label>
+
+      <mat-select formControlName="lessonId">
+        @for (lesson of lessons(); track lesson.id) {
+          <mat-option [value]="lesson.id">
+            {{ lesson.name }} — {{ lesson.groupName }} — {{ lesson.date }}
+            {{ lesson.startTime.slice(0, 5) }}
+          </mat-option>
+        }
+      </mat-select>
+
+      @if (form.controls.lessonId.touched && form.controls.lessonId.hasError('required')) {
+        <mat-error>Lesson is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Student</mat-label>
+
+      <mat-select formControlName="studentId">
+        @for (student of studentsForSelectedLesson(); track student.id) {
+          <mat-option [value]="student.id">
+            {{ student.firstName }} {{ student.lastName }} —
+            {{ student.email }}
+          </mat-option>
+        }
+      </mat-select>
+
+      @if (form.controls.studentId.touched && form.controls.studentId.hasError('required')) {
+        <mat-error>Student is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Grade</mat-label>
+
+      <mat-select formControlName="value">
+        @for (gradeValue of gradeValues; track gradeValue) {
+          <mat-option [value]="gradeValue">
+            {{ gradeValue }}
+          </mat-option>
+        }
+      </mat-select>
+
+      @if (form.controls.value.touched && form.controls.value.hasError('required')) {
+        <mat-error>Grade is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="actions">
+      <button mat-button type="button" [disabled]="submitting()" (click)="cancel()">Cancel</button>
+
+      <button mat-flat-button type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Creating...' : 'Create grade' }}
+      </button>
+    </div>
+  </form>
+}

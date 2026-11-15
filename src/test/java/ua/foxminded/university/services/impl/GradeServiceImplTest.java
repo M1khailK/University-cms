@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
 import ua.foxminded.university.customexceptions.GradeNotFoundException;
+import ua.foxminded.university.customexceptions.GradeStudentGroupMismatchException;
 import ua.foxminded.university.info.Grade;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
@@ -19,6 +20,7 @@ import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -124,6 +126,82 @@ class GradeServiceImplTest {
         verify(gradeRepository, never()).delete(any(Grade.class));
     }
 
+    @Test
+    void gradeService_shouldRejectStudentFromAnotherLessonGroup() {
+        Student student = createStudent();
+        Lesson lesson = createLessonWithTeacher(2);
+
+        Group anotherGroup = new Group();
+        anotherGroup.setId(20);
+        anotherGroup.setName("BB-22");
+
+        lesson.setGroup(anotherGroup);
+
+        when(userService.getUserIdByEmail("teacher@example.com"))
+                .thenReturn(2);
+        when(lessonService.getById(100)).thenReturn(lesson);
+        when(studentService.getById(1)).thenReturn(student);
+
+        assertThrows(
+                GradeStudentGroupMismatchException.class,
+                () -> gradeService.createGrade(
+                        1,
+                        100,
+                        5,
+                        "teacher@example.com"
+                )
+        );
+
+        verify(gradeRepository, never()).save(any(Grade.class));
+    }
+
+    @Test
+    void gradeService_shouldReturnGradeCreationLessonsForTeacher() {
+        Lesson lesson = createLessonWithTeacher(2);
+        List<Lesson> lessons = List.of(lesson);
+
+        when(
+                lessonService.getAllByTeacherEmailWithGroupStudents(
+                        "teacher@example.com"
+                )
+        ).thenReturn(lessons);
+
+        List<Lesson> actual =
+                gradeService.getGradeCreationLessons(
+                        "teacher@example.com"
+                );
+
+        assertEquals(lessons, actual);
+
+        verify(lessonService)
+                .getAllByTeacherEmailWithGroupStudents(
+                        "teacher@example.com"
+                );
+    }
+
+    @Test
+    void gradeService_shouldReturnOnlyTeacherGrades() {
+        Grade grade = createGradeForTeacher(2);
+
+        when(
+                gradeRepository.findAllByLessonTeacherEmail(
+                        "teacher@example.com"
+                )
+        ).thenReturn(List.of(grade));
+
+        List<Grade> actual =
+                gradeService.getGradesByTeacherEmail(
+                        "teacher@example.com"
+                );
+
+        assertEquals(List.of(grade), actual);
+
+        verify(gradeRepository)
+                .findAllByLessonTeacherEmail(
+                        "teacher@example.com"
+                );
+    }
+
     private Grade createGradeForTeacher(Integer teacherId) {
         return new Grade(500, createStudent(), createLessonWithTeacher(teacherId), 5);
     }
@@ -154,10 +232,15 @@ class GradeServiceImplTest {
                 "TEACHER"
         );
 
+        Group group = new Group();
+        group.setId(10);
+        group.setName("AA-11");
+
         Lesson lesson = new Lesson();
         lesson.setId(100);
         lesson.setName("Math lesson");
         lesson.setTeacher(teacher);
+        lesson.setGroup(group);
         lesson.setDate(LocalDate.of(2023, 4, 27));
         lesson.setStartTime(LocalTime.of(10, 0));
         lesson.setEndTime(LocalTime.of(12, 0));

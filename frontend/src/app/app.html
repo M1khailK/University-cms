@@ -54,6 +54,11 @@
           </a>
         }
 
+        <a routerLink="/grades" routerLinkActive="active" (click)="closeMenu()">
+          <span class="nav-icon" aria-hidden="true">A</span>
+          {{ isStudent() ? 'My grades' : 'Grades' }}
+        </a>
+
         <a routerLink="/assistant" routerLinkActive="active" (click)="closeMenu()">
           <span class="nav-icon" aria-hidden="true">✦</span>
           AI assistant

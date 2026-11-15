@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface GradeRepository extends JpaRepository<Grade, Integer> {
     List<Grade> findByStudentEmail(String studentEmail);
+
+    List<Grade> findAllByLessonTeacherEmail(
+            String teacherEmail
+    );
 }

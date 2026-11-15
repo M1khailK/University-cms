@@ -7,12 +7,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
 import ua.foxminded.university.api.grade.mapper.GradeMapper;
 import ua.foxminded.university.customexceptions.GradeAccessDeniedException;
 import ua.foxminded.university.customexceptions.GradeNotFoundException;
+import ua.foxminded.university.customexceptions.GradeStudentGroupMismatchException;
 import ua.foxminded.university.info.Grade;
 import ua.foxminded.university.info.Group;
 import ua.foxminded.university.info.Lesson;
@@ -46,23 +48,57 @@ class GradeRestControllerTest {
     private GradeService gradeService;
 
     @Test
-    void gradeRestController_shouldReturnAllGrades_whenRequestedByPrivilegedUser() throws Exception {
-        when(gradeService.getAllGrades()).thenReturn(List.of(createGrade()));
+    void gradeRestController_shouldReturnAllGradesForAdmin()
+            throws Exception {
+        when(gradeService.getAllGrades())
+                .thenReturn(List.of(createGrade()));
 
-        mockMvc.perform(get("/api/v1/grades"))
+        mockMvc.perform(get("/api/v1/grades")
+                        .principal(
+                                new UsernamePasswordAuthenticationToken(
+                                        "admin@example.com",
+                                        "password",
+                                        List.of(
+                                                new SimpleGrantedAuthority(
+                                                        "ROLE_ADMIN"
+                                                )
+                                        )
+                                )
+                        ))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(500))
-                .andExpect(jsonPath("$[0].value").value(5))
-                .andExpect(jsonPath("$[0].studentId").value(1))
-                .andExpect(jsonPath("$[0].studentFirstName").value("Alice"))
-                .andExpect(jsonPath("$[0].studentLastName").value("Brown"))
-                .andExpect(jsonPath("$[0].studentEmail").value("alice.brown@example.com"))
-                .andExpect(jsonPath("$[0].lessonId").value(100))
-                .andExpect(jsonPath("$[0].lessonName").value("Math lesson"))
-                .andExpect(jsonPath("$[0].password").doesNotExist());
+                .andExpect(jsonPath("$[0].id").value(500));
 
         verify(gradeService).getAllGrades();
+    }
+
+    @Test
+    void gradeRestController_shouldReturnOnlyTeacherGrades()
+            throws Exception {
+        when(
+                gradeService.getGradesByTeacherEmail(
+                        "teacher@example.com"
+                )
+        ).thenReturn(List.of(createGrade()));
+
+        mockMvc.perform(get("/api/v1/grades")
+                        .principal(
+                                new UsernamePasswordAuthenticationToken(
+                                        "teacher@example.com",
+                                        "password",
+                                        List.of(
+                                                new SimpleGrantedAuthority(
+                                                        "ROLE_TEACHER"
+                                                )
+                                        )
+                                )
+                        ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(500));
+
+        verify(gradeService)
+                .getGradesByTeacherEmail(
+                        "teacher@example.com"
+                );
     }
 
     @Test
@@ -223,5 +259,98 @@ class GradeRestControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.title").value("Grade not found"));
+    }
+
+    @Test
+    void gradeRestController_shouldReturnConflict_whenStudentIsFromAnotherGroup()
+            throws Exception {
+        when(gradeService.createGrade(
+                eq(1),
+                eq(100),
+                eq(5),
+                eq("teacher@example.com")
+        )).thenThrow(
+                new GradeStudentGroupMismatchException(1, 100)
+        );
+
+        mockMvc.perform(post("/api/v1/grades")
+                        .principal(new UsernamePasswordAuthenticationToken(
+                                "teacher@example.com",
+                                "password"
+                        ))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "studentId": 1,
+                                  "lessonId": 100,
+                                  "value": 5
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(content().contentTypeCompatibleWith(
+                        MediaType.APPLICATION_PROBLEM_JSON
+                ))
+                .andExpect(jsonPath("$.title")
+                        .value("Grade assignment conflict"));
+    }
+
+    @Test
+    void gradeRestController_shouldReturnGradeCreationOptions()
+            throws Exception {
+        Group group = new Group();
+        group.setId(10);
+        group.setName("AA-11");
+
+        Student student = new Student(
+                1,
+                "Alice",
+                "Brown",
+                "alice.brown@example.com",
+                group,
+                "encoded-password",
+                "STUDENT"
+        );
+
+        group.setStudents(List.of(student));
+
+        Lesson lesson = new Lesson();
+        lesson.setId(100);
+        lesson.setName("Math lesson");
+        lesson.setDate(LocalDate.of(2023, 4, 27));
+        lesson.setStartTime(LocalTime.of(10, 0));
+        lesson.setEndTime(LocalTime.of(12, 0));
+        lesson.setGroup(group);
+
+        when(
+                gradeService.getGradeCreationLessons(
+                        "teacher@example.com"
+                )
+        ).thenReturn(List.of(lesson));
+
+        mockMvc.perform(get("/api/v1/grades/options")
+                        .principal(
+                                new UsernamePasswordAuthenticationToken(
+                                        "teacher@example.com",
+                                        "password"
+                                )
+                        ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.lessons[0].id").value(100))
+                .andExpect(jsonPath("$.lessons[0].name")
+                        .value("Math lesson"))
+                .andExpect(jsonPath("$.lessons[0].groupId")
+                        .value(10))
+                .andExpect(jsonPath("$.lessons[0].groupName")
+                        .value("AA-11"))
+                .andExpect(jsonPath("$.lessons[0].students[0].id")
+                        .value(1))
+                .andExpect(jsonPath(
+                        "$.lessons[0].students[0].email"
+                ).value("alice.brown@example.com"));
+
+        verify(gradeService)
+                .getGradeCreationLessons(
+                        "teacher@example.com"
+                );
     }
 }

@@ -57,7 +57,8 @@ class GradeApiSecurityTest {
 
     @Test
     void gradeApiSecurity_shouldAllowReadAllGrades_whenUserIsTeacher() throws Exception {
-        when(gradeService.getAllGrades()).thenReturn(List.of(createGrade()));
+        when(gradeService.getGradesByTeacherEmail("teacher"))
+                .thenReturn(List.of(createGrade()));
 
         mockMvc.perform(get("/api/v1/grades")
                         .with(user("teacher").roles("TEACHER")))
@@ -103,6 +104,40 @@ class GradeApiSecurityTest {
     @Test
     void gradeApiSecurity_shouldRedirectToLogin_whenAnonymousReadsOwnGrades() throws Exception {
         mockMvc.perform(get("/api/v1/grades/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void gradeApiSecurity_shouldAllowGradeOptions_whenUserIsTeacher()
+            throws Exception {
+        when(gradeService.getGradeCreationLessons("teacher"))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/grades/options")
+                        .with(user("teacher").roles("TEACHER")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void gradeApiSecurity_shouldForbidGradeOptions_whenUserIsStudent()
+            throws Exception {
+        mockMvc.perform(get("/api/v1/grades/options")
+                        .with(user("student").roles("STUDENT")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void gradeApiSecurity_shouldForbidGradeOptions_whenUserIsAdmin()
+            throws Exception {
+        mockMvc.perform(get("/api/v1/grades/options")
+                        .with(user("admin").roles("ADMIN")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void gradeApiSecurity_shouldRejectAnonymousGradeOptions()
+            throws Exception {
+        mockMvc.perform(get("/api/v1/grades/options"))
                 .andExpect(status().isUnauthorized());
     }
 

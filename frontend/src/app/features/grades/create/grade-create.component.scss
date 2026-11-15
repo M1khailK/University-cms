@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+form {
+  display: grid;
+  max-width: 640px;
+  gap: 16px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.error-message {
+  color: var(--mat-sys-error);
+}

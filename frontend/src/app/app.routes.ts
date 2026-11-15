@@ -109,20 +109,6 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'lessons',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/lessons/lessons.component').then((module) => module.LessonsComponent),
-  },
-  {
-    path: 'lessons/new',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/lessons/create/lesson-create.component').then(
-        (module) => module.LessonCreateComponent,
-      ),
-  },
-  {
     path: 'lessons/:id/edit',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -131,10 +117,24 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'lessons',
+    path: 'grades/new',
     canActivate: [authGuard],
     loadComponent: () =>
-      import('./features/lessons/lessons.component').then((module) => module.LessonsComponent),
+      import('./features/grades/create/grade-create.component').then(
+        (module) => module.GradeCreateComponent,
+      ),
+  },
+  {
+    path: 'grades',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/grades/grades.component').then((module) => module.GradesComponent),
+  },
+  {
+    path: 'grades',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/grades/grades.component').then((module) => module.GradesComponent),
   },
   {
     path: '**',

@@ -53,8 +53,28 @@ describe('DashboardComponent', () => {
     expect(content).toContain('Open my schedule');
     expect(content).toContain('Ask the AI assistant');
     expect(content).not.toContain('Manage students');
-  });
+    expect(content).toContain('Manage grades');
 
+    expect(fixture.nativeElement.querySelector('a[href="/grades"]')).not.toBeNull();
+  });
+  it('should render personal grades action for a student', () => {
+    authenticatedUser.set({
+      email: 'student@university.com',
+      authorities: ['ROLE_STUDENT'],
+    });
+
+    isTeacher.set(false);
+    isStudent.set(true);
+
+    const fixture = TestBed.createComponent(DashboardComponent);
+    fixture.detectChanges();
+
+    const content = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(content).toContain('View my grades');
+
+    expect(fixture.nativeElement.querySelector('a[href="/grades"]')).not.toBeNull();
+  });
   it('should render administrator actions', () => {
     isTeacher.set(false);
     isAdmin.set(true);
@@ -68,5 +88,6 @@ describe('DashboardComponent', () => {
     expect(content).toContain('Administrator');
     expect(content).toContain('Manage students');
     expect(content).not.toContain('Open my schedule');
+    expect(content).toContain('Review grades');
   });
 });
