@@ -1,5 +1,9 @@
 <h1>{{ isStudent() ? 'My grades' : 'Grades' }}</h1>
 
+@if (isTeacher()) {
+  <a mat-flat-button routerLink="/grades/new"> Add grade </a>
+}
+
 @if (loading()) {
   <p>Loading grades...</p>
 } @else if (errorMessage()) {

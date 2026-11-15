@@ -6,10 +6,11 @@ import { finalize } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { GradeResponse } from './grade.models';
 import { GradeService } from './grade.service';
-
+import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-grades',
-  imports: [MatTableModule],
+  imports: [MatButtonModule, MatTableModule, RouterLink],
   templateUrl: './grades.component.html',
   styleUrl: './grades.component.scss',
 })
@@ -18,6 +19,7 @@ export class GradesComponent implements OnInit {
   private readonly authService = inject(AuthService);
 
   protected readonly isStudent = this.authService.isStudent;
+  protected readonly isTeacher = this.authService.isTeacher;
 
   protected readonly grades = signal<GradeResponse[]>([]);
   protected readonly loading = signal(false);

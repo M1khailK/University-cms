@@ -117,6 +117,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'grades/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/grades/create/grade-create.component').then(
+        (module) => module.GradeCreateComponent,
+      ),
+  },
+  {
+    path: 'grades',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/grades/grades.component').then((module) => module.GradesComponent),
+  },
+  {
     path: 'grades',
     canActivate: [authGuard],
     loadComponent: () =>

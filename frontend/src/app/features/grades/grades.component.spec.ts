@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, Subject, throwError } from 'rxjs';
-
+import { provideRouter } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { GradeResponse } from './grade.models';
 import { GradeService } from './grade.service';
@@ -11,7 +11,7 @@ import { GradesComponent } from './grades.component';
 describe('GradesComponent', () => {
   let fixture: ComponentFixture<GradesComponent>;
   let isStudent: ReturnType<typeof signal<boolean>>;
-
+  let isTeacher: ReturnType<typeof signal<boolean>>;
   let gradeService: {
     getGrades: ReturnType<typeof vi.fn>;
     getMyGrades: ReturnType<typeof vi.fn>;
@@ -33,7 +33,7 @@ describe('GradesComponent', () => {
 
   beforeEach(async () => {
     isStudent = signal(false);
-
+    isTeacher = signal(false);
     gradeService = {
       getGrades: vi.fn().mockReturnValue(of([grade])),
       getMyGrades: vi.fn().mockReturnValue(of([grade])),
@@ -42,6 +42,7 @@ describe('GradesComponent', () => {
     TestBed.configureTestingModule({
       imports: [GradesComponent],
       providers: [
+        provideRouter([]),
         {
           provide: GradeService,
           useValue: gradeService,
@@ -50,6 +51,7 @@ describe('GradesComponent', () => {
           provide: AuthService,
           useValue: {
             isStudent,
+            isTeacher,
           },
         },
       ],
@@ -129,5 +131,17 @@ describe('GradesComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('Failed to load grades.');
+  });
+
+  it('should show add grade link only for a teacher', () => {
+    fixture = TestBed.createComponent(GradesComponent);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('a[href="/grades/new"]')).toBeNull();
+
+    isTeacher.set(true);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('a[href="/grades/new"]')).not.toBeNull();
   });
 });
