@@ -16,7 +16,15 @@ import { LessonService } from './lesson.service';
 export class LessonsComponent implements OnInit {
   private readonly lessonService = inject(LessonService);
 
-  protected readonly displayedColumns = ['name', 'date', 'time', 'subject', 'group', 'teacher'];
+  protected readonly displayedColumns = [
+    'name',
+    'date',
+    'time',
+    'subject',
+    'group',
+    'teacher',
+    'actions',
+  ];
 
   protected readonly lessons = signal<LessonResponse[]>([]);
   protected readonly loading = signal(false);

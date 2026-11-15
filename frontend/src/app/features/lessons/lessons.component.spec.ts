@@ -95,4 +95,15 @@ describe('LessonsComponent', () => {
 
     response$.complete();
   });
+
+  it('should render edit link for lesson', () => {
+    fixture = TestBed.createComponent(LessonsComponent);
+    fixture.detectChanges();
+
+    const editLink = fixture.nativeElement.querySelector(
+      'a[href="/lessons/1/edit"]',
+    ) as HTMLAnchorElement | null;
+
+    expect(editLink).not.toBeNull();
+  });
 });
