@@ -52,4 +52,17 @@ public interface LessonRepository
             order by lesson.id
             """)
     List<Integer> findAllIds();
+
+    @Query("""
+        select distinct lesson
+        from Lesson lesson
+        join fetch lesson.teacher teacher
+        join fetch lesson.group lessonGroup
+        left join fetch lessonGroup.students
+        where teacher.email = :teacherEmail
+        order by lesson.date, lesson.startTime, lesson.id
+        """)
+    List<Lesson> findAllByTeacherEmailWithGroupStudents(
+            @Param("teacherEmail") String teacherEmail
+    );
 }

@@ -81,6 +81,14 @@ public class LessonServiceImpl implements LessonService {
         return lessonRepository.findAllByGroupIdAndDateBetween(group.getId(), from, to);
     }
 
+    @Override
+    public List<Lesson> getAllByTeacherEmailWithGroupStudents(
+            String teacherEmail
+    ) {
+        return lessonRepository
+                .findAllByTeacherEmailWithGroupStudents(teacherEmail);
+    }
+
     private LocalDate getDefaultDate() {
         LocalDate today = LocalDate.now(clock);
         LocalTime now = LocalTime.now(clock);

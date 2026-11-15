@@ -13,9 +13,15 @@ public interface LessonService extends EntityService<Lesson> {
 
     List<Lesson> getAllByGroupAndDateBetween(Group group, LocalDate from, LocalDate to);
 
+    List<Lesson> getAllByTeacherEmailWithGroupStudents(
+            String teacherEmail
+    );
+
     Lesson create(Lesson lesson);
 
     Lesson update(int lessonId, Lesson lesson);
 
     void deleteById(int lessonId);
+
+
 }

@@ -2,13 +2,14 @@ package ua.foxminded.university.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc
-        .AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import ua.foxminded.university.info.Lesson;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest(properties = {
@@ -70,6 +71,27 @@ class LessonRepositoryAccessTest {
                                 "unknown-teacher@example.com"
                         )
                         .isEmpty()
+        );
+    }
+
+    @Test
+    void gradeOptionsQuery_shouldReturnOnlyTeacherLessonsWithGroupStudents() {
+        List<Lesson> lessons =
+                lessonRepository.findAllByTeacherEmailWithGroupStudents(
+                        "bob.first@example.com"
+                );
+
+        assertEquals(1, lessons.size());
+
+        Lesson lesson = lessons.getFirst();
+
+        assertEquals("Math lesson", lesson.getName());
+        assertEquals("Exact Sciences Group", lesson.getGroup().getName());
+
+        assertFalse(lesson.getGroup().getStudents().isEmpty());
+        assertEquals(
+                "alice.fourth@example.com",
+                lesson.getGroup().getStudents().getFirst().getEmail()
         );
     }
 }

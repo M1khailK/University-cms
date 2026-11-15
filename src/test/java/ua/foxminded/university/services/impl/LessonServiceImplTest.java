@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -106,6 +107,31 @@ public class LessonServiceImplTest {
 
         List<Lesson> actual = lessonService.getAllByGroupAndDateBetween(new Group(ID, GROUP_NAME, Collections.emptyList()), null, null);
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void lessonService_shouldReturnTeacherLessonsWithGroupStudents() {
+        Lesson lesson = new Lesson();
+        lesson.setId(100);
+        lesson.setName("Math lesson");
+
+        List<Lesson> lessons = List.of(lesson);
+
+        when(
+                lessonRepository.findAllByTeacherEmailWithGroupStudents(
+                        EXAMPLE_EMAIL
+                )
+        ).thenReturn(lessons);
+
+        List<Lesson> actual =
+                lessonService.getAllByTeacherEmailWithGroupStudents(
+                        EXAMPLE_EMAIL
+                );
+
+        Assertions.assertEquals(lessons, actual);
+
+        verify(lessonRepository)
+                .findAllByTeacherEmailWithGroupStudents(EXAMPLE_EMAIL);
     }
 
 }
