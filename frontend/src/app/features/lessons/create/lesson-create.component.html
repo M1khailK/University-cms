@@ -1,0 +1,87 @@
+<h1>Create lesson</h1>
+
+@if (errorMessage()) {
+  <p class="error-message" role="alert">
+    {{ errorMessage() }}
+  </p>
+}
+
+@if (optionsLoading()) {
+  <p>Loading lesson options...</p>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" maxlength="50" />
+
+      @if (form.controls.name.hasError('required') || form.controls.name.hasError('blank')) {
+        <mat-error>Name is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Date</mat-label>
+      <input matInput type="date" formControlName="date" />
+    </mat-form-field>
+
+    <div class="time-row">
+      <mat-form-field>
+        <mat-label>Start time</mat-label>
+        <input matInput type="time" formControlName="startTime" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>End time</mat-label>
+        <input matInput type="time" formControlName="endTime" />
+      </mat-form-field>
+    </div>
+
+    @if (
+      form.hasError('invalidTimeRange') &&
+      (form.controls.startTime.touched || form.controls.endTime.touched)
+    ) {
+      <p class="error-message" role="alert">End time must be after start time.</p>
+    }
+
+    <mat-form-field>
+      <mat-label>Subject</mat-label>
+      <mat-select formControlName="subjectId">
+        @for (subject of subjects(); track subject.id) {
+          <mat-option [value]="subject.id">
+            {{ subject.name }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Group</mat-label>
+      <mat-select formControlName="groupId">
+        @for (group of groups(); track group.id) {
+          <mat-option [value]="group.id">
+            {{ group.name }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Teacher</mat-label>
+      <mat-select formControlName="teacherId">
+        @for (teacher of teachers(); track teacher.id) {
+          <mat-option [value]="teacher.id">
+            {{ teacher.firstName }} {{ teacher.lastName }} — {{ teacher.email }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div class="actions">
+      <button mat-button type="button" [disabled]="submitting()" (click)="cancel()">Cancel</button>
+
+      <button mat-flat-button type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Creating...' : 'Create lesson' }}
+      </button>
+    </div>
+  </form>
+}
