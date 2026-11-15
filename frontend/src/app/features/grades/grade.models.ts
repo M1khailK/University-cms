@@ -19,3 +19,24 @@ export interface GradeCreateRequest {
   lessonId: number;
   value: number;
 }
+export interface GradeStudentOptionResponse {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface GradeLessonOptionResponse {
+  id: number;
+  name: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  groupId: number;
+  groupName: string;
+  students: GradeStudentOptionResponse[];
+}
+
+export interface GradeOptionsResponse {
+  lessons: GradeLessonOptionResponse[];
+}
