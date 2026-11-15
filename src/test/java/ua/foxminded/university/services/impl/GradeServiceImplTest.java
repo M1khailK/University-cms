@@ -179,6 +179,29 @@ class GradeServiceImplTest {
                 );
     }
 
+    @Test
+    void gradeService_shouldReturnOnlyTeacherGrades() {
+        Grade grade = createGradeForTeacher(2);
+
+        when(
+                gradeRepository.findAllByLessonTeacherEmail(
+                        "teacher@example.com"
+                )
+        ).thenReturn(List.of(grade));
+
+        List<Grade> actual =
+                gradeService.getGradesByTeacherEmail(
+                        "teacher@example.com"
+                );
+
+        assertEquals(List.of(grade), actual);
+
+        verify(gradeRepository)
+                .findAllByLessonTeacherEmail(
+                        "teacher@example.com"
+                );
+    }
+
     private Grade createGradeForTeacher(Integer teacherId) {
         return new Grade(500, createStudent(), createLessonWithTeacher(teacherId), 5);
     }

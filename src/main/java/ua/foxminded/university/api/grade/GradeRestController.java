@@ -32,8 +32,20 @@ public class GradeRestController {
     private final GradeMapper gradeMapper;
 
     @GetMapping
-    public List<GradeResponse> getGrades() {
-        return gradeMapper.toResponses(gradeService.getAllGrades());
+    public List<GradeResponse> getGrades(
+            Authentication authentication
+    ) {
+        if (isAdmin(authentication)) {
+            return gradeMapper.toResponses(
+                    gradeService.getAllGrades()
+            );
+        }
+
+        return gradeMapper.toResponses(
+                gradeService.getGradesByTeacherEmail(
+                        authentication.getName()
+                )
+        );
     }
 
     @GetMapping("/me")
@@ -79,5 +91,14 @@ public class GradeRestController {
         gradeService.deleteGrade(id, authentication.getName());
 
         return ResponseEntity.noContent().build();
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        return authentication
+                .getAuthorities()
+                .stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ADMIN")
+                );
     }
 }

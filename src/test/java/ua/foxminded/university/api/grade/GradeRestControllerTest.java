@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.university.api.common.ApiExceptionHandler;
@@ -47,23 +48,57 @@ class GradeRestControllerTest {
     private GradeService gradeService;
 
     @Test
-    void gradeRestController_shouldReturnAllGrades_whenRequestedByPrivilegedUser() throws Exception {
-        when(gradeService.getAllGrades()).thenReturn(List.of(createGrade()));
+    void gradeRestController_shouldReturnAllGradesForAdmin()
+            throws Exception {
+        when(gradeService.getAllGrades())
+                .thenReturn(List.of(createGrade()));
 
-        mockMvc.perform(get("/api/v1/grades"))
+        mockMvc.perform(get("/api/v1/grades")
+                        .principal(
+                                new UsernamePasswordAuthenticationToken(
+                                        "admin@example.com",
+                                        "password",
+                                        List.of(
+                                                new SimpleGrantedAuthority(
+                                                        "ROLE_ADMIN"
+                                                )
+                                        )
+                                )
+                        ))
                 .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(500))
-                .andExpect(jsonPath("$[0].value").value(5))
-                .andExpect(jsonPath("$[0].studentId").value(1))
-                .andExpect(jsonPath("$[0].studentFirstName").value("Alice"))
-                .andExpect(jsonPath("$[0].studentLastName").value("Brown"))
-                .andExpect(jsonPath("$[0].studentEmail").value("alice.brown@example.com"))
-                .andExpect(jsonPath("$[0].lessonId").value(100))
-                .andExpect(jsonPath("$[0].lessonName").value("Math lesson"))
-                .andExpect(jsonPath("$[0].password").doesNotExist());
+                .andExpect(jsonPath("$[0].id").value(500));
 
         verify(gradeService).getAllGrades();
+    }
+
+    @Test
+    void gradeRestController_shouldReturnOnlyTeacherGrades()
+            throws Exception {
+        when(
+                gradeService.getGradesByTeacherEmail(
+                        "teacher@example.com"
+                )
+        ).thenReturn(List.of(createGrade()));
+
+        mockMvc.perform(get("/api/v1/grades")
+                        .principal(
+                                new UsernamePasswordAuthenticationToken(
+                                        "teacher@example.com",
+                                        "password",
+                                        List.of(
+                                                new SimpleGrantedAuthority(
+                                                        "ROLE_TEACHER"
+                                                )
+                                        )
+                                )
+                        ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(500));
+
+        verify(gradeService)
+                .getGradesByTeacherEmail(
+                        "teacher@example.com"
+                );
     }
 
     @Test

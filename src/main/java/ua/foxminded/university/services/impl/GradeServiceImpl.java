@@ -76,6 +76,14 @@ public class GradeServiceImpl implements GradeService {
                 .getAllByTeacherEmailWithGroupStudents(teacherEmail);
     }
 
+    @Override
+    public List<Grade> getGradesByTeacherEmail(
+            String teacherEmail
+    ) {
+        return gradeRepository
+                .findAllByLessonTeacherEmail(teacherEmail);
+    }
+
     private void assertTeacherOwnsLesson(Lesson lesson, String teacherEmail) {
         int teacherId = userService.getUserIdByEmail(teacherEmail);
 

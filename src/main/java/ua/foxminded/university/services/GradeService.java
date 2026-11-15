@@ -16,4 +16,6 @@ public interface GradeService {
     List<Grade> getAllGrades();
 
     List<Lesson> getGradeCreationLessons(String teacherEmail);
+
+    List<Grade> getGradesByTeacherEmail(String teacherEmail);
 }

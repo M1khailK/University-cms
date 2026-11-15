@@ -57,7 +57,8 @@ class GradeApiSecurityTest {
 
     @Test
     void gradeApiSecurity_shouldAllowReadAllGrades_whenUserIsTeacher() throws Exception {
-        when(gradeService.getAllGrades()).thenReturn(List.of(createGrade()));
+        when(gradeService.getGradesByTeacherEmail("teacher"))
+                .thenReturn(List.of(createGrade()));
 
         mockMvc.perform(get("/api/v1/grades")
                         .with(user("teacher").roles("TEACHER")))
