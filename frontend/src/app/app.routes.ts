@@ -109,32 +109,12 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'lessons',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/lessons/lessons.component').then((module) => module.LessonsComponent),
-  },
-  {
-    path: 'lessons/new',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/lessons/create/lesson-create.component').then(
-        (module) => module.LessonCreateComponent,
-      ),
-  },
-  {
     path: 'lessons/:id/edit',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/lessons/edit/lesson-edit.component').then(
         (module) => module.LessonEditComponent,
       ),
-  },
-  {
-    path: 'lessons',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/lessons/lessons.component').then((module) => module.LessonsComponent),
   },
   {
     path: '**',
