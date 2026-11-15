@@ -20,6 +20,7 @@ import ua.foxminded.university.services.UserService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -152,6 +153,30 @@ class GradeServiceImplTest {
         );
 
         verify(gradeRepository, never()).save(any(Grade.class));
+    }
+
+    @Test
+    void gradeService_shouldReturnGradeCreationLessonsForTeacher() {
+        Lesson lesson = createLessonWithTeacher(2);
+        List<Lesson> lessons = List.of(lesson);
+
+        when(
+                lessonService.getAllByTeacherEmailWithGroupStudents(
+                        "teacher@example.com"
+                )
+        ).thenReturn(lessons);
+
+        List<Lesson> actual =
+                gradeService.getGradeCreationLessons(
+                        "teacher@example.com"
+                );
+
+        assertEquals(lessons, actual);
+
+        verify(lessonService)
+                .getAllByTeacherEmailWithGroupStudents(
+                        "teacher@example.com"
+                );
     }
 
     private Grade createGradeForTeacher(Integer teacherId) {

@@ -1,6 +1,7 @@
 package ua.foxminded.university.services;
 
 import ua.foxminded.university.info.Grade;
+import ua.foxminded.university.info.Lesson;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface GradeService {
     List<Grade> getGradesByEmail(String studentEmail);
 
     List<Grade> getAllGrades();
+
+    List<Lesson> getGradeCreationLessons(String teacherEmail);
 }

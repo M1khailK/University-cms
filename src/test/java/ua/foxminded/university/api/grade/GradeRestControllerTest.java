@@ -258,4 +258,64 @@ class GradeRestControllerTest {
                 .andExpect(jsonPath("$.title")
                         .value("Grade assignment conflict"));
     }
+
+    @Test
+    void gradeRestController_shouldReturnGradeCreationOptions()
+            throws Exception {
+        Group group = new Group();
+        group.setId(10);
+        group.setName("AA-11");
+
+        Student student = new Student(
+                1,
+                "Alice",
+                "Brown",
+                "alice.brown@example.com",
+                group,
+                "encoded-password",
+                "STUDENT"
+        );
+
+        group.setStudents(List.of(student));
+
+        Lesson lesson = new Lesson();
+        lesson.setId(100);
+        lesson.setName("Math lesson");
+        lesson.setDate(LocalDate.of(2023, 4, 27));
+        lesson.setStartTime(LocalTime.of(10, 0));
+        lesson.setEndTime(LocalTime.of(12, 0));
+        lesson.setGroup(group);
+
+        when(
+                gradeService.getGradeCreationLessons(
+                        "teacher@example.com"
+                )
+        ).thenReturn(List.of(lesson));
+
+        mockMvc.perform(get("/api/v1/grades/options")
+                        .principal(
+                                new UsernamePasswordAuthenticationToken(
+                                        "teacher@example.com",
+                                        "password"
+                                )
+                        ))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.lessons[0].id").value(100))
+                .andExpect(jsonPath("$.lessons[0].name")
+                        .value("Math lesson"))
+                .andExpect(jsonPath("$.lessons[0].groupId")
+                        .value(10))
+                .andExpect(jsonPath("$.lessons[0].groupName")
+                        .value("AA-11"))
+                .andExpect(jsonPath("$.lessons[0].students[0].id")
+                        .value(1))
+                .andExpect(jsonPath(
+                        "$.lessons[0].students[0].email"
+                ).value("alice.brown@example.com"));
+
+        verify(gradeService)
+                .getGradeCreationLessons(
+                        "teacher@example.com"
+                );
+    }
 }

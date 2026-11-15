@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ua.foxminded.university.api.grade.dto.GradeCreateRequest;
+import ua.foxminded.university.api.grade.dto.GradeOptionsResponse;
 import ua.foxminded.university.api.grade.dto.GradeResponse;
 import ua.foxminded.university.api.grade.mapper.GradeMapper;
 import ua.foxminded.university.services.GradeService;
@@ -38,6 +39,17 @@ public class GradeRestController {
     @GetMapping("/me")
     public List<GradeResponse> getMyGrades(Authentication authentication) {
         return gradeMapper.toResponses(gradeService.getGradesByEmail(authentication.getName()));
+    }
+
+    @GetMapping("/options")
+    public GradeOptionsResponse getGradeCreationOptions(
+            Authentication authentication
+    ) {
+        return gradeMapper.toOptionsResponse(
+                gradeService.getGradeCreationLessons(
+                        authentication.getName()
+                )
+        );
     }
 
     @PostMapping

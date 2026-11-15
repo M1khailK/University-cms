@@ -69,6 +69,13 @@ public class GradeServiceImpl implements GradeService {
         gradeRepository.delete(grade);
     }
 
+    @Override
+    @Transactional
+    public List<Lesson> getGradeCreationLessons(String teacherEmail) {
+        return lessonService
+                .getAllByTeacherEmailWithGroupStudents(teacherEmail);
+    }
+
     private void assertTeacherOwnsLesson(Lesson lesson, String teacherEmail) {
         int teacherId = userService.getUserIdByEmail(teacherEmail);
 
