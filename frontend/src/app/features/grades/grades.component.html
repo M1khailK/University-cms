@@ -4,6 +4,12 @@
   <a mat-flat-button routerLink="/grades/new"> Add grade </a>
 }
 
+@if (actionError()) {
+  <p class="error-message" role="alert">
+    {{ actionError() }}
+  </p>
+}
+
 @if (loading()) {
   <p>Loading grades...</p>
 } @else if (errorMessage()) {
@@ -42,6 +48,21 @@
     <ng-container matColumnDef="value">
       <th mat-header-cell *matHeaderCellDef>Grade</th>
       <td mat-cell *matCellDef="let grade">{{ grade.value }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+
+      <td mat-cell *matCellDef="let grade">
+        <button
+          mat-button
+          type="button"
+          [disabled]="deletingGradeId() === grade.id"
+          (click)="deleteGrade(grade)"
+        >
+          {{ deletingGradeId() === grade.id ? 'Deleting...' : 'Delete' }}
+        </button>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>

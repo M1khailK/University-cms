@@ -7,7 +7,7 @@ import { AuthService } from '../auth/auth.service';
 import { GradeResponse } from './grade.models';
 import { GradeService } from './grade.service';
 import { GradesComponent } from './grades.component';
-
+import { MatDialog } from '@angular/material/dialog';
 describe('GradesComponent', () => {
   let fixture: ComponentFixture<GradesComponent>;
   let isStudent: ReturnType<typeof signal<boolean>>;
@@ -15,8 +15,11 @@ describe('GradesComponent', () => {
   let gradeService: {
     getGrades: ReturnType<typeof vi.fn>;
     getMyGrades: ReturnType<typeof vi.fn>;
+    deleteGrade: ReturnType<typeof vi.fn>;
   };
-
+  const dialog = {
+    open: vi.fn(),
+  };
   const grade: GradeResponse = {
     id: 500,
     value: 5,
@@ -32,11 +35,13 @@ describe('GradesComponent', () => {
   };
 
   beforeEach(async () => {
+    dialog.open.mockReset();
     isStudent = signal(false);
     isTeacher = signal(false);
     gradeService = {
       getGrades: vi.fn().mockReturnValue(of([grade])),
       getMyGrades: vi.fn().mockReturnValue(of([grade])),
+      deleteGrade: vi.fn(),
     };
 
     TestBed.configureTestingModule({
@@ -56,7 +61,9 @@ describe('GradesComponent', () => {
         },
       ],
     });
-
+    TestBed.overrideProvider(MatDialog, {
+      useValue: dialog,
+    });
     await TestBed.compileComponents();
   });
 
@@ -143,5 +150,67 @@ describe('GradesComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('a[href="/grades/new"]')).not.toBeNull();
+  });
+
+  it('should not delete grade when confirmation is cancelled', () => {
+    isTeacher.set(true);
+
+    dialog.open.mockReturnValue({
+      afterClosed: () => of(false),
+    });
+
+    fixture = TestBed.createComponent(GradesComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance['deleteGrade'](grade);
+
+    expect(gradeService.deleteGrade).not.toHaveBeenCalled();
+  });
+
+  it('should delete grade and reload grades after confirmation', () => {
+    isTeacher.set(true);
+
+    dialog.open.mockReturnValue({
+      afterClosed: () => of(true),
+    });
+
+    gradeService.deleteGrade.mockReturnValue(of(undefined));
+
+    fixture = TestBed.createComponent(GradesComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance['deleteGrade'](grade);
+
+    expect(gradeService.deleteGrade).toHaveBeenCalledWith(500);
+    expect(gradeService.getGrades).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([
+    [403, 'You are not allowed to delete this grade.'],
+    [404, 'Grade was not found.'],
+  ])('should show delete error for HTTP %i', (status: number, expectedMessage: string) => {
+    isTeacher.set(true);
+
+    dialog.open.mockReturnValue({
+      afterClosed: () => of(true),
+    });
+
+    gradeService.deleteGrade.mockReturnValue(
+      throwError(
+        () =>
+          new HttpErrorResponse({
+            status,
+          }),
+      ),
+    );
+
+    fixture = TestBed.createComponent(GradesComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance['deleteGrade'](grade);
+
+    expect(fixture.componentInstance['actionError']()).toBe(expectedMessage);
+
+    expect(gradeService.getGrades).toHaveBeenCalledTimes(1);
   });
 });
