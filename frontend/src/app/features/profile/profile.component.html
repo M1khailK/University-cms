@@ -1,0 +1,72 @@
+<section class="profile-page">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Account</p>
+      <h1>My profile</h1>
+      <p>Review your personal and academic account information.</p>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <section class="state-card">
+      <p>Loading profile...</p>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="state-card error-card" role="alert">
+      <strong>Profile unavailable</strong>
+      <p>{{ errorMessage() }}</p>
+    </section>
+  } @else if (profile(); as profile) {
+    <section class="profile-card">
+      <header class="profile-summary">
+        <span class="profile-avatar" aria-hidden="true">
+          {{ initials() }}
+        </span>
+
+        <div>
+          <span class="role-badge">{{ roleLabel() }}</span>
+          <h2>{{ profile.firstName }} {{ profile.lastName }}</h2>
+          <p>{{ profile.email }}</p>
+        </div>
+      </header>
+
+      <div class="details-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Personal information</p>
+            <h2>Account details</h2>
+          </div>
+        </div>
+
+        <dl class="details-grid">
+          <div>
+            <dt>First name</dt>
+            <dd>{{ profile.firstName }}</dd>
+          </div>
+
+          <div>
+            <dt>Last name</dt>
+            <dd>{{ profile.lastName }}</dd>
+          </div>
+
+          <div>
+            <dt>Email address</dt>
+            <dd>{{ profile.email }}</dd>
+          </div>
+
+          <div>
+            <dt>Role</dt>
+            <dd>{{ roleLabel() }}</dd>
+          </div>
+
+          @if (profile.groupName) {
+            <div>
+              <dt>Student group</dt>
+              <dd>{{ profile.groupName }}</dd>
+            </div>
+          }
+        </dl>
+      </div>
+    </section>
+  }
+</section>
