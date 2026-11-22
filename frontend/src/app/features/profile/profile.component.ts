@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { finalize } from 'rxjs';
-
+import { ChangePasswordComponent } from './password/change-password.component';
 import { ProfileResponse } from './profile.models';
 import { ProfileService } from './profile.service';
 
@@ -9,6 +9,7 @@ import { ProfileService } from './profile.service';
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
+  imports: [ChangePasswordComponent],
 })
 export class ProfileComponent implements OnInit {
   private readonly profileService = inject(ProfileService);
