@@ -104,14 +104,29 @@
           <strong>Academic workspace</strong>
         </div>
 
-        <div class="topbar-user">
-          <span class="topbar-avatar">{{ initials() }}</span>
+        @if (isTeacher() || isStudent()) {
+          <a
+            class="topbar-user topbar-user-link"
+            routerLink="/profile"
+            aria-label="Open my profile"
+          >
+            <span class="topbar-avatar">{{ initials() }}</span>
 
-          <span>
-            <strong>{{ roleLabel() }}</strong>
-            <small>{{ currentUser()?.email }}</small>
-          </span>
-        </div>
+            <span>
+              <strong>{{ roleLabel() }}</strong>
+              <small>{{ currentUser()?.email }}</small>
+            </span>
+          </a>
+        } @else {
+          <div class="topbar-user">
+            <span class="topbar-avatar">{{ initials() }}</span>
+
+            <span>
+              <strong>{{ roleLabel() }}</strong>
+              <small>{{ currentUser()?.email }}</small>
+            </span>
+          </div>
+        }
       </header>
 
       <main class="app-content">

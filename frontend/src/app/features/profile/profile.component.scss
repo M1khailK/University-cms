@@ -1,0 +1,160 @@
+.profile-page {
+  display: grid;
+  gap: 2rem;
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+}
+
+.page-header h1 {
+  margin: 0.25rem 0 0.5rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: -0.04em;
+}
+
+.page-header > div > p:last-child {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--mat-sys-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.profile-card {
+  overflow: hidden;
+  border: 1px solid rgb(31 45 82 / 9%);
+  border-radius: 1.5rem;
+  background: rgb(255 255 255 / 86%);
+  box-shadow: 0 1rem 3rem rgb(35 48 87 / 8%);
+}
+
+.profile-summary {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  color: #f7f8ff;
+  background:
+    radial-gradient(circle at 90% 10%, rgb(151 169 255 / 45%), transparent 18rem),
+    linear-gradient(135deg, #151d38, #273569);
+}
+
+.profile-summary h2 {
+  margin: 0.6rem 0 0.25rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  letter-spacing: -0.035em;
+}
+
+.profile-summary p {
+  margin: 0;
+  color: #cbd3ef;
+}
+
+.profile-avatar {
+  display: grid;
+  flex: 0 0 6rem;
+  width: 6rem;
+  height: 6rem;
+  place-items: center;
+  border-radius: 1.5rem;
+  color: #172044;
+  background: #c4ceff;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.role-badge {
+  display: inline-flex;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 8%);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.details-section {
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+}
+
+.section-heading h2 {
+  margin: 0.25rem 0 0;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.details-grid div {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.details-grid dt {
+  margin-bottom: 0.35rem;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.details-grid dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+  font-weight: 600;
+}
+
+.state-card {
+  padding: 2rem;
+  border-radius: 1.25rem;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.state-card p {
+  margin: 0;
+}
+
+.error-card {
+  color: var(--mat-sys-error);
+}
+
+.error-card p {
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .profile-summary {
+    align-items: flex-start;
+  }
+
+  .profile-avatar {
+    flex-basis: 4.5rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 1.125rem;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}

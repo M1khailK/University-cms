@@ -21,6 +21,12 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/profile/profile.component').then((module) => module.ProfileComponent),
+  },
+  {
     path: 'teachers',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -123,12 +129,6 @@ export const routes: Routes = [
       import('./features/grades/create/grade-create.component').then(
         (module) => module.GradeCreateComponent,
       ),
-  },
-  {
-    path: 'grades',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/grades/grades.component').then((module) => module.GradesComponent),
   },
   {
     path: 'grades',
