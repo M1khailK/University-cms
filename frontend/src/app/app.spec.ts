@@ -127,4 +127,39 @@ describe('App', () => {
     expect(gradesLink).not.toBeNull();
     expect(gradesLink?.textContent).toContain('My grades');
   });
+
+  it('should link teacher profile from the topbar', () => {
+    const fixture = TestBed.createComponent(App);
+
+    fixture.detectChanges();
+
+    const profileLink = fixture.nativeElement.querySelector(
+      'a.topbar-user[href="/profile"]',
+    ) as HTMLAnchorElement | null;
+
+    expect(profileLink).not.toBeNull();
+    expect(profileLink?.textContent).toContain('Teacher');
+    expect(profileLink?.textContent).toContain('teacher@university.com');
+  });
+
+  it('should not show profile link for an administrator', () => {
+    authenticatedUser.set({
+      email: 'admin@university.com',
+      authorities: ['ROLE_ADMIN'],
+    });
+
+    isAdmin.set(true);
+    isTeacher.set(false);
+    isStudent.set(false);
+
+    const fixture = TestBed.createComponent(App);
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('a.topbar-user[href="/profile"]')).toBeNull();
+
+    expect(fixture.nativeElement.querySelector('.topbar-user')?.textContent).toContain(
+      'Administrator',
+    );
+  });
 });
